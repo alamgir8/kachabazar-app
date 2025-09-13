@@ -1,13 +1,14 @@
 import { Image } from "expo-image";
 import { Platform, StyleSheet } from "react-native";
 
-import { Collapsible } from "@/components/ui/collapsible";
-import { ExternalLink } from "@/components/external-link";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
+// internal imports
+import { Fonts } from "@/constants/theme";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Fonts } from "@/constants/theme";
+import { Collapsible } from "@/components/ui/collapsible";
+import { ExternalLink } from "@/components/external-link";
+import ParallaxScrollView from "@/components/parallax-scroll-view";
 
 export default function TabTwoScreen() {
   return (
