@@ -1,0 +1,33 @@
+{
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      },
+      "channel": "development"
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://backend-dev.cloudclever.com/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "https://mobile-app.cloudclever.com"
+      }
+    },
+
+    "preview3": {
+      "developmentClient": true
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "autoIncrement": false
+    }
+  }
+}
