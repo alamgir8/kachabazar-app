@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
@@ -7,6 +8,37 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
+
+type MenuItemProps = {
+  icon: React.ComponentProps<typeof Feather>["name"];
+  title: string;
+  subtitle?: string;
+  onPress: () => void;
+  badge?: number;
+};
+
+const MenuItem = ({ icon, title, subtitle, onPress, badge }: MenuItemProps) => (
+  <Pressable
+    onPress={onPress}
+    className="flex-row items-center border-b border-slate-100 py-4"
+  >
+    <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-50">
+      <Feather name={icon} size={20} color="#1c7646" />
+    </View>
+    <View className="ml-4 flex-1">
+      <Text className="text-base font-semibold text-slate-900">{title}</Text>
+      {subtitle && (
+        <Text className="mt-0.5 text-xs text-slate-500">{subtitle}</Text>
+      )}
+    </View>
+    {badge ? (
+      <View className="mr-2 h-6 min-w-[24px] items-center justify-center rounded-full bg-red-500 px-2">
+        <Text className="text-xs font-bold text-white">{badge}</Text>
+      </View>
+    ) : null}
+    <Feather name="chevron-right" size={20} color="#94a3b8" />
+  </Pressable>
+);
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -21,7 +53,7 @@ export default function ProfileScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 20,
-            paddingVertical: 80
+            paddingVertical: 80,
           }}
         >
           <View className="items-center rounded-3xl bg-white p-12 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
@@ -158,6 +190,53 @@ export default function ProfileScreen() {
             variant="ghost"
             className="mt-4"
             onPress={() => router.push("/profile/edit")}
+          />
+        </View>
+
+        {/* Menu Items */}
+        <View className="mt-6 rounded-3xl bg-white px-6 py-2 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+          <MenuItem
+            icon="shopping-bag"
+            title="My Orders"
+            subtitle="View all your orders"
+            badge={stats?.pending}
+            onPress={() => router.push("/orders")}
+          />
+          <MenuItem
+            icon="tag"
+            title="Special Offers"
+            subtitle="Exclusive deals for you"
+            onPress={() => router.push("/offers")}
+          />
+          <MenuItem
+            icon="info"
+            title="About Us"
+            subtitle="Learn more about KachaBazar"
+            onPress={() => router.push("/about-us")}
+          />
+          <MenuItem
+            icon="phone"
+            title="Contact Us"
+            subtitle="Get in touch with support"
+            onPress={() => router.push("/contact-us")}
+          />
+          <MenuItem
+            icon="help-circle"
+            title="FAQs"
+            subtitle="Frequently asked questions"
+            onPress={() => router.push("/faq")}
+          />
+          <MenuItem
+            icon="file-text"
+            title="Terms & Conditions"
+            subtitle="Read our terms of service"
+            onPress={() => router.push("/terms-and-conditions")}
+          />
+          <MenuItem
+            icon="shield"
+            title="Privacy Policy"
+            subtitle="How we protect your data"
+            onPress={() => router.push("/privacy-policy")}
           />
         </View>
 

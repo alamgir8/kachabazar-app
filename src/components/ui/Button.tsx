@@ -1,62 +1,241 @@
-import { ActivityIndicator, Pressable, Text } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import type { PressableProps } from "react-native";
-
+import { LinearGradient } from "expo-linear-gradient";
 import { theme } from "@/theme";
 import { cn } from "@/utils/cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "success"
+  | "danger";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends PressableProps {
   title: string;
   variant?: ButtonVariant;
+  size?: ButtonSize;
   loading?: boolean;
+  fullWidth?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
   className?: string;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-primary-500",
-  secondary: "bg-slate-900",
-  ghost: "bg-transparent"
-};
-
-const textStyles: Record<ButtonVariant, string> = {
-  primary: "text-white",
-  secondary: "text-white",
-  ghost: "text-primary-500"
+const sizeStyles = {
+  sm: {
+    container: "px-4 py-2.5 rounded-xl",
+    text: "text-sm",
+  },
+  md: {
+    container: "px-6 py-3.5 rounded-2xl",
+    text: "text-base",
+  },
+  lg: {
+    container: "px-8 py-4 rounded-2xl",
+    text: "text-lg",
+  },
 };
 
 export const Button: React.FC<ButtonProps> = ({
   title,
   variant = "primary",
+  size = "md",
   loading,
   disabled,
+  fullWidth,
+  icon,
+  iconPosition = "left",
   className,
   ...props
-}) => (
-  <Pressable
-    className={cn(
-      "flex-row items-center justify-center rounded-2xl px-6 py-4",
-      variantStyles[variant],
-      disabled || loading
-        ? "opacity-60"
-        : "shadow-card shadow-primary-900/5 active:opacity-90",
-      variant === "ghost" ? "border border-primary-200" : "",
-      className
-    )}
-    disabled={disabled || loading}
-    {...props}
-  >
-    {loading ? (
-      <ActivityIndicator color={variant === "ghost" ? theme.colors.primary : "#fff"} />
-    ) : (
-      <Text
+}) => {
+  const isDisabled = disabled || loading;
+
+  const getButtonContent = () => (
+    <View className="flex-row items-center justify-center gap-2">
+      {loading ? (
+        <ActivityIndicator
+          color={
+            variant === "outline" || variant === "ghost"
+              ? theme.colors.primary[600]
+              : "#fff"
+          }
+          size="small"
+        />
+      ) : (
+        <>
+          {icon && iconPosition === "left" && icon}
+          <Text
+            className={cn(
+              "font-semibold",
+              sizeStyles[size].text,
+              variant === "primary" && "text-white",
+              variant === "secondary" && "text-white",
+              variant === "outline" && "text-primary-600",
+              variant === "ghost" && "text-slate-700",
+              variant === "success" && "text-white",
+              variant === "danger" && "text-white"
+            )}
+          >
+            {title}
+          </Text>
+          {icon && iconPosition === "right" && icon}
+        </>
+      )}
+    </View>
+  );
+
+  if (variant === "primary") {
+    return (
+      <Pressable
         className={cn(
-          "text-center text-base font-semibold uppercase tracking-wider",
-          textStyles[variant]
+          sizeStyles[size].container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          className
         )}
+        disabled={isDisabled}
+        {...props}
       >
-        {title}
-      </Text>
-    )}
-  </Pressable>
-);
+        {({ pressed }) => (
+          <LinearGradient
+            colors={["#22c55e", "#16a34a"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className={cn(
+              "items-center justify-center rounded-2xl",
+              sizeStyles[size].container,
+              pressed && !isDisabled && "opacity-90"
+            )}
+            style={{
+              shadowColor: "#16a34a",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 8,
+            }}
+          >
+            {getButtonContent()}
+          </LinearGradient>
+        )}
+      </Pressable>
+    );
+  }
+
+  if (variant === "secondary") {
+    return (
+      <Pressable
+        className={cn(
+          "bg-slate-700",
+          sizeStyles[size].container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          !isDisabled && "active:opacity-90",
+          className
+        )}
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        disabled={isDisabled}
+        {...props}
+      >
+        {getButtonContent()}
+      </Pressable>
+    );
+  }
+
+  if (variant === "outline") {
+    return (
+      <Pressable
+        className={cn(
+          "border-2 border-primary-500 bg-white",
+          sizeStyles[size].container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          !isDisabled && "active:bg-primary-50",
+          className
+        )}
+        disabled={isDisabled}
+        {...props}
+      >
+        {getButtonContent()}
+      </Pressable>
+    );
+  }
+
+  if (variant === "success") {
+    return (
+      <Pressable
+        className={cn(
+          "bg-green-600",
+          sizeStyles[size].container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          !isDisabled && "active:bg-green-700",
+          className
+        )}
+        style={{
+          shadowColor: "#16a34a",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        disabled={isDisabled}
+        {...props}
+      >
+        {getButtonContent()}
+      </Pressable>
+    );
+  }
+
+  if (variant === "danger") {
+    return (
+      <Pressable
+        className={cn(
+          "bg-red-600",
+          sizeStyles[size].container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          !isDisabled && "active:bg-red-700",
+          className
+        )}
+        style={{
+          shadowColor: "#dc2626",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        disabled={isDisabled}
+        {...props}
+      >
+        {getButtonContent()}
+      </Pressable>
+    );
+  }
+
+  // Ghost variant
+  return (
+    <Pressable
+      className={cn(
+        "bg-transparent",
+        sizeStyles[size].container,
+        fullWidth && "w-full",
+        isDisabled && "opacity-50",
+        !isDisabled && "active:bg-slate-100",
+        className
+      )}
+      disabled={isDisabled}
+      {...props}
+    >
+      {getButtonContent()}
+    </Pressable>
+  );
+};

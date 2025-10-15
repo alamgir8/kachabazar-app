@@ -5,41 +5,63 @@ interface HighlightItem {
   icon: React.ComponentProps<typeof Feather>["name"];
   title: string;
   subtitle: string;
+  color: string;
+  bgColor: string;
 }
 
 const defaultHighlights: HighlightItem[] = [
   {
     icon: "truck",
     title: "Lightning fast delivery",
-    subtitle: "Get groceries delivered in under 45 minutes."
+    subtitle: "Get groceries delivered in under 45 minutes.",
+    color: "#3b82f6",
+    bgColor: "#dbeafe",
   },
   {
     icon: "gift",
     title: "Daily handpicked offers",
-    subtitle: "Save more with curated bundles and flash deals."
+    subtitle: "Save more with curated bundles and flash deals.",
+    color: "#f59e0b",
+    bgColor: "#fef3c7",
   },
   {
     icon: "shield",
     title: "Quality you can trust",
-    subtitle: "Carefully sourced produce checked for freshness."
-  }
+    subtitle: "Carefully sourced produce checked for freshness.",
+    color: "#10b981",
+    bgColor: "#d1fae5",
+  },
 ];
 
 export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
-  items = defaultHighlights
+  items = defaultHighlights,
 }) => (
-  <View className="mb-8 rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,118,110,0.08)]">
+  <View className="gap-3">
     {items.map((item, index) => (
       <View
         key={`${item.title}-${index}`}
-        className="mb-5 flex-row items-start last:mb-0"
+        className="flex-row items-center rounded-2xl bg-white p-4"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 6,
+          elevation: 3,
+        }}
       >
-        <View className="mr-4 rounded-2xl bg-primary-50 p-3">
-          <Feather name={item.icon} size={18} color="#1c7646" />
+        <View
+          className="mr-4 h-14 w-14 items-center justify-center rounded-2xl"
+          style={{ backgroundColor: item.bgColor }}
+        >
+          <Feather name={item.icon} size={24} color={item.color} />
         </View>
         <View className="flex-1">
-          <Text className="font-semibold text-slate-900">{item.title}</Text>
-          <Text className="mt-1 text-sm text-slate-500">{item.subtitle}</Text>
+          <Text className="mb-1 text-base font-bold text-slate-900">
+            {item.title}
+          </Text>
+          <Text className="text-sm leading-5 text-slate-600">
+            {item.subtitle}
+          </Text>
         </View>
       </View>
     ))}

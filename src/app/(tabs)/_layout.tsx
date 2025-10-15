@@ -8,7 +8,7 @@ import { theme } from "@/theme";
 const TabBarIcon = ({
   color,
   name,
-  size = 22
+  size = 22,
 }: {
   color: string;
   name: React.ComponentProps<typeof Feather>["name"];
@@ -23,30 +23,37 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.muted,
+        tabBarActiveTintColor: "#16a34a",
+        tabBarInactiveTintColor: "#94a3b8",
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "600",
-          marginBottom: 6
+          marginBottom: 8,
+          marginTop: -4,
         },
         tabBarStyle: {
-          height: 68,
-          borderTopWidth: 0,
+          height: 70,
+          paddingBottom: 8,
+          paddingTop: 8,
+          borderTopWidth: 1,
+          borderTopColor: "#f1f5f9",
           backgroundColor: "#ffffff",
-          shadowColor: "rgba(15,118,110,0.08)",
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.18,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
           shadowRadius: 12,
-          elevation: 20
-        }
+          elevation: 10,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -59,7 +66,7 @@ export default function TabsLayout() {
               size={22}
               color={color}
             />
-          )
+          ),
         }}
       />
       <Tabs.Screen
@@ -77,7 +84,7 @@ export default function TabsLayout() {
                 </View>
               )}
             </View>
-          )
+          ),
         }}
       />
       <Tabs.Screen
@@ -86,7 +93,7 @@ export default function TabsLayout() {
           title: "Profile",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="user" color={color} size={23} />
-          )
+          ),
         }}
       />
     </Tabs>

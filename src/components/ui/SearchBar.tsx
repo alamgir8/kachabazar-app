@@ -5,7 +5,7 @@ import {
   TextInputProps,
   View,
   Pressable,
-  Keyboard
+  Keyboard,
 } from "react-native";
 
 import { cn } from "@/utils/cn";
@@ -31,9 +31,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   ...props
 }) => {
   const isControlled = controlledValue !== undefined;
-  const [value, setValue] = useState(
-    controlledValue ?? defaultValue ?? ""
-  );
+  const [value, setValue] = useState(controlledValue ?? defaultValue ?? "");
 
   useEffect(() => {
     if (isControlled) {
@@ -64,14 +62,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <View
       className={cn(
-        "flex-row items-center rounded-3xl bg-white px-4 py-3 shadow-[0_10px_30px_rgba(15,118,110,0.08)]",
+        "flex-row items-center rounded-2xl border-2 border-slate-200 bg-white px-4 py-2",
         containerClassName
       )}
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 6,
+        elevation: 3,
+      }}
     >
-      <Feather name="search" size={20} color="#64748b" />
+      <Feather name="search" size={22} color="#16a34a" />
       <TextInput
         className={cn(
-          "ml-3 flex-1 font-body text-base text-slate-700",
+          "ml-3 flex-1 py-2 font-body text-base text-slate-900",
           className
         )}
         placeholderTextColor="#94a3b8"
@@ -82,8 +87,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {...props}
       />
       {value.length > 0 && (
-        <Pressable onPress={handleClear}>
-          <Feather name="x-circle" size={18} color="#94a3b8" />
+        <Pressable onPress={handleClear} className="p-1">
+          <Feather name="x-circle" size={20} color="#94a3b8" />
         </Pressable>
       )}
     </View>

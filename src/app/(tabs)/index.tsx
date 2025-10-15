@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -22,12 +22,12 @@ export default function HomeScreen() {
   const categoriesQuery = useCategories();
   const productsQuery = useProducts();
 
-  console.log(
-    "productsQuery.data",
-    productsQuery.data,
-    "categoriesQuery.data",
-    categoriesQuery.data
-  );
+  // console.log(
+  //   "productsQuery.data",
+  //   productsQuery.data,
+  //   "categoriesQuery.data",
+  //   categoriesQuery.data
+  // );
 
   const isLoading = productsQuery.isLoading || categoriesQuery.isLoading;
   const isError = productsQuery.isError || categoriesQuery.isError;
@@ -73,49 +73,74 @@ export default function HomeScreen() {
   }
 
   return (
-    <Screen className="px-0" scrollable>
+    <Screen
+      className="px-0 pt-0"
+      scrollable
+      edges={["top", "bottom"]}
+      bgColor="white"
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={refresh} />
         }
         contentContainerStyle={{
-          paddingBottom: 160,
-          paddingHorizontal: 20,
+          paddingBottom: 120,
         }}
       >
-        <AppHeader />
-        <SearchBar
-          placeholder="Search for fruits, veggies, snacks..."
-          onSubmitSearch={onSearchSubmit}
-          containerClassName="mb-6"
-        />
-        <Hero onExplorePress={handleExplorePress} />
-        <CategoryStrip
-          categories={categoriesQuery.data ?? []}
-          onSeeAll={handleExplorePress}
-        />
-        <Highlights />
-        <ProductCarousel
-          title="Trending now"
-          subtitle="Loved by our community"
-          products={popularProducts}
-          onSeeAll={() =>
-            router.push({ pathname: "/search", params: { sort: "popular" } })
-          }
-        />
-        <ProductCarousel
-          title="Limited time offers"
-          subtitle="Grab them before they are gone"
-          products={discountedProducts}
-          onSeeAll={() => router.push("/offers")}
-        />
-        <Button
-          title="Browse all products"
-          onPress={() => router.push("/search")}
-          className="mt-4 self-stretch"
-          variant="ghost"
-        />
+        <View className="px-5">
+          <AppHeader />
+          <SearchBar
+            placeholder="Search for fruits, veggies, snacks..."
+            onSubmitSearch={onSearchSubmit}
+            containerClassName="mb-5"
+          />
+        </View>
+
+        <View className="px-5">
+          <Hero onExplorePress={handleExplorePress} />
+        </View>
+
+        <View className="mb-6 px-5">
+          <CategoryStrip
+            categories={categoriesQuery.data ?? []}
+            onSeeAll={handleExplorePress}
+          />
+        </View>
+
+        <View className="mb-6 px-5">
+          <Highlights />
+        </View>
+
+        <View className="mb-6">
+          <ProductCarousel
+            title="Trending now"
+            subtitle="Loved by our community"
+            products={popularProducts}
+            onSeeAll={() =>
+              router.push({ pathname: "/search", params: { sort: "popular" } })
+            }
+          />
+        </View>
+
+        <View className="mb-6">
+          <ProductCarousel
+            title="Limited time offers"
+            subtitle="Grab them before they are gone"
+            products={discountedProducts}
+            onSeeAll={() => router.push("/offers")}
+          />
+        </View>
+
+        <View className="px-5">
+          <Button
+            title="Browse all products"
+            onPress={() => router.push("/search")}
+            variant="outline"
+            size="lg"
+            fullWidth
+          />
+        </View>
       </ScrollView>
     </Screen>
   );
