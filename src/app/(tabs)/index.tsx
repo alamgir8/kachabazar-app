@@ -57,6 +57,8 @@ export default function HomeScreen() {
     [productsQuery.data?.discountedProducts]
   );
 
+  console.log("categoriesQuery?.data", categoriesQuery?.data);
+
   if (isLoading) {
     return <LoadingState message="Curating fresh picks..." />;
   }
@@ -101,8 +103,8 @@ export default function HomeScreen() {
 
         <View className="mb-6">
           <CategoryStrip
-            categories={categoriesQuery.data ?? []}
             onSeeAll={handleExplorePress}
+            categories={categoriesQuery?.data ?? []}
           />
         </View>
 

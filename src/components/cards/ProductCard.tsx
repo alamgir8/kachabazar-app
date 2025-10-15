@@ -143,20 +143,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {/* Add to Cart Button */}
               <Pressable
                 onPress={handleAdd}
-                className="active:scale-95"
+                className="active:scale-95 rounded-md"
                 accessibilityLabel="Add to cart"
               >
                 <LinearGradient
                   colors={["#10b981", "#059669"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  className="h-9 w-9 items-center justify-center rounded-lg"
+                  className="h-9 w-9 items-center justify-center rounded-md shadow-lg"
                   style={{
                     shadowColor: "#059669",
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.3,
                     shadowRadius: 4,
                     elevation: 3,
+                    borderRadius: 2,
                   }}
                 >
                   <Feather name="plus" size={18} color="#ffffff" />

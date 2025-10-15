@@ -119,7 +119,7 @@ export const Button: React.FC<ButtonProps> = ({
             style={{
               height: sizeStyles[size].height,
               paddingHorizontal: sizeStyles[size].paddingHorizontal,
-              borderRadius: 16,
+              borderRadius: 12,
               shadowColor: "#15803d",
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.3,
@@ -158,7 +158,7 @@ export const Button: React.FC<ButtonProps> = ({
             style={{
               height: sizeStyles[size].height,
               paddingHorizontal: sizeStyles[size].paddingHorizontal,
-              borderRadius: 16,
+              borderRadius: 12,
               shadowColor: "#334155",
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.25,
@@ -186,7 +186,7 @@ export const Button: React.FC<ButtonProps> = ({
         style={{
           height: sizeStyles[size].height,
           paddingHorizontal: sizeStyles[size].paddingHorizontal,
-          borderRadius: 16,
+          borderRadius: 12,
         }}
         disabled={isDisabled}
         {...props}
@@ -220,7 +220,7 @@ export const Button: React.FC<ButtonProps> = ({
             style={{
               height: sizeStyles[size].height,
               paddingHorizontal: sizeStyles[size].paddingHorizontal,
-              borderRadius: 16,
+              borderRadius: 12,
               shadowColor: "#15803d",
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
@@ -248,7 +248,7 @@ export const Button: React.FC<ButtonProps> = ({
         style={{
           height: sizeStyles[size].height,
           paddingHorizontal: sizeStyles[size].paddingHorizontal,
-          borderRadius: 16,
+          borderRadius: 12,
           shadowColor: "#dc2626",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.25,

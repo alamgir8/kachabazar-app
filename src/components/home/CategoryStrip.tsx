@@ -18,7 +18,13 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
       <SectionHeader
         title="Shop by category"
         subtitle="Discover curated collections"
-        actionLabel={categories.length > 0 ? "See all" : undefined}
+        actionLabel={
+          categories[0] &&
+          categories[0].children &&
+          categories[0].children.length > 0
+            ? "See all"
+            : undefined
+        }
         onActionPress={onSeeAll}
         badgeLabel={undefined}
       />
@@ -32,7 +38,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         paddingVertical: 12,
       }}
     >
-      {categories.map((category) => (
+      {categories?.[0]?.children?.map((category) => (
         <CategoryCard key={category._id} category={category} />
       ))}
     </ScrollView>
