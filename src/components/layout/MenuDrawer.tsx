@@ -1,8 +1,10 @@
-import { Pressable, ScrollView, Text, View, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+
 import { useAuth } from "@/contexts/AuthContext";
-import { useSettings } from "@/contexts/SettingsContext";
+import { theme } from "@/theme";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -14,10 +16,17 @@ type MenuItemProps = {
 const MenuItem = ({ icon, title, onPress, badge }: MenuItemProps) => (
   <Pressable
     onPress={onPress}
-    className="flex-row items-center border-b border-slate-100 py-4"
+    className="mb-2 flex-row items-center rounded-2xl bg-white/70 px-4 py-4"
+    style={{
+      shadowColor: theme.colors.primary[900],
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.04,
+      shadowRadius: 10,
+      elevation: 3,
+    }}
   >
-    <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-50">
-      <Feather name={icon} size={20} color="#1c7646" />
+    <View className="h-10 w-10 items-center justify-center rounded-2xl bg-primary-50">
+      <Feather name={icon} size={20} color={theme.colors.primary[700]} />
     </View>
     <Text className="ml-4 flex-1 text-base font-medium text-slate-900">
       {title}
@@ -38,7 +47,6 @@ type MenuDrawerProps = {
 export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
-  const { storeCustomization } = useSettings();
 
   const navigate = (path: string) => {
     onClose();
@@ -46,13 +54,21 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <LinearGradient
+      colors={[theme.colors.background, "#ffffff"]}
+      style={{ flex: 1 }}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         {/* Header */}
-        <View className="bg-gradient-to-br from-primary-600 to-primary-500 px-6 pb-8 pt-16">
+        <LinearGradient
+          colors={[theme.colors.primary[600], theme.colors.accent[600]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ paddingHorizontal: 24, paddingVertical: 32, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+        >
           <Pressable
             onPress={onClose}
             className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
@@ -83,21 +99,21 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
                 </Text>
               </View>
             </View>
-          ) : (
-            <View>
-              <Text className="mb-2 font-display text-2xl font-bold text-white">
-                Welcome to KachaBazar
-              </Text>
-              <Text className="text-sm text-white/90">
-                Sign in to access your account
-              </Text>
-            </View>
-          )}
-        </View>
+            ) : (
+              <View>
+                <Text className="mb-2 font-display text-2xl font-bold text-white">
+                  Welcome to KachaBazar
+                </Text>
+                <Text className="text-sm text-white/90">
+                  Sign in to access your account
+                </Text>
+              </View>
+            )}
+        </LinearGradient>
 
         {/* Main Navigation */}
-        <View className="px-6 py-4">
-          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <View className="px-6 py-5">
+          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
             Main Menu
           </Text>
           <MenuItem
@@ -134,8 +150,8 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
 
         {/* Account Section */}
         {isAuthenticated && (
-          <View className="px-6 py-4">
-            <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <View className="px-6 py-5">
+            <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
               My Account
             </Text>
             <MenuItem
@@ -152,8 +168,8 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         )}
 
         {/* Information */}
-        <View className="px-6 py-4">
-          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <View className="px-6 py-5">
+          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
             Information
           </Text>
           <MenuItem
@@ -184,7 +200,7 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         </View>
 
         {/* Auth Actions */}
-        <View className="px-6 py-4">
+        <View className="px-6 py-6">
           {isAuthenticated ? (
             <Pressable
               onPress={() => {
@@ -226,6 +242,6 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
           </Text>
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };

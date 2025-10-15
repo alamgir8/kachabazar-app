@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Image, ScrollView, Text, View, Dimensions } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
@@ -19,6 +26,7 @@ import {
   getLocalizedValue,
   getProductImage
 } from "@/utils";
+import { theme } from "@/theme";
 
 const { width } = Dimensions.get("window");
 
@@ -71,11 +79,30 @@ export default function ProductScreen() {
   const relatedProducts = relatedQuery.data?.relatedProducts ?? [];
 
   return (
-    <Screen className="px-0" scrollable>
+    <Screen innerClassName="px-0" scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 180 }}
       >
+        <View className="px-5 pt-4">
+          <Pressable
+            onPress={() => router.back()}
+            className="mb-4 h-11 w-11 items-center justify-center rounded-full bg-white/80"
+            style={{
+              shadowColor: "rgba(12, 70, 65, 0.25)",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.1,
+              shadowRadius: 10,
+              elevation: 6,
+            }}
+          >
+            <Feather
+              name="arrow-left"
+              size={20}
+              color={theme.colors.primary[700]}
+            />
+          </Pressable>
+        </View>
         <ScrollView
           horizontal
           pagingEnabled

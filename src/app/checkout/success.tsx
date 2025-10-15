@@ -15,7 +15,7 @@ export default function OrderSuccessScreen() {
   const currency = globalSetting?.default_currency ?? "$";
 
   return (
-    <Screen className="px-0">
+    <Screen innerClassName="px-0">
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 80, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}

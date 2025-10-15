@@ -38,7 +38,7 @@ export default function OrderDetailScreen() {
   }
 
   return (
-    <Screen className="px-0" scrollable>
+    <Screen innerClassName="px-0" scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 140, paddingTop: 32 }}

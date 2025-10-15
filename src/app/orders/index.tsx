@@ -60,7 +60,7 @@ export default function OrdersScreen() {
   }
 
   return (
-    <Screen className="px-0">
+    <Screen innerClassName="px-0">
       <FlatList
         data={data?.orders ?? []}
         keyExtractor={(item) => item._id}

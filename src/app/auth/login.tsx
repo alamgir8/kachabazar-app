@@ -49,7 +49,7 @@ export default function LoginScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen className="px-0" scrollable>
+      <Screen innerClassName="px-0" scrollable>
         <View className="px-6 pt-32">
           <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
             Welcome back

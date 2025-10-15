@@ -24,7 +24,7 @@ export default function CartScreen() {
   };
 
   return (
-    <Screen className="px-0">
+    <Screen innerClassName="px-0">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}

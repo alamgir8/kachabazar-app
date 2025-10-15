@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
-import { Image, ScrollView, Text, View, Pressable } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
+import { theme } from "@/theme";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -20,10 +22,17 @@ type MenuItemProps = {
 const MenuItem = ({ icon, title, subtitle, onPress, badge }: MenuItemProps) => (
   <Pressable
     onPress={onPress}
-    className="flex-row items-center border-b border-slate-100 py-4"
+    className="mb-3 flex-row items-center rounded-2xl bg-white/80 px-4 py-4"
+    style={{
+      shadowColor: "rgba(12, 70, 65, 0.3)",
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.07,
+      shadowRadius: 12,
+      elevation: 4,
+    }}
   >
-    <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-50">
-      <Feather name={icon} size={20} color="#1c7646" />
+    <View className="h-10 w-10 items-center justify-center rounded-2xl bg-primary-50">
+      <Feather name={icon} size={20} color="#147d71" />
     </View>
     <View className="ml-4 flex-1">
       <Text className="text-base font-semibold text-slate-900">{title}</Text>
@@ -32,11 +41,11 @@ const MenuItem = ({ icon, title, subtitle, onPress, badge }: MenuItemProps) => (
       )}
     </View>
     {badge ? (
-      <View className="mr-2 h-6 min-w-[24px] items-center justify-center rounded-full bg-red-500 px-2">
+      <View className="mr-2 h-6 min-w-[24px] items-center justify-center rounded-full bg-accent-500 px-2">
         <Text className="text-xs font-bold text-white">{badge}</Text>
       </View>
     ) : null}
-    <Feather name="chevron-right" size={20} color="#94a3b8" />
+    <Feather name="chevron-right" size={20} color="#8c9ab5" />
   </Pressable>
 );
 
@@ -49,36 +58,51 @@ export default function ProfileScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="px-0">
+      <Screen innerClassName="px-0">
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingVertical: 80,
           }}
         >
-          <View className="items-center rounded-3xl bg-white p-12 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+          <LinearGradient
+            colors={[theme.colors.primary[100], theme.colors.accent[100]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 32,
+              padding: 28,
+              shadowColor: theme.colors.primary[800],
+              shadowOffset: { width: 0, height: 16 },
+              shadowOpacity: 0.14,
+              shadowRadius: 28,
+              elevation: 10,
+            }}
+          >
+            <Text className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-600">
               Hey there
             </Text>
-            <Text className="mt-2 text-center font-display text-3xl text-slate-900">
+            <Text className="mt-3 text-center font-display text-3xl text-slate-900">
               Sign in to unlock curated experiences
             </Text>
-            <Text className="mt-4 text-center text-sm text-slate-500">
+            <Text className="mt-4 text-center text-sm text-slate-600">
               Track orders, save multiple addresses, rate your favourites, and
               enjoy personalised deals tailored for you.
             </Text>
             <Button
               title="Login to your account"
               className="mt-6 w-full"
+              size="lg"
               onPress={() => router.push("/auth/login")}
             />
             <Button
               title="Create a new account"
-              variant="ghost"
+              variant="outline"
               className="mt-3 w-full"
+              size="lg"
               onPress={() => router.push("/auth/register")}
             />
-          </View>
+          </LinearGradient>
         </ScrollView>
       </Screen>
     );
@@ -87,26 +111,42 @@ export default function ProfileScreen() {
   const stats = ordersQuery.data;
 
   return (
-    <Screen className="px-0" scrollable>
+    <Screen innerClassName="px-0" scrollable>
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="mt-6 flex-row items-center rounded-3xl bg-white p-6 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+        <LinearGradient
+          colors={[theme.colors.primary[100], "#ffffff"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            marginTop: 24,
+            borderRadius: 32,
+            padding: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            shadowColor: theme.colors.primary[800],
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: 0.12,
+            shadowRadius: 24,
+            elevation: 10,
+          }}
+        >
           {user?.image ? (
             <Image
               source={{ uri: user.image }}
-              className="h-16 w-16 rounded-full"
+              className="h-16 w-16 rounded-3xl"
             />
           ) : (
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+            <View className="h-16 w-16 items-center justify-center rounded-3xl bg-white/70">
               <Text className="text-xl font-bold text-primary-600">
                 {user?.name?.[0] ?? "K"}
               </Text>
             </View>
           )}
           <View className="ml-4 flex-1">
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+            <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
               Member
             </Text>
             <Text className="mt-1 text-lg font-semibold text-slate-900">
@@ -114,9 +154,18 @@ export default function ProfileScreen() {
             </Text>
             <Text className="text-sm text-slate-500">{user?.email}</Text>
           </View>
-        </View>
+        </LinearGradient>
 
-        <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+        <View
+          className="mt-6 rounded-3xl bg-white/85 p-6"
+          style={{
+            shadowColor: "rgba(12, 70, 65, 0.25)",
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.08,
+            shadowRadius: 18,
+            elevation: 7,
+          }}
+        >
           <Text className="text-base font-semibold text-slate-900">
             Quick stats
           </Text>
@@ -152,7 +201,16 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+        <View
+          className="mt-6 rounded-3xl bg-white/85 p-6"
+          style={{
+            shadowColor: "rgba(12, 70, 65, 0.25)",
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.08,
+            shadowRadius: 18,
+            elevation: 7,
+          }}
+        >
           <Text className="text-base font-semibold text-slate-900">
             Default delivery address
           </Text>

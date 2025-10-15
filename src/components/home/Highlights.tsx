@@ -1,12 +1,14 @@
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { Text, View } from "react-native";
+
+import { theme } from "@/theme";
 
 interface HighlightItem {
   icon: React.ComponentProps<typeof Feather>["name"];
   title: string;
   subtitle: string;
-  color: string;
-  bgColor: string;
+  palette: [string, string];
 }
 
 const defaultHighlights: HighlightItem[] = [
@@ -14,56 +16,57 @@ const defaultHighlights: HighlightItem[] = [
     icon: "truck",
     title: "Lightning fast delivery",
     subtitle: "Get groceries delivered in under 45 minutes.",
-    color: "#3b82f6",
-    bgColor: "#dbeafe",
+    palette: ["#60a5fa", "#dbeafe"],
   },
   {
     icon: "gift",
     title: "Daily handpicked offers",
     subtitle: "Save more with curated bundles and flash deals.",
-    color: "#f59e0b",
-    bgColor: "#fef3c7",
+    palette: ["#fda4af", "#fef9c3"],
   },
   {
     icon: "shield",
     title: "Quality you can trust",
     subtitle: "Carefully sourced produce checked for freshness.",
-    color: "#10b981",
-    bgColor: "#d1fae5",
+    palette: [theme.colors.primary[400], "#e0f7f3"],
   },
 ];
 
 export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
   items = defaultHighlights,
 }) => (
-  <View className="gap-3">
+  <View className="gap-4">
     {items.map((item, index) => (
-      <View
+      <LinearGradient
         key={`${item.title}-${index}`}
-        className="flex-row items-center rounded-2xl bg-white p-4"
+        colors={item.palette}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="flex-row items-center rounded-3xl px-5 py-4"
         style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.06,
-          shadowRadius: 6,
-          elevation: 3,
+          shadowColor: theme.colors.primary[900],
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.1,
+          shadowRadius: 18,
+          elevation: 6,
         }}
       >
-        <View
-          className="mr-4 h-14 w-14 items-center justify-center rounded-2xl"
-          style={{ backgroundColor: item.bgColor }}
-        >
-          <Feather name={item.icon} size={24} color={item.color} />
+        <View className="mr-4 h-14 w-14 items-center justify-center rounded-2xl bg-white/70">
+          <Feather
+            name={item.icon}
+            size={24}
+            color={theme.colors.primary[700]}
+          />
         </View>
         <View className="flex-1">
-          <Text className="mb-1 text-base font-bold text-slate-900">
+          <Text className="mb-1 text-base font-semibold text-slate-900">
             {item.title}
           </Text>
-          <Text className="text-sm leading-5 text-slate-600">
+          <Text className="text-[13px] leading-5 text-slate-600">
             {item.subtitle}
           </Text>
         </View>
-      </View>
+      </LinearGradient>
     ))}
   </View>
 );

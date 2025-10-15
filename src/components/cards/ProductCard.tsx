@@ -1,10 +1,11 @@
 import { Feather } from "@expo/vector-icons";
-import { Image, Pressable, Text, View } from "react-native";
-import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "expo-router";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { theme } from "@/theme";
 import { Product } from "@/types";
 import {
   calculateDiscountPercentage,
@@ -43,36 +44,44 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <View
-      className="w-44 overflow-hidden rounded-3xl bg-white"
       style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 5,
+        width: 188,
+        borderRadius: theme.borderRadius["2xl"],
+        backgroundColor: theme.colors.glass,
+        shadowColor: theme.colors.primary[900],
+        shadowOffset: { width: 0, height: 14 },
+        shadowOpacity: 0.12,
+        shadowRadius: 22,
+        elevation: 10,
       }}
     >
       <Link href={`/product/${product.slug}`} asChild>
         <Pressable>
           <LinearGradient
-            colors={["#f0fdf4", "#ffffff"]}
-            className="h-36 w-full items-center justify-center p-3"
+            colors={[theme.colors.primary[50], "#ffffff"]}
+            className="h-40 w-full items-center justify-center"
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            <View className="relative h-full w-full items-center justify-center">
+            <View className="relative h-[92%] w-[90%] items-center justify-center rounded-[26px] bg-white/75">
               {image ? (
                 <Image
                   source={{ uri: image }}
-                  className="h-full w-full rounded-2xl"
+                  className="h-full w-full rounded-[22px]"
                   resizeMode="contain"
                 />
               ) : (
-                <View className="h-28 w-28 items-center justify-center rounded-2xl bg-green-100">
-                  <Feather name="image" size={32} color="#16a34a" />
+                <View className="h-24 w-24 items-center justify-center rounded-3xl bg-primary-100">
+                  <Feather
+                    name="image"
+                    size={28}
+                    color={theme.colors.primary[600]}
+                  />
                 </View>
               )}
               {discount > 0 ? (
-                <View className="absolute right-0 top-0 rounded-full bg-red-500 px-2.5 py-1">
-                  <Text className="text-xs font-bold text-white">
+                <View className="absolute right-2 top-2 rounded-full bg-accent-500/90 px-2.5 py-1">
+                  <Text className="text-[11px] font-semibold text-white">
                     -{discount}%
                   </Text>
                 </View>
@@ -80,20 +89,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </View>
           </LinearGradient>
 
-          <View className="p-4">
+          <View className="space-y-3 px-4 pb-4 pt-3">
             <Text
               numberOfLines={2}
-              className="mb-1 text-base font-bold leading-tight text-slate-900"
+              className="text-base font-semibold leading-tight text-slate-900"
             >
               {getLocalizedValue(product.title)}
             </Text>
-            <Text className="mb-3 text-xs text-slate-500">
+            <Text className="text-xs text-slate-500">
               {variantLabel ? variantLabel : `${product.stock ?? 0} available`}
             </Text>
 
             <View className="flex-row items-center justify-between">
               <View>
-                <Text className="font-display text-xl font-bold text-green-600">
+                <Text className="font-display text-xl font-bold text-primary-700">
                   {formatCurrency(price, currency)}
                 </Text>
                 {originalPrice > price ? (
@@ -104,17 +113,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </View>
               <Pressable
                 onPress={handleAdd}
-                className="h-11 w-11 items-center justify-center rounded-xl bg-green-600"
+                className="h-11 w-11 items-center justify-center rounded-2xl"
                 style={{
-                  shadowColor: "#16a34a",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: 4,
+                  backgroundColor: theme.colors.primary[600],
+                  shadowColor: theme.colors.primary[700],
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.24,
+                  shadowRadius: 6,
+                  elevation: 6,
                 }}
                 accessibilityLabel="Add to cart"
               >
-                <Feather name="plus" size={20} color="#ffffff" />
+                <Feather name="plus" size={20} color={theme.colors.text.inverse} />
               </Pressable>
             </View>
           </View>

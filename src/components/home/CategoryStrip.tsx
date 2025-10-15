@@ -23,7 +23,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: 18 }}
+      contentContainerStyle={{ gap: 18, paddingHorizontal: 4 }}
     >
       {categories.map(category => (
         <CategoryCard key={category._id} category={category} />

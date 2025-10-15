@@ -64,7 +64,7 @@ export default function CategoriesScreen() {
   }
 
   return (
-    <Screen className="px-0">
+    <Screen innerClassName="px-0">
       <FlatList
         data={categoriesQuery.data ?? []}
         keyExtractor={(item) => item._id}

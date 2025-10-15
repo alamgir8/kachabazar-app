@@ -60,7 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
           color={
             variant === "outline" || variant === "ghost"
               ? theme.colors.primary[600]
-              : "#fff"
+              : theme.colors.text.inverse
           }
           size="small"
         />
@@ -101,7 +101,7 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {({ pressed }) => (
           <LinearGradient
-            colors={["#22c55e", "#16a34a"]}
+            colors={[theme.colors.primary[500], theme.colors.accent[500]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className={cn(
@@ -110,11 +110,11 @@ export const Button: React.FC<ButtonProps> = ({
               pressed && !isDisabled && "opacity-90"
             )}
             style={{
-              shadowColor: "#16a34a",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 8,
+              shadowColor: theme.colors.primary[700],
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.32,
+              shadowRadius: 12,
+              elevation: 10,
             }}
           >
             {getButtonContent()}
@@ -128,7 +128,7 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "bg-slate-700",
+          "bg-slate-800",
           sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
@@ -154,7 +154,7 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "border-2 border-primary-500 bg-white",
+          "border-2 border-primary-300 bg-white",
           sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
@@ -173,15 +173,15 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "bg-green-600",
+          "bg-primary-600",
           sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
-          !isDisabled && "active:bg-green-700",
+          !isDisabled && "active:bg-primary-700",
           className
         )}
         style={{
-          shadowColor: "#16a34a",
+          shadowColor: theme.colors.primary[700],
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.2,
           shadowRadius: 4,

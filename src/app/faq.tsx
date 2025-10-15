@@ -100,13 +100,13 @@ export default function FAQScreen() {
   }
 
   return (
-    <Screen className="px-0 pt-0" edges={["top", "bottom"]}>
+    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
-        <View className="bg-gradient-to-b from-primary-600 to-primary-500 px-5 pb-8 pt-16">
+        <View className="bg-gradient-to-b from-primary-600 to-accent-600 px-5 pb-8 pt-16">
           <Pressable
             onPress={() => router.back()}
             className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"

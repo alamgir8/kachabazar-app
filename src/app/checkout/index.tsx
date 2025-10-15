@@ -167,7 +167,7 @@ export default function CheckoutScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen className="px-0" scrollable>
+      <Screen innerClassName="px-0" scrollable>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}

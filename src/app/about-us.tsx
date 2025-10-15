@@ -17,13 +17,13 @@ export default function AboutUsScreen() {
   }
 
   return (
-    <Screen className="px-0 pt-0" edges={["top", "bottom"]}>
+    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
-        <View className="relative h-48 bg-gradient-to-b from-primary-600 to-primary-500">
+        <View className="relative h-48 bg-gradient-to-b from-primary-600 to-accent-600">
           <Image
             source={{
               uri: aboutUs?.header_bg || "https://via.placeholder.com/800x300",

@@ -74,7 +74,8 @@ export default function HomeScreen() {
 
   return (
     <Screen
-      className="px-0 pt-0"
+      className="pt-0"
+      innerClassName="px-0"
       scrollable
       edges={["top", "bottom"]}
       bgColor="white"

@@ -131,7 +131,7 @@ export default function SearchScreen() {
   }
 
   return (
-    <Screen className="px-0">
+    <Screen innerClassName="px-0">
       <FlatList
         data={products}
         keyExtractor={(item) => item._id}
