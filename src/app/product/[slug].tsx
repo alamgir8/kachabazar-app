@@ -6,7 +6,8 @@ import {
   View,
   Dimensions,
   Pressable,
-  Animated,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -44,6 +45,10 @@ export default function ProductScreen() {
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [zoomedImageIndex, setZoomedImageIndex] = useState(0);
+  const [selectedVariant, setSelectedVariant] = useState<any>({});
 
   if (productQuery.isLoading || relatedQuery.isLoading) {
     return <LoadingState message="Loading product..." />;
@@ -83,6 +88,27 @@ export default function ProductScreen() {
   const reviews = relatedQuery.data?.reviews ?? [];
   const relatedProducts = relatedQuery.data?.relatedProducts ?? [];
 
+  // Get product variants and attributes
+  const productVariants = product.variants || [];
+  const hasVariants = productVariants.length > 0;
+
+  // Get unique attribute types
+  const variantAttributes = hasVariants
+    ? Object.keys(productVariants[0] || {}).filter(
+        (key) =>
+          ![
+            "_id",
+            "price",
+            "originalPrice",
+            "quantity",
+            "discount",
+            "barcode",
+            "sku",
+            "image",
+          ].includes(key)
+      )
+    : [];
+
   // Calculate average rating stars
   const renderStars = (rating: number) => {
     const stars = [];
@@ -120,6 +146,26 @@ export default function ProductScreen() {
     }
     return stars;
   };
+
+  // Handle image zoom
+  const handleImageZoom = (images: string[], index: number) => {
+    setZoomedImage(images[index]);
+    setZoomedImageIndex(index);
+  };
+
+  const handleNextZoomImage = (images: string[]) => {
+    const nextIndex = (zoomedImageIndex + 1) % images.length;
+    setZoomedImage(images[nextIndex]);
+    setZoomedImageIndex(nextIndex);
+  };
+
+  const handlePrevZoomImage = (images: string[]) => {
+    const prevIndex = (zoomedImageIndex - 1 + images.length) % images.length;
+    setZoomedImage(images[prevIndex]);
+    setZoomedImageIndex(prevIndex);
+  };
+
+  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
     <Screen innerClassName="px-0" scrollable>
@@ -210,8 +256,8 @@ export default function ProductScreen() {
         </View>
 
         {/* Product Info Card */}
-        <View className="-mt-6">
-          <View className="rounded-3xl bg-white p-6 shadow-xl border border-slate-100">
+        <View className="px-4 -mt-6">
+          <View className="rounded-3xl bg-white p-5 shadow-xl border border-slate-100">
             {/* Category & Rating */}
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
@@ -295,7 +341,64 @@ export default function ProductScreen() {
             </View>
 
             {/* Quantity & Add to Cart */}
-            <View className="mt-5 flex-row items-center gap-3">
+            <View className="mt-5 gap-3">
+              {/* Product Variants/Combinations */}
+              {hasVariants && variantAttributes.length > 0 && (
+                <View className="mb-3">
+                  {variantAttributes.map((attrKey: string) => {
+                    const uniqueOptions = [
+                      ...new Set(
+                        productVariants
+                          .map((v: any) => v[attrKey])
+                          .filter(Boolean)
+                      ),
+                    ];
+
+                    if (uniqueOptions.length === 0) return null;
+
+                    return (
+                      <View key={attrKey} className="mb-3">
+                        <Text className="text-sm font-semibold text-slate-700 mb-2">
+                          {attrKey.charAt(0).toUpperCase() + attrKey.slice(1)}:
+                        </Text>
+                        <View className="flex-row flex-wrap gap-2">
+                          {uniqueOptions.map((option: any) => {
+                            const isSelected =
+                              selectedVariant[attrKey] === option;
+                            return (
+                              <Pressable
+                                key={option}
+                                onPress={() =>
+                                  setSelectedVariant({
+                                    ...selectedVariant,
+                                    [attrKey]: option,
+                                  })
+                                }
+                                className={`px-4 py-2 rounded-lg border-2 ${
+                                  isSelected
+                                    ? "bg-primary-50 border-primary-500"
+                                    : "bg-white border-slate-200"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm font-semibold ${
+                                    isSelected
+                                      ? "text-primary-700"
+                                      : "text-slate-600"
+                                  }`}
+                                >
+                                  {option}
+                                </Text>
+                              </Pressable>
+                            );
+                          })}
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
+              )}
+
               <View className="flex-row items-center gap-2">
                 <Text className="text-sm font-semibold text-slate-700">
                   Qty:
@@ -307,14 +410,14 @@ export default function ProductScreen() {
                     setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
                   }
                 />
+                <EnhancedButton
+                  title="Add to Cart"
+                  onPress={handleAddToCart}
+                  className="flex-1"
+                  size="lg"
+                  disabled={(product.stock ?? 0) === 0}
+                />
               </View>
-              <EnhancedButton
-                title="Add to Cart"
-                onPress={handleAddToCart}
-                className="flex-1"
-                size="lg"
-                disabled={(product.stock ?? 0) === 0}
-              />
             </View>
           </View>
 
@@ -406,7 +509,7 @@ export default function ProductScreen() {
               </View>
 
               <View className="space-y-3">
-                {reviews.slice(0, 3).map((review: any) => (
+                {displayedReviews.map((review: any) => (
                   <View
                     key={review._id}
                     className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm"
@@ -438,18 +541,49 @@ export default function ProductScreen() {
                       </View>
                     </View>
                     <Text className="text-sm text-slate-600 leading-relaxed pl-12">
-                      {review.review}
+                      {review.review || review.comment}
                     </Text>
+
+                    {/* Review Images */}
+                    {review.images && review.images.length > 0 && (
+                      <View className="flex-row flex-wrap gap-2 mt-3 pl-12">
+                        {review.images.map((img: string, idx: number) => (
+                          <Pressable
+                            key={idx}
+                            onPress={() => handleImageZoom(review.images, idx)}
+                            className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200"
+                          >
+                            <Image
+                              source={{ uri: img }}
+                              className="w-full h-full"
+                              resizeMode="cover"
+                            />
+                          </Pressable>
+                        ))}
+                      </View>
+                    )}
                   </View>
                 ))}
               </View>
 
               {reviews.length > 3 && (
-                <Pressable className="mt-3">
+                <Pressable
+                  className="mt-3"
+                  onPress={() => setShowAllReviews(!showAllReviews)}
+                >
                   <View className="rounded-xl bg-slate-50 border border-slate-200 p-4 items-center">
-                    <Text className="text-sm font-semibold text-slate-700">
-                      View all {reviews.length} reviews
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-sm font-semibold text-slate-700">
+                        {showAllReviews
+                          ? "Show less"
+                          : `View all ${reviews.length} reviews`}
+                      </Text>
+                      <Feather
+                        name={showAllReviews ? "chevron-up" : "chevron-down"}
+                        size={16}
+                        color="#334155"
+                      />
+                    </View>
                   </View>
                 </Pressable>
               )}
@@ -469,6 +603,64 @@ export default function ProductScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Image Zoom Modal */}
+      <Modal
+        visible={!!zoomedImage}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setZoomedImage(null)}
+      >
+        <View className="flex-1 bg-black/90 justify-center items-center">
+          <TouchableOpacity
+            onPress={() => setZoomedImage(null)}
+            className="absolute top-12 right-6 z-10 bg-red-500 p-3 rounded-full"
+          >
+            <Feather name="x" size={24} color="#ffffff" />
+          </TouchableOpacity>
+
+          {zoomedImage && (
+            <View className="w-full items-center justify-center px-4">
+              <Image
+                source={{ uri: zoomedImage }}
+                className="w-full h-96"
+                resizeMode="contain"
+              />
+
+              {/* Navigation Buttons */}
+              <View className="flex-row gap-4 mt-6">
+                <TouchableOpacity
+                  onPress={() => {
+                    const currentReview: any = reviews.find((r: any) =>
+                      r.images?.includes(zoomedImage)
+                    );
+                    if (currentReview?.images) {
+                      handlePrevZoomImage(currentReview.images);
+                    }
+                  }}
+                  className="bg-white/20 p-4 rounded-full"
+                >
+                  <Feather name="chevron-left" size={24} color="#ffffff" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    const currentReview: any = reviews.find((r: any) =>
+                      r.images?.includes(zoomedImage)
+                    );
+                    if (currentReview?.images) {
+                      handleNextZoomImage(currentReview.images);
+                    }
+                  }}
+                  className="bg-white/20 p-4 rounded-full"
+                >
+                  <Feather name="chevron-right" size={24} color="#ffffff" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
+      </Modal>
     </Screen>
   );
 }
