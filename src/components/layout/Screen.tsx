@@ -11,6 +11,8 @@ interface ScreenProps extends ViewProps {
   edges?: Array<"top" | "right" | "bottom" | "left">;
   bgColor?: "default" | "white" | "gradient";
   innerClassName?: string;
+  noPadding?: boolean; // Allow opt-out of default padding
+  noHorizontalPadding?: boolean; // Allow opt-out of horizontal padding only
 }
 
 export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
@@ -21,6 +23,8 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
   edges = ["top"],
   bgColor = "gradient",
   innerClassName,
+  noPadding = false,
+  noHorizontalPadding = false,
   ...props
 }) => {
   const insets = useSafeAreaInsets();
@@ -30,6 +34,13 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
   const paddingBottom = edges.includes("bottom") ? insets.bottom : 0;
   const paddingLeft = edges.includes("left") ? insets.left : 0;
   const paddingRight = edges.includes("right") ? insets.right : 0;
+
+  // Determine inner padding class
+  const innerPaddingClass = noPadding
+    ? ""
+    : noHorizontalPadding
+      ? "py-4"
+      : "px-4 py-4";
 
   return (
     <View className="flex-1" style={{ paddingTop, paddingLeft, paddingRight }}>
@@ -81,12 +92,11 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
         {...props}
       >
         <View
-          className={cn("w-full px-4", innerClassName)}
-          // style={{
-          //   width: "100%",
-          //   maxWidth: theme.layout.maxWidth,
-          //   alignSelf: "center",
-          // }}
+          className={cn("w-full", innerPaddingClass, innerClassName)}
+          style={{
+            maxWidth: theme.layout.maxWidth,
+            alignSelf: "center",
+          }}
         >
           {children}
         </View>

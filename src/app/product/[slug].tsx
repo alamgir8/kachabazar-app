@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Image,
   ScrollView,
@@ -8,6 +8,7 @@ import {
   Pressable,
   Modal,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -22,8 +23,10 @@ import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { useProduct, useProducts } from "@/hooks/queries/useProducts";
+import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useCart } from "@/contexts/CartContext";
+import { useProductAction } from "@/hooks/useProductAction";
 import {
   calculateDiscountPercentage,
   formatCurrency,
@@ -39,75 +42,91 @@ export default function ProductScreen() {
   const router = useRouter();
   const productQuery = useProduct(slug);
   const relatedQuery = useProducts({ slug });
-  const { addItem } = useCart();
+  const attributesQuery = useAttributes();
   const { globalSetting } = useSettings();
-  const currency = globalSetting?.default_currency ?? "$";
+
+  // All hooks must be called before any early returns
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [zoomedImageIndex, setZoomedImageIndex] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<any>({});
 
-  if (productQuery.isLoading || relatedQuery.isLoading) {
+  const product = productQuery.data;
+  const attributes = attributesQuery.data || [];
+  const reviews = relatedQuery.data?.reviews ?? [];
+  const relatedProducts = relatedQuery.data?.relatedProducts ?? [];
+
+  // Use the product action hook (must be called unconditionally)
+  const {
+    price,
+    stock,
+    discount,
+    selectedImage,
+    originalPrice,
+    selectVariant,
+    setSelectVariant,
+    setValue,
+    variantTitle,
+    handleAddToCart: addToCartAction,
+  } = useProductAction({
+    product,
+    attributes,
+    globalSetting,
+  });
+
+  // NOW we can do conditional rendering
+  if (
+    productQuery.isLoading ||
+    relatedQuery.isLoading ||
+    attributesQuery.isLoading
+  ) {
     return <LoadingState message="Loading product..." />;
   }
 
-  if (productQuery.isError || !productQuery.data) {
+  if (productQuery.isError || !product) {
     return (
-      <Screen className="px-5 pt-20">
+      <Screen>
         <ErrorState
           title="Product not found"
           message="We could not load this product. Try exploring other collections."
           onRetry={() => {
             productQuery.refetch();
             relatedQuery.refetch();
+            attributesQuery.refetch();
           }}
         />
       </Screen>
     );
   }
 
-  const product = productQuery.data;
   const displayName = getLocalizedValue(product.title);
   const description = getLocalizedValue(product.description);
-  const price = product.prices?.price ?? 0;
-  const originalPrice = product.prices?.originalPrice ?? price;
-  const discount = calculateDiscountPercentage(originalPrice, price);
+  const currency = globalSetting?.default_currency ?? "$";
   const imagesRaw = product.image?.length
     ? product.image
     : [getProductImage(product)];
   const images = (imagesRaw ?? []).filter(Boolean) as string[];
   const carouselImages = images.length ? images : [undefined];
 
-  const handleAddToCart = () => {
-    addItem({ product, quantity });
+  // Override with selected image if variant has one
+  const displayImages = selectedImage
+    ? [selectedImage, ...images.filter((img) => img !== selectedImage)]
+    : images;
+  const displayCarouselImages = displayImages.length
+    ? displayImages
+    : [undefined];
+
+  const handleAddToCartClick = () => {
+    const result = addToCartAction(quantity);
+    if (!result.success) {
+      Alert.alert("Error", result.message);
+    } else {
+      Alert.alert("Success", "Added to cart successfully!");
+      setQuantity(1);
+    }
   };
-
-  const reviews = relatedQuery.data?.reviews ?? [];
-  const relatedProducts = relatedQuery.data?.relatedProducts ?? [];
-
-  // Get product variants and attributes
-  const productVariants = product.variants || [];
-  const hasVariants = productVariants.length > 0;
-
-  // Get unique attribute types
-  const variantAttributes = hasVariants
-    ? Object.keys(productVariants[0] || {}).filter(
-        (key) =>
-          ![
-            "_id",
-            "price",
-            "originalPrice",
-            "quantity",
-            "discount",
-            "barcode",
-            "sku",
-            "image",
-          ].includes(key)
-      )
-    : [];
 
   // Calculate average rating stars
   const renderStars = (rating: number) => {
@@ -168,7 +187,7 @@ export default function ProductScreen() {
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
-    <Screen innerClassName="px-0" scrollable>
+    <Screen noHorizontalPadding scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 140 }}
@@ -201,7 +220,7 @@ export default function ProductScreen() {
             }}
             scrollEventThrottle={16}
           >
-            {carouselImages.map((img, index) => (
+            {displayCarouselImages.map((img, index) => (
               <View
                 key={`${img}-${index}`}
                 style={{ width }}
@@ -223,9 +242,9 @@ export default function ProductScreen() {
           </ScrollView>
 
           {/* Image Indicators */}
-          {carouselImages.length > 1 && (
+          {displayCarouselImages.length > 1 && (
             <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-2">
-              {carouselImages.map((_, index) => (
+              {displayCarouselImages.map((_, index) => (
                 <View
                   key={index}
                   className={`h-2 rounded-full transition-all ${
@@ -318,22 +337,18 @@ export default function ProductScreen() {
               {/* Stock Badge */}
               <View className="items-end">
                 <View
-                  className={`rounded-xl px-4 py-2.5 ${(product.stock ?? 0) > 0 ? "bg-emerald-50" : "bg-red-50"}`}
+                  className={`rounded-xl px-4 py-2.5 ${stock > 0 ? "bg-emerald-50" : "bg-red-50"}`}
                 >
                   <View className="flex-row items-center gap-1.5">
                     <Feather
-                      name={
-                        (product.stock ?? 0) > 0 ? "check-circle" : "x-circle"
-                      }
+                      name={stock > 0 ? "check-circle" : "x-circle"}
                       size={14}
-                      color={(product.stock ?? 0) > 0 ? "#059669" : "#dc2626"}
+                      color={stock > 0 ? "#059669" : "#dc2626"}
                     />
                     <Text
-                      className={`text-xs font-bold ${(product.stock ?? 0) > 0 ? "text-emerald-700" : "text-red-700"}`}
+                      className={`text-xs font-bold ${stock > 0 ? "text-emerald-700" : "text-red-700"}`}
                     >
-                      {(product.stock ?? 0) > 0
-                        ? `${product.stock} in stock`
-                        : "Out of stock"}
+                      {stock > 0 ? `${stock} in stock` : "Out of stock"}
                     </Text>
                   </View>
                 </View>
@@ -343,38 +358,30 @@ export default function ProductScreen() {
             {/* Quantity & Add to Cart */}
             <View className="mt-5 gap-3">
               {/* Product Variants/Combinations */}
-              {hasVariants && variantAttributes.length > 0 && (
+              {variantTitle && variantTitle.length > 0 && (
                 <View className="mb-3">
-                  {variantAttributes.map((attrKey: string) => {
-                    const uniqueOptions = [
-                      ...new Set(
-                        productVariants
-                          .map((v: any) => v[attrKey])
-                          .filter(Boolean)
-                      ),
-                    ];
-
-                    if (uniqueOptions.length === 0) return null;
-
-                    return (
-                      <View key={attrKey} className="mb-3">
-                        <Text className="text-sm font-semibold text-slate-700 mb-2">
-                          {attrKey.charAt(0).toUpperCase() + attrKey.slice(1)}:
-                        </Text>
-                        <View className="flex-row flex-wrap gap-2">
-                          {uniqueOptions.map((option: any) => {
+                  {variantTitle.map((att: any) => (
+                    <View key={att._id} className="mb-3">
+                      <Text className="text-sm font-semibold text-slate-700 mb-2">
+                        {getLocalizedValue(att.name)}:
+                      </Text>
+                      <View className="flex-row flex-wrap gap-2">
+                        {att.variants
+                          ?.filter((v: any) => v.status === "show")
+                          .map((variant: any) => {
                             const isSelected =
-                              selectedVariant[attrKey] === option;
+                              selectVariant[att._id] === variant._id;
                             return (
                               <Pressable
-                                key={option}
-                                onPress={() =>
-                                  setSelectedVariant({
-                                    ...selectedVariant,
-                                    [attrKey]: option,
-                                  })
-                                }
-                                className={`px-4 py-2 rounded-lg border-2 ${
+                                key={variant._id}
+                                onPress={() => {
+                                  setValue(variant._id);
+                                  setSelectVariant({
+                                    ...selectVariant,
+                                    [att._id]: variant._id,
+                                  });
+                                }}
+                                className={`px-4 py-2.5 rounded-xl border-2 ${
                                   isSelected
                                     ? "bg-primary-50 border-primary-500"
                                     : "bg-white border-slate-200"
@@ -387,15 +394,14 @@ export default function ProductScreen() {
                                       : "text-slate-600"
                                   }`}
                                 >
-                                  {option}
+                                  {getLocalizedValue(variant.name)}
                                 </Text>
                               </Pressable>
                             );
                           })}
-                        </View>
                       </View>
-                    );
-                  })}
+                    </View>
+                  ))}
                 </View>
               )}
 
@@ -412,10 +418,10 @@ export default function ProductScreen() {
                 />
                 <EnhancedButton
                   title="Add to Cart"
-                  onPress={handleAddToCart}
+                  onPress={handleAddToCartClick}
                   className="flex-1"
                   size="lg"
-                  disabled={(product.stock ?? 0) === 0}
+                  disabled={stock === 0}
                 />
               </View>
             </View>
