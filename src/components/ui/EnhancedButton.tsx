@@ -93,7 +93,7 @@ const variantConfig = {
   outline: {
     bg: "bg-white",
     text: "text-primary-600",
-    border: "border-2 border-primary-500",
+    border: "border border-primary-500",
     activeOpacity: 0.7,
     gradient: undefined,
   },

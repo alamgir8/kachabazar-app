@@ -55,8 +55,8 @@ export default function RegisterScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen innerClassName="px-0" scrollable>
-        <View className="px-6 pt-32">
+      <Screen scrollable edges={["bottom"]}>
+        <View className="pt-16">
           {/* Back Button */}
           <Pressable
             onPress={() => router.back()}
@@ -76,7 +76,7 @@ export default function RegisterScreen() {
             to continue.
           </Text>
 
-          <View className="mt-8 rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,118,110,0.1)]">
+          <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">
             <Controller
               control={control}
               name="name"
@@ -156,13 +156,12 @@ export default function RegisterScreen() {
               disabled={isSubmitting}
               loading={isSubmitting}
               size="lg"
-              gradient
             />
             <EnhancedButton
               title="Back to login"
               variant="outline"
               size="lg"
-              className="mt-3"
+              className="mt-6"
               onPress={() => router.push("/auth/login")}
             />
           </View>

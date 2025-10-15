@@ -85,7 +85,7 @@ export default function HomeScreen() {
           paddingBottom: 100,
         }}
       >
-        <View className="pt-4">
+        <View className="pt-8">
           <AppHeader />
         </View>
 

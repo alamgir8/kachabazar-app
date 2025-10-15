@@ -10,6 +10,7 @@ import { useOrders } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import { theme } from "@/theme";
+import { useEffect } from "react";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -56,57 +57,11 @@ export default function ProfileScreen() {
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
 
-  if (!isAuthenticated) {
-    return (
-      <Screen innerClassName="px-0">
-        <ScrollView
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            paddingVertical: 60,
-          }}
-        >
-          <LinearGradient
-            colors={[theme.colors.primary[100], theme.colors.accent[100]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              borderRadius: 32,
-              padding: 28,
-              shadowColor: theme.colors.primary[800],
-              shadowOffset: { width: 0, height: 16 },
-              shadowOpacity: 0.14,
-              shadowRadius: 28,
-              elevation: 10,
-            }}
-          >
-            <Text className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-600">
-              Hey there
-            </Text>
-            <Text className="mt-3 text-center font-display text-3xl text-slate-900">
-              Sign in to unlock curated experiences
-            </Text>
-            <Text className="mt-4 text-center text-sm text-slate-600">
-              Track orders, save multiple addresses, rate your favourites, and
-              enjoy personalised deals tailored for you.
-            </Text>
-            <EnhancedButton
-              title="Login to your account"
-              className="mt-6 w-full"
-              size="lg"
-              onPress={() => router.push("/auth/login")}
-            />
-            <EnhancedButton
-              title="Create a new account"
-              variant="outline"
-              className="mt-3 w-full"
-              size="lg"
-              onPress={() => router.push("/auth/register")}
-            />
-          </LinearGradient>
-        </ScrollView>
-      </Screen>
-    );
-  }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/auth/login");
+    }
+  }, []);
 
   const stats = ordersQuery.data;
 

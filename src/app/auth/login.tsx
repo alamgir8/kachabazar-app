@@ -56,11 +56,11 @@ export default function LoginScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen innerClassName="px-0" scrollable>
-        <View className="px-6 pt-16">
+      <Screen scrollable edges={["bottom"]}>
+        <View className="pt-16">
           {/* Back Button */}
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => router?.push("/")}
             className="mb-4 h-10 w-10 items-center justify-center rounded-xl bg-slate-100 active:bg-slate-200"
           >
             <Feather name="arrow-left" size={20} color="#334155" />
@@ -77,7 +77,7 @@ export default function LoginScreen() {
             checkout.
           </Text>
 
-          <View className="mt-6 rounded-2xl bg-white p-6 border border-slate-100 shadow-sm">
+          <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">
             <Controller
               control={control}
               name="email"
@@ -127,13 +127,12 @@ export default function LoginScreen() {
               disabled={isSubmitting}
               loading={isSubmitting}
               size="lg"
-              gradient
             />
             <EnhancedButton
               title="Create an account"
               variant="outline"
               size="lg"
-              className="mt-3"
+              className="mt-6"
               onPress={() => router.push("/auth/register")}
             />
             <EnhancedButton

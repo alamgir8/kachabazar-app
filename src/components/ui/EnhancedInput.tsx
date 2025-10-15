@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { View, TextInput, Text, Pressable, TextInputProps } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
 import { cn } from "@/utils/cn";
+import { Feather } from "@expo/vector-icons";
 
 export interface EnhancedInputProps extends TextInputProps {
   label?: string;
   error?: string;
   helperText?: string;
-  leftIcon?: React.ReactNode;
+  leftIcon?: string | React.ReactNode;
   rightIcon?: React.ReactNode;
   containerClassName?: string;
   inputClassName?: string;
@@ -48,7 +49,7 @@ export const EnhancedInput = React.forwardRef<TextInput, EnhancedInputProps>(
 
         <View
           className={cn(
-            "flex-row items-center bg-neutral-50 rounded-xl border px-4 py-3",
+            "flex-row items-center bg-neutral-50 rounded-xl border px-1 py-1",
             isFocused && !error && "border-primary-500 bg-white",
             error && "border-error bg-error-light/10",
             !error && !isFocused && "border-neutral-200",
@@ -57,7 +58,19 @@ export const EnhancedInput = React.forwardRef<TextInput, EnhancedInputProps>(
             rightIcon || isPassword ? "pr-12" : ""
           )}
         >
-          {leftIcon && <View className="absolute left-4">{leftIcon}</View>}
+          {leftIcon && (
+            <View className="absolute left-4">
+              {typeof leftIcon === "string" ? (
+                <Feather
+                  name={leftIcon as keyof typeof Feather.glyphMap}
+                  size={20}
+                  color="#737373"
+                />
+              ) : (
+                leftIcon
+              )}
+            </View>
+          )}
 
           <TextInput
             ref={ref}
