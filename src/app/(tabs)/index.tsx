@@ -22,6 +22,13 @@ export default function HomeScreen() {
   const categoriesQuery = useCategories();
   const productsQuery = useProducts();
 
+  console.log(
+    "productsQuery.data",
+    productsQuery.data,
+    "categoriesQuery.data",
+    categoriesQuery.data
+  );
+
   const isLoading = productsQuery.isLoading || categoriesQuery.isLoading;
   const isError = productsQuery.isError || categoriesQuery.isError;
 
@@ -74,7 +81,7 @@ export default function HomeScreen() {
         }
         contentContainerStyle={{
           paddingBottom: 160,
-          paddingHorizontal: 20
+          paddingHorizontal: 20,
         }}
       >
         <AppHeader />

@@ -1,5 +1,10 @@
 import { API_BASE_URL } from "@/constants";
 
+if (__DEV__) {
+  // eslint-disable-next-line no-console
+  console.log("[api] base url:", API_BASE_URL);
+}
+
 export interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   token?: string | null;
@@ -36,10 +41,11 @@ export async function request<TResponse = unknown, TBody = unknown>(
   { method = "GET", token, data, headers, signal }: RequestOptions = {}
 ): Promise<TResponse> {
   const url = resolveUrl(endpoint);
-  const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+  const isFormData =
+    typeof FormData !== "undefined" && data instanceof FormData;
 
   const defaultHeaders: Record<string, string> = {
-    Accept: "application/json"
+    Accept: "application/json",
   };
 
   if (!isFormData) {
@@ -54,14 +60,14 @@ export async function request<TResponse = unknown, TBody = unknown>(
     method,
     headers: {
       ...defaultHeaders,
-      ...headers
+      ...headers,
     },
     body: data
       ? isFormData
         ? (data as FormData)
         : JSON.stringify(data)
       : undefined,
-    signal
+    signal,
   });
 
   const parseJson = async () => {
@@ -89,13 +95,16 @@ export async function request<TResponse = unknown, TBody = unknown>(
 }
 
 export const http = {
-  get: <T>(endpoint: string, options?: Omit<RequestOptions, "method" | "data">) =>
-    request<T>(endpoint, { ...options, method: "GET" }),
+  get: <T>(
+    endpoint: string,
+    options?: Omit<RequestOptions, "method" | "data">
+  ) => request<T>(endpoint, { ...options, method: "GET" }),
   post: <TResponse, TBody = unknown>(
     endpoint: string,
     data?: TBody,
     options?: Omit<RequestOptions, "method" | "data">
-  ) => request<TResponse, TBody>(endpoint, { ...options, method: "POST", data }),
+  ) =>
+    request<TResponse, TBody>(endpoint, { ...options, method: "POST", data }),
   put: <TResponse, TBody = unknown>(
     endpoint: string,
     data?: TBody,
@@ -109,8 +118,10 @@ export const http = {
     request<TResponse, TBody>(endpoint, {
       ...options,
       method: "PATCH",
-      data
+      data,
     }),
-  delete: <T>(endpoint: string, options?: Omit<RequestOptions, "method" | "data">) =>
-    request<T>(endpoint, { ...options, method: "DELETE" })
+  delete: <T>(
+    endpoint: string,
+    options?: Omit<RequestOptions, "method" | "data">
+  ) => request<T>(endpoint, { ...options, method: "DELETE" }),
 };
