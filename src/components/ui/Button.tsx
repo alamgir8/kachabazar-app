@@ -30,12 +30,12 @@ const sizeStyles = {
     text: "text-sm",
   },
   md: {
-    container: "px-6 py-3.5 rounded-2xl",
+    container: "px-6 py-3 rounded-xl",
     text: "text-base",
   },
   lg: {
-    container: "px-8 py-4 rounded-2xl",
-    text: "text-lg",
+    container: "px-8 py-4 rounded-xl",
+    text: "text-base",
   },
 };
 
@@ -101,20 +101,20 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {({ pressed }) => (
           <LinearGradient
-            colors={[theme.colors.primary[500], theme.colors.accent[500]]}
+            colors={[theme.colors.primary[500], theme.colors.primary[600]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className={cn(
-              "items-center justify-center rounded-2xl",
+              "items-center justify-center rounded-xl",
               sizeStyles[size].container,
               pressed && !isDisabled && "opacity-90"
             )}
             style={{
               shadowColor: theme.colors.primary[700],
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.32,
-              shadowRadius: 12,
-              elevation: 10,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 6,
             }}
           >
             {getButtonContent()}
@@ -154,7 +154,7 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "border-2 border-primary-300 bg-white",
+          "border-2 border-primary-500 bg-white",
           sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",

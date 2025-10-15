@@ -28,76 +28,42 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
     typeof banner?.hero_image === "string" ? banner?.hero_image : undefined;
 
   return (
-    <Pressable onPress={onExplorePress} className="mb-8">
+    <Pressable onPress={onExplorePress} className="active:scale-[0.98]">
       <LinearGradient
-        colors={[theme.colors.primary[100], theme.colors.accent[100], "#ffffff"]}
+        colors={["#f0fdf4", "#ecfdf5"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        className="overflow-hidden"
+        className="overflow-hidden rounded-2xl"
         style={{
-          borderRadius: 32,
-          shadowColor: theme.colors.primary[800],
-          shadowOffset: { width: 0, height: 18 },
-          shadowOpacity: 0.16,
-          shadowRadius: 26,
-          elevation: 14,
+          shadowColor: theme.colors.primary[600],
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
         }}
       >
-        <View className="flex-row items-center px-6 py-7">
-          <View className="flex-1 pr-4">
-            <View className="mb-4 self-start flex-row items-center rounded-full bg-white/70 px-4 py-2">
-              <Feather
-                name="zap"
-                size={16}
-                color={theme.colors.accent[600]}
-              />
-              <Text className="ml-2 text-xs font-semibold uppercase tracking-[0.32em] text-slate-600">
-                Seasonal Picks
-              </Text>
-            </View>
-            <Text className="font-display text-[28px] leading-tight text-slate-900">
-              {headline}
+        <View className="px-5 py-5">
+          <View className="mb-3 self-start flex-row items-center rounded-full bg-white px-3 py-1.5 shadow-sm">
+            <Feather name="zap" size={13} color={theme.colors.primary[600]} />
+            <Text className="ml-1.5 text-[10px] font-bold uppercase tracking-wider text-primary-600">
+              Seasonal Picks
             </Text>
-            <Text className="mt-3 text-sm leading-6 text-slate-600">
-              {subheading}
-            </Text>
-            <Button
-              title={cta}
-              className="mt-5"
-              size="lg"
-              onPress={onExplorePress}
-            />
           </View>
 
-          <View className="h-36 w-36 items-center justify-center">
-            <LinearGradient
-              colors={["rgba(38,189,166,0.15)", "rgba(162,109,255,0.12)"]}
-              style={{
-                position: "absolute",
-                height: "100%",
-                width: "100%",
-                borderRadius: 180,
-                transform: [{ rotate: "12deg" }],
-              }}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            />
-            {heroImage ? (
-              <Image
-                source={{ uri: heroImage }}
-                className="h-32 w-32"
-                resizeMode="contain"
-              />
-            ) : (
-              <View className="h-28 w-28 items-center justify-center rounded-full bg-white/70">
-                <Feather
-                  name="shopping-bag"
-                  size={32}
-                  color={theme.colors.primary[600]}
-                />
-              </View>
-            )}
-          </View>
+          <Text className="mb-2 text-[22px] font-bold leading-tight text-slate-900">
+            {headline}
+          </Text>
+
+          <Text className="mb-4 text-[13px] leading-relaxed text-slate-600">
+            {subheading}
+          </Text>
+
+          <Button
+            title={cta}
+            size="md"
+            onPress={onExplorePress}
+            className="self-start"
+          />
         </View>
       </LinearGradient>
     </Pressable>

@@ -1,5 +1,4 @@
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
   Keyboard,
@@ -62,28 +61,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <LinearGradient
-      colors={["#eefcf5", "#ffffff"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      className={cn("rounded-[28px]", containerClassName)}
+    <View
+      className={cn("rounded-xl bg-white", containerClassName)}
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(38, 189, 166, 0.18)",
-        shadowColor: "rgba(12, 70, 65, 0.18)",
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.08,
-        shadowRadius: 16,
-        elevation: 6,
+        shadowColor: "#0c4641",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        elevation: 2,
       }}
     >
       <View className="flex-row items-center px-4 py-3">
-        <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-white/90">
-          <Feather name="search" size={20} color={theme.colors.primary[600]} />
-        </View>
+        <Feather name="search" size={20} color={theme.colors.slate[400]} />
         <TextInput
           className={cn(
-            "flex-1 py-1 font-body text-base text-slate-900",
+            "ml-3 flex-1 font-body text-[15px] text-slate-900",
             className
           )}
           placeholderTextColor="#94a3b8"
@@ -96,12 +88,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {value.length > 0 && (
           <Pressable
             onPress={handleClear}
-            className="ml-2 h-10 w-10 items-center justify-center rounded-2xl bg-white/70 active:opacity-80"
+            className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-slate-100 active:bg-slate-200"
           >
-            <Feather name="x" size={18} color="#94a3b8" />
+            <Feather name="x" size={14} color="#64748b" />
           </Pressable>
         )}
       </View>
-    </LinearGradient>
+    </View>
   );
 };

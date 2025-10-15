@@ -20,14 +20,14 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         subtitle="Discover curated collections"
         actionLabel={categories.length > 0 ? "See all" : undefined}
         onActionPress={onSeeAll}
-        badgeLabel={null}
+        badgeLabel={undefined}
       />
     </View>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
-        gap: 16,
+        gap: 14,
         paddingHorizontal: 20,
         paddingVertical: 4,
       }}

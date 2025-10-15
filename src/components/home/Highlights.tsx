@@ -35,40 +35,40 @@ const defaultHighlights: HighlightItem[] = [
 export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
   items = defaultHighlights,
 }) => (
-  <View className="gap-4">
+  <View className="gap-2.5">
     {items.map((item, index) => (
-      <LinearGradient
+      <View
         key={`${item.title}-${index}`}
-        colors={item.palette}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="flex-row items-center rounded-3xl px-5 py-4"
+        className="flex-row items-center rounded-xl bg-white p-4"
         style={{
-          shadowColor: theme.colors.primary[900],
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.1,
-          shadowRadius: 18,
-          elevation: 6,
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.7)",
+          shadowColor: "#0c4641",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.04,
+          shadowRadius: 4,
+          elevation: 2,
         }}
       >
-        <View className="mr-4 h-14 w-14 items-center justify-center rounded-2xl bg-white/70">
+        <View
+          className="mr-3 h-11 w-11 items-center justify-center rounded-lg"
+          style={{
+            backgroundColor: item.palette[0],
+          }}
+        >
           <Feather
             name={item.icon}
-            size={24}
-            color={theme.colors.primary[700]}
+            size={20}
+            color={theme.colors.primary[600]}
           />
         </View>
         <View className="flex-1">
-          <Text className="mb-1 text-base font-semibold text-slate-900">
+          <Text className="mb-0.5 text-[14px] font-bold text-slate-900">
             {item.title}
           </Text>
-          <Text className="text-[13px] leading-5 text-slate-600">
+          <Text className="text-[12px] leading-5 text-slate-600">
             {item.subtitle}
           </Text>
         </View>
-      </LinearGradient>
+      </View>
     ))}
   </View>
 );

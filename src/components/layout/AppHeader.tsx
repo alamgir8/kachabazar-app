@@ -1,6 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { Image, Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { Image, Modal, Pressable, Text, View } from "react-native";
 import { Link } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
@@ -25,79 +24,59 @@ export const AppHeader: React.FC = () => {
 
   return (
     <>
-      <View style={{ paddingTop: insets.top > 0 ? insets.top + 12 : 12 }}>
-        <View
-          className="mb-6 overflow-hidden rounded-3xl"
-          style={{
-            borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.6)",
-            backgroundColor: theme.colors.glass,
-            shadowColor: theme.colors.primary[900],
-            shadowOffset: { width: 0, height: 16 },
-            shadowOpacity: 0.12,
-            shadowRadius: 28,
-            elevation: 12,
-          }}
-        >
-          <LinearGradient
-            colors={["rgba(38, 189, 166, 0.25)", "rgba(162, 109, 255, 0.2)"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFillObject}
-          />
+      <View className="pb-2">
+        <View className="flex-row items-center justify-between px-5 py-2">
+          <Pressable
+            onPress={() => setMenuOpen(true)}
+            className="h-11 w-11 items-center justify-center rounded-xl bg-white active:scale-95"
+            style={{
+              shadowColor: "#0c4641",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.04,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
+          >
+            <Feather name="menu" size={22} color={theme.colors.slate[700]} />
+          </Pressable>
 
-          <View className="flex-row items-center justify-between px-5 py-4">
+          <View className="flex-1 px-4">
+            <Text className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              {greeting || "Welcome"}
+            </Text>
+            <Text className="mt-0.5 text-[17px] font-bold text-slate-900">
+              {isAuthenticated
+                ? `Hi ${user?.name?.split(" ")[0] || "there"}!`
+                : "Let's shop fresh"}
+            </Text>
+          </View>
+
+          <Link href="/(tabs)/profile" asChild>
             <Pressable
-              onPress={() => setMenuOpen(true)}
-              className="mr-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/70"
+              className="h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white active:scale-95"
               style={{
-                shadowColor: theme.colors.primary[700],
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.12,
-                shadowRadius: 6,
-                elevation: 4,
+                shadowColor: "#0c4641",
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.04,
+                shadowRadius: 4,
+                elevation: 2,
               }}
             >
-              <Feather name="menu" size={22} color={theme.colors.primary[700]} />
+              {user?.image ? (
+                <Image
+                  source={{ uri: user.image }}
+                  className="h-11 w-11"
+                  resizeMode="cover"
+                />
+              ) : (
+                <Feather
+                  name="user"
+                  size={22}
+                  color={theme.colors.slate[700]}
+                />
+              )}
             </Pressable>
-
-            <View className="flex-1 px-1">
-              <Text className="text-xs font-medium uppercase tracking-[0.28em] text-slate-500">
-                {greeting || "Welcome"}
-              </Text>
-              <Text className="mt-1 font-display text-[22px] leading-7 text-slate-900">
-                {isAuthenticated
-                  ? `Hi ${user?.name?.split(" ")[0] || "there"}, let’s shop!`
-                  : "Fresh groceries, delivered beautifully."}
-              </Text>
-            </View>
-
-            <Link href="/(tabs)/profile" asChild>
-              <Pressable
-                className="ml-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/80"
-                style={{
-                  shadowColor: theme.colors.accent[500],
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.18,
-                  shadowRadius: 10,
-                  elevation: 6,
-                }}
-              >
-                {user?.image ? (
-                  <Image
-                    source={{ uri: user.image }}
-                    className="h-12 w-12 rounded-2xl"
-                  />
-                ) : (
-                  <Feather
-                    name="user"
-                    size={22}
-                    color={theme.colors.accent[600]}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          </View>
+          </Link>
         </View>
       </View>
 

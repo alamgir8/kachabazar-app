@@ -21,31 +21,40 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   className,
   badgeLabel = "Featured",
 }) => (
-  <View className={cn("mb-5 flex-row items-center justify-between", className)}>
+  <View className={cn("mb-4 flex-row items-center justify-between", className)}>
     <View className="flex-1">
       {badgeLabel ? (
-        <View className="mb-1 self-start rounded-full bg-white/70 px-3 py-1">
-          <Text className="text-[11px] font-semibold uppercase tracking-[0.32em] text-slate-500">
+        <View className="mb-1.5 self-start rounded-full bg-primary-50 px-2.5 py-1">
+          <Text className="text-[10px] font-bold uppercase tracking-wider text-primary-600">
             {badgeLabel}
           </Text>
         </View>
       ) : null}
-      <Text className="font-display text-[22px] text-slate-900">{title}</Text>
+      <Text className="font-display text-[20px] font-bold text-slate-900">
+        {title}
+      </Text>
       {subtitle ? (
-        <Text className="mt-1 text-sm text-slate-500">{subtitle}</Text>
+        <Text className="mt-0.5 text-[13px] text-slate-500">{subtitle}</Text>
       ) : null}
     </View>
     {actionLabel ? (
       <Pressable
-        className="flex-row items-center rounded-full bg-white/80 px-4 py-2"
+        className="flex-row items-center rounded-lg bg-white px-3.5 py-2 active:bg-primary-50"
         onPress={onActionPress}
+        style={{
+          shadowColor: "#0c4641",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.04,
+          shadowRadius: 4,
+          elevation: 2,
+        }}
       >
-        <Text className="mr-2 text-sm font-semibold text-primary-600">
+        <Text className="mr-1.5 text-[13px] font-semibold text-primary-600">
           {actionLabel}
         </Text>
         <Feather
           name="arrow-right"
-          size={16}
+          size={14}
           color={theme.colors.primary[600]}
         />
       </Pressable>

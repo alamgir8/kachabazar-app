@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TextInputProps, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { cn } from "@/utils/cn";
+import { theme } from "@/theme";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -40,33 +41,36 @@ export const Input: React.FC<InputProps> = ({
 
       <View
         className={cn(
-          "flex-row items-center rounded-2xl border-2 bg-white px-4 py-1",
+          "flex-row items-center rounded-xl border-2 bg-white px-4 py-0.5",
           isFocused
             ? "border-primary-500"
             : error
-              ? "border-red-500"
+              ? "border-red-400"
               : "border-slate-200",
           props.editable === false && "bg-slate-50"
         )}
         style={{
-          shadowColor: isFocused ? "#22c55e" : "#000",
+          shadowColor: isFocused ? theme.colors.primary[500] : "#000",
           shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isFocused ? 0.1 : 0.05,
+          shadowOpacity: isFocused ? 0.12 : 0.04,
           shadowRadius: 4,
-          elevation: isFocused ? 3 : 1,
+          elevation: isFocused ? 2 : 1,
         }}
       >
         {leftIcon && (
           <Feather
             name={leftIcon}
             size={20}
-            color={isFocused ? "#22c55e" : "#94a3b8"}
+            color={isFocused ? theme.colors.primary[500] : "#94a3b8"}
             style={{ marginRight: 12 }}
           />
         )}
 
         <TextInput
-          className={cn("flex-1 py-3 text-base text-slate-900", inputClassName)}
+          className={cn(
+            "flex-1 py-3 text-[15px] text-slate-900",
+            inputClassName
+          )}
           placeholderTextColor="#94a3b8"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -82,7 +86,7 @@ export const Input: React.FC<InputProps> = ({
             <Feather
               name={rightIcon}
               size={20}
-              color={isFocused ? "#22c55e" : "#94a3b8"}
+              color={isFocused ? theme.colors.primary[500] : "#94a3b8"}
             />
           </Pressable>
         )}

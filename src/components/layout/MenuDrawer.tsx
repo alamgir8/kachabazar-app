@@ -14,32 +14,32 @@ type MenuItemProps = {
 };
 
 const MenuItem = ({ icon, title, onPress, badge }: MenuItemProps) => (
-  <Pressable onPress={onPress} className="active:opacity-95">
+  <Pressable onPress={onPress} className="mb-2.5 active:scale-[0.98]">
     <View
-      className="mb-3 flex-row items-center justify-between rounded-3xl bg-white px-5 py-4"
+      className="flex-row items-center justify-between rounded-xl bg-white px-4 py-3.5"
       style={{
-        shadowColor: "rgba(12, 70, 65, 0.18)",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.08,
-        shadowRadius: 16,
-        elevation: 6,
+        shadowColor: "#0c4641",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        elevation: 2,
       }}
     >
       <View className="flex-row items-center">
-        <View className="h-11 w-11 items-center justify-center rounded-2xl bg-primary-50">
-          <Feather name={icon} size={22} color={theme.colors.primary[600]} />
+        <View className="h-9 w-9 items-center justify-center rounded-lg bg-primary-50">
+          <Feather name={icon} size={18} color={theme.colors.primary[600]} />
         </View>
-        <Text className="ml-4 text-[15px] font-semibold text-slate-800">
+        <Text className="ml-3 text-[15px] font-semibold text-slate-800">
           {title}
         </Text>
       </View>
       <View className="flex-row items-center gap-2">
         {badge ? (
-          <View className="mr-1 h-6 min-w-[24px] items-center justify-center rounded-full bg-accent-500 px-2">
-            <Text className="text-xs font-bold text-white">{badge}</Text>
+          <View className="mr-1 h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5">
+            <Text className="text-[11px] font-bold text-white">{badge}</Text>
           </View>
         ) : null}
-        <Feather name="chevron-right" size={20} color="#94a3b8" />
+        <Feather name="chevron-right" size={16} color="#94a3b8" />
       </View>
     </View>
   </Pressable>
@@ -59,31 +59,29 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
   };
 
   return (
-    <LinearGradient
-      colors={[theme.colors.background, "#ffffff"]}
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1, backgroundColor: "#f8fafb" }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         {/* Header */}
         <LinearGradient
-          colors={[theme.colors.primary[600], theme.colors.accent[600]]}
+          colors={[theme.colors.primary[600], theme.colors.primary[500]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            paddingHorizontal: 24,
-            paddingVertical: 32,
-            borderBottomLeftRadius: 32,
-            borderBottomRightRadius: 32,
+            paddingHorizontal: 20,
+            paddingTop: 50,
+            paddingBottom: 24,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
           }}
         >
           <Pressable
             onPress={onClose}
-            className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
+            className="mb-5 h-9 w-9 items-center justify-center rounded-lg bg-white/20 active:bg-white/30"
           >
-            <Feather name="x" size={24} color="#fff" />
+            <Feather name="x" size={20} color="#fff" />
           </Pressable>
 
           {isAuthenticated ? (
@@ -91,30 +89,31 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
               {user?.image ? (
                 <Image
                   source={{ uri: user.image }}
-                  className="h-16 w-16 rounded-full border-2 border-white/30"
+                  className="h-12 w-12 rounded-xl border-2 border-white/30"
+                  resizeMode="cover"
                 />
               ) : (
-                <View className="h-16 w-16 items-center justify-center rounded-full border-2 border-white/30 bg-white/20">
-                  <Text className="text-2xl font-bold text-white">
+                <View className="h-12 w-12 items-center justify-center rounded-xl border-2 border-white/30 bg-white/20">
+                  <Text className="text-lg font-bold text-white">
                     {user?.name?.[0] ?? "K"}
                   </Text>
                 </View>
               )}
-              <View className="ml-4 flex-1">
-                <Text className="text-xl font-bold text-white">
+              <View className="ml-3.5 flex-1">
+                <Text className="text-[17px] font-bold text-white">
                   {user?.name || "Guest User"}
                 </Text>
-                <Text className="mt-1 text-sm text-white/90">
+                <Text className="mt-0.5 text-[13px] text-white/80">
                   {user?.email}
                 </Text>
               </View>
             </View>
           ) : (
             <View>
-              <Text className="mb-2 font-display text-2xl font-bold text-white">
+              <Text className="mb-1 text-lg font-bold text-white">
                 Welcome to KachaBazar
               </Text>
-              <Text className="text-sm text-white/90">
+              <Text className="text-[13px] text-white/80">
                 Sign in to access your account
               </Text>
             </View>
@@ -122,8 +121,8 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         </LinearGradient>
 
         {/* Main Navigation */}
-        <View className="px-6 py-5">
-          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <View className="px-4 py-4">
+          <Text className="mb-2.5 px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
             Main Menu
           </Text>
           <MenuItem
@@ -160,8 +159,8 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
 
         {/* Account Section */}
         {isAuthenticated && (
-          <View className="px-6 py-5">
-            <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <View className="px-4 py-4">
+            <Text className="mb-2.5 px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
               My Account
             </Text>
             <MenuItem
@@ -178,8 +177,8 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         )}
 
         {/* Information */}
-        <View className="px-6 py-5">
-          <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <View className="px-4 py-4">
+          <Text className="mb-2.5 px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
             Information
           </Text>
           <MenuItem
@@ -210,33 +209,48 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         </View>
 
         {/* Auth Actions */}
-        <View className="px-6 py-6">
+        <View className="px-4 py-4">
           {isAuthenticated ? (
             <Pressable
               onPress={() => {
                 logout();
                 onClose();
               }}
-              className="flex-row items-center justify-center rounded-2xl bg-red-50 py-4"
+              className="flex-row items-center justify-center rounded-xl bg-red-50 py-3.5"
             >
-              <Feather name="log-out" size={20} color="#dc2626" />
-              <Text className="ml-2 font-semibold text-red-600">Log Out</Text>
+              <Feather name="log-out" size={18} color="#dc2626" />
+              <Text className="ml-2 text-[15px] font-semibold text-red-600">
+                Log Out
+              </Text>
             </Pressable>
           ) : (
-            <View className="gap-3">
+            <View className="gap-2.5">
               <Pressable
                 onPress={() => navigate("/auth/login")}
-                className="flex-row items-center justify-center rounded-2xl bg-primary-600 py-4"
+                className="flex-row items-center justify-center rounded-xl bg-primary-600 py-3.5"
+                style={{
+                  shadowColor: theme.colors.primary[700],
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 6,
+                  elevation: 4,
+                }}
               >
-                <Feather name="log-in" size={20} color="#fff" />
-                <Text className="ml-2 font-semibold text-white">Sign In</Text>
+                <Feather name="log-in" size={18} color="#fff" />
+                <Text className="ml-2 text-[15px] font-semibold text-white">
+                  Sign In
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => navigate("/auth/register")}
-                className="flex-row items-center justify-center rounded-2xl border-2 border-primary-600 py-4"
+                className="flex-row items-center justify-center rounded-xl border-2 border-primary-600 bg-white py-3.5"
               >
-                <Feather name="user-plus" size={20} color="#1c7646" />
-                <Text className="ml-2 font-semibold text-primary-600">
+                <Feather
+                  name="user-plus"
+                  size={18}
+                  color={theme.colors.primary[600]}
+                />
+                <Text className="ml-2 text-[15px] font-semibold text-primary-600">
                   Sign Up
                 </Text>
               </Pressable>
@@ -245,13 +259,13 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
         </View>
 
         {/* Footer */}
-        <View className="mt-6 items-center px-6 pb-8">
-          <Text className="text-xs text-slate-400">Version 1.0.0</Text>
-          <Text className="mt-2 text-center text-xs text-slate-400">
+        <View className="mt-4 items-center px-4 pb-8">
+          <Text className="text-[11px] text-slate-400">Version 1.0.0</Text>
+          <Text className="mt-1.5 text-center text-[11px] text-slate-400">
             © 2024 KachaBazar. All rights reserved.
           </Text>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };

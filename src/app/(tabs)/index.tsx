@@ -77,7 +77,7 @@ export default function HomeScreen() {
       className="pt-0"
       innerClassName="px-0"
       scrollable
-      edges={["top", "bottom"]}
+      edges={["bottom"]}
       bgColor="white"
     >
       <ScrollView
@@ -86,34 +86,35 @@ export default function HomeScreen() {
           <RefreshControl refreshing={false} onRefresh={refresh} />
         }
         contentContainerStyle={{
-          paddingBottom: 120,
+          paddingBottom: 100,
         }}
       >
-        <View className="pt-2">
-          <AppHeader />
+        <AppHeader />
+
+        <View className="px-5">
           <SearchBar
             placeholder="Search for fruits, veggies, snacks..."
             onSubmitSearch={onSearchSubmit}
-            containerClassName="mb-6"
+            containerClassName="mb-4"
           />
         </View>
 
-        <View className="mb-6">
+        <View className="mb-4 px-5">
           <Hero onExplorePress={handleExplorePress} />
         </View>
 
-        <View className="mb-7">
+        <View className="mb-5">
           <CategoryStrip
             categories={categoriesQuery.data ?? []}
             onSeeAll={handleExplorePress}
           />
         </View>
 
-        <View className="mb-7">
+        <View className="mb-5 px-5">
           <Highlights />
         </View>
 
-        <View className="mb-7">
+        <View className="mb-5">
           <ProductCarousel
             title="Trending now"
             subtitle="Loved by our community"
@@ -125,7 +126,7 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View className="mb-6">
+        <View className="mb-5">
           <ProductCarousel
             title="Limited time offers"
             subtitle="Grab them before they are gone"

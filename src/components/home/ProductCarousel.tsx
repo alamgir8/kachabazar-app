@@ -22,17 +22,17 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
   badgeLabel = "Featured",
 }) => (
   <View>
-    <View className="px-5">
+    <View className="mb-4 px-5">
       <SectionHeader
         title={title}
         subtitle={subtitle}
         actionLabel={products.length > 0 ? "See all" : undefined}
         onActionPress={onSeeAll}
-        badgeLabel={badgeLabel}
+        badgeLabel={badgeLabel ?? undefined}
       />
     </View>
     {products.length === 0 ? (
-      <View className="mx-5 rounded-3xl bg-slate-50 p-8">
+      <View className="mx-5 rounded-2xl bg-slate-50 p-6">
         <Text className="text-center text-sm text-slate-500">
           {emptyLabel ?? "We are adding new items soon."}
         </Text>
@@ -41,7 +41,10 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 6 }}
+        contentContainerStyle={{
+          gap: 12,
+          paddingHorizontal: 20,
+        }}
       >
         {products.map((product) => (
           <ProductCard key={product._id} product={product} layout="carousel" />
