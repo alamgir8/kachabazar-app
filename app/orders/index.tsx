@@ -1,0 +1,141 @@
+import { FlatList, RefreshControl, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+
+import { Screen } from "@/components/layout/Screen";
+import { Button } from "@/components/ui/Button";
+import { useOrders } from "@/hooks/queries/useOrders";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { formatCurrency } from "@/utils";
+
+export default function OrdersScreen() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { data, isLoading, isError, refetch, isRefetching } = useOrders();
+  const { globalSetting } = useSettings();
+  const currency = globalSetting?.default_currency ?? "$";
+
+  if (!isAuthenticated) {
+    return (
+      <Screen className="px-5 pt-24">
+        <View className="rounded-3xl bg-white p-10 shadow-[0_15px_40px_rgba(15,118,110,0.1)]">
+          <Text className="text-lg font-semibold text-slate-900">
+            Track your orders in one place
+          </Text>
+          <Text className="mt-2 text-sm text-slate-500">
+            Sign in to view order history and reorder favourites in a single tap.
+          </Text>
+          <Button
+            title="Login"
+            className="mt-6"
+            onPress={() => router.push("/auth/login")}
+          />
+        </View>
+      </Screen>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Screen className="px-5 pt-24">
+        <Text className="text-sm text-slate-500">Fetching your orders...</Text>
+      </Screen>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Screen className="px-5 pt-24">
+        <View className="space-y-4 rounded-3xl bg-white p-8 shadow-[0_15px_40px_rgba(15,118,110,0.1)]">
+          <Text className="text-lg font-semibold text-slate-900">
+            Unable to load orders
+          </Text>
+          <Text className="text-sm text-slate-500">
+            Please check your connection and try again.
+          </Text>
+          <Button title="Retry" onPress={() => refetch()} />
+        </View>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen className="px-0">
+      <FlatList
+        data={data?.orders ?? []}
+        keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+        }
+        contentContainerStyle={{
+          paddingBottom: 140,
+          paddingHorizontal: 20,
+          paddingTop: 24
+        }}
+        ListHeaderComponent={
+          <View className="mb-6">
+            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+              Orders
+            </Text>
+            <Text className="mt-2 font-display text-3xl text-slate-900">
+              Keep tabs on your deliveries
+            </Text>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <View className="mb-4 rounded-3xl bg-white p-6 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-sm text-slate-500">
+                  Invoice #{item.invoice ?? "--"}
+                </Text>
+                <Text className="mt-1 text-lg font-semibold text-slate-900">
+                  {formatCurrency(item.total, currency)}
+                </Text>
+              </View>
+              <View className="rounded-full bg-primary-50 px-3 py-1">
+                <Text className="text-xs font-semibold text-primary-600">
+                  {item.status}
+                </Text>
+              </View>
+            </View>
+            <View className="mt-4 space-y-1">
+              <Text className="text-sm text-slate-500">
+                Placed on {new Date(item.createdAt).toLocaleDateString()}
+              </Text>
+              <Text className="text-sm text-slate-500">
+                Items: {item.cart.length}
+              </Text>
+            </View>
+            <Button
+              title="View details"
+              variant="ghost"
+              className="mt-4"
+              onPress={() =>
+                router.push({
+                  pathname: "/orders/[id]",
+                  params: { id: item._id }
+                })
+              }
+            />
+          </View>
+        )}
+        ListEmptyComponent={
+          <View className="mt-20 items-center">
+            <Text className="text-base font-semibold text-slate-700">
+              You haven’t placed any orders yet.
+            </Text>
+            <Text className="mt-2 text-sm text-slate-500">
+              Explore the store and add your favourite groceries to the cart.
+            </Text>
+            <Button
+              title="Start shopping"
+              className="mt-6"
+              onPress={() => router.push("/search")}
+            />
+          </View>
+        }
+      />
+    </Screen>
+  );
+}

@@ -1,0 +1,43 @@
+import { Feather } from "@expo/vector-icons";
+import { Image, Pressable, Text, View } from "react-native";
+import { Link } from "expo-router";
+
+import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { getLocalizedValue } from "@/utils";
+
+export const AppHeader: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
+  const { storeCustomization } = useSettings();
+
+  const greeting =
+    storeCustomization?.navbar &&
+    getLocalizedValue(
+      storeCustomization.navbar.greeting as Record<string, string>
+    );
+
+  return (
+    <View className="mb-6 flex-row items-center justify-between px-1">
+      <View className="flex-1">
+        <Text className="text-sm text-slate-400">
+          {greeting || "Welcome to KachaBazar"}
+        </Text>
+        <Text className="font-display text-2xl text-slate-900">
+          {isAuthenticated ? `Hello, ${user?.name?.split(" ")[0] || "there"}!` : "Fresh groceries, delivered."}
+        </Text>
+      </View>
+      <Link href="/(tabs)/profile" asChild>
+        <Pressable className="ml-4 h-12 w-12 items-center justify-center rounded-full bg-primary-50">
+          {user?.image ? (
+            <Image
+              source={{ uri: user.image }}
+              className="h-12 w-12 rounded-full"
+            />
+          ) : (
+            <Feather name="user" size={22} color="#1c7646" />
+          )}
+        </Pressable>
+      </Link>
+    </View>
+  );
+};

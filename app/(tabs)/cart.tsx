@@ -1,0 +1,80 @@
+import { useRouter } from "expo-router";
+import { ScrollView, Text, View } from "react-native";
+
+import { Screen } from "@/components/layout/Screen";
+import { CartItemRow } from "@/components/cart/CartItemRow";
+import { CartSummary } from "@/components/cart/CartSummary";
+import { Button } from "@/components/ui/Button";
+import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { formatCurrency } from "@/utils";
+
+export default function CartScreen() {
+  const router = useRouter();
+  const { items, subtotal, isEmpty, clearCart } = useCart();
+  const { globalSetting } = useSettings();
+  const currency = globalSetting?.default_currency ?? "$";
+
+  const handleCheckout = () => {
+    if (isEmpty) {
+      router.push("/search");
+      return;
+    }
+    router.push("/checkout");
+  };
+
+  return (
+    <Screen className="px-0">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
+      >
+        <View className="mb-6 mt-4 flex-row items-baseline justify-between">
+          <View>
+            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+              Your basket
+            </Text>
+            <Text className="mt-2 font-display text-3xl text-slate-900">
+              {isEmpty ? "It feels empty here" : "Ready to checkout"}
+            </Text>
+          </View>
+          {!isEmpty ? (
+            <Text className="text-sm font-semibold text-primary-600">
+              {formatCurrency(subtotal, currency)}
+            </Text>
+          ) : null}
+        </View>
+
+        {isEmpty ? (
+          <View className="mt-16 items-center rounded-3xl bg-white p-10 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
+            <Text className="text-lg font-semibold text-slate-900">
+              Your cart is craving something fresh
+            </Text>
+            <Text className="mt-2 text-center text-sm text-slate-500">
+              Explore seasonal picks, curate your weekly essentials, and come
+              back to checkout.
+            </Text>
+            <Button
+              title="Start shopping"
+              className="mt-6 w-full"
+              onPress={() => router.push("/search")}
+            />
+          </View>
+        ) : (
+          <>
+            {items.map((item) => (
+              <CartItemRow key={item.id} item={item} />
+            ))}
+            <CartSummary onCheckout={handleCheckout} />
+            <Button
+              title="Clear cart"
+              variant="ghost"
+              className="mt-4"
+              onPress={clearCart}
+            />
+          </>
+        )}
+      </ScrollView>
+    </Screen>
+  );
+}

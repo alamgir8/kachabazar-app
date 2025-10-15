@@ -1,0 +1,57 @@
+import { FlatList, RefreshControl, Text, View } from "react-native";
+
+import { Screen } from "@/components/layout/Screen";
+import { ProductCard } from "@/components/cards/ProductCard";
+import { useProducts } from "@/hooks/queries/useProducts";
+
+export default function OffersScreen() {
+  const { data, isLoading, isError, refetch, isRefetching } = useProducts();
+  const discounted = data?.discountedProducts ?? [];
+
+  return (
+    <Screen className="px-0">
+      <FlatList
+        data={discounted}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        columnWrapperStyle={{ gap: 16 }}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+        }
+        ListHeaderComponent={
+          <View className="px-5 pt-24">
+            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+              Exclusive offers
+            </Text>
+            <Text className="mt-2 font-display text-3xl text-slate-900">
+              Save more on essentials
+            </Text>
+            <Text className="mt-4 text-sm text-slate-500">
+              Fresh deals curated daily. Tap any product to learn more or add to cart instantly.
+            </Text>
+            {isError ? (
+              <Text className="mt-3 text-sm text-rose-500">
+                Unable to load offers right now.
+              </Text>
+            ) : null}
+          </View>
+        }
+        renderItem={({ item }) => (
+          <View className="px-5 pb-6">
+            <ProductCard product={item} />
+          </View>
+        )}
+        ListEmptyComponent={
+          <View className="px-5 py-20">
+            <Text className="text-center text-sm text-slate-500">
+              {isLoading
+                ? "Fetching fresh deals..."
+                : "No offers available at the moment. Check back soon!"}
+            </Text>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 160, paddingHorizontal: 4 }}
+      />
+    </Screen>
+  );
+}
