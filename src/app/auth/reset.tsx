@@ -9,8 +9,8 @@ export default function ResetPasswordScreen() {
   const router = useRouter();
 
   return (
-    <Screen scrollable innerClassName="px-0">
-      <View className="px-6 pt-16">
+    <Screen scrollable edges={["bottom"]}>
+      <View className="pt-16">
         <Pressable
           onPress={() => router.back()}
           className="mb-4 h-10 w-10 items-center justify-center rounded-xl bg-slate-100 active:bg-slate-200"
@@ -29,7 +29,7 @@ export default function ResetPasswordScreen() {
           We will bring the full flow to the app soon.
         </Text>
 
-        <View className="mt-6 rounded-2xl bg-white p-6 border border-slate-100 shadow-sm">
+        <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">
           <View className="mb-4 rounded-xl bg-blue-50 p-3 flex-row items-start border border-blue-100">
             <Feather name="info" size={18} color="#3b82f6" />
             <Text className="ml-2 text-sm text-blue-600 flex-1">
@@ -41,7 +41,6 @@ export default function ResetPasswordScreen() {
             title="Back to login"
             variant="primary"
             size="lg"
-            gradient
             onPress={() => router.push("/auth/login")}
           />
         </View>

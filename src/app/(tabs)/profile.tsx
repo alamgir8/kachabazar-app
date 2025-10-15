@@ -66,198 +66,199 @@ export default function ProfileScreen() {
   const stats = ordersQuery.data;
 
   return (
-    <Screen innerClassName="px-0" scrollable>
+    <Screen scrollable edges={["bottom"]}>
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingBottom: 160,
+          paddingBottom: 10,
           paddingTop: 8,
         }}
         showsVerticalScrollIndicator={false}
       >
-        <LinearGradient
-          colors={[theme.colors.primary[100], "#ffffff"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            marginTop: 16,
-            borderRadius: 32,
-            padding: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            shadowColor: theme.colors.primary[800],
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.12,
-            shadowRadius: 24,
-            elevation: 10,
-          }}
-        >
-          {user?.image ? (
-            <Image
-              source={{ uri: user.image }}
-              className="h-16 w-16 rounded-3xl"
+        <View className="pt-8">
+          <LinearGradient
+            colors={[theme.colors.primary[100], "#ffffff"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              marginTop: 16,
+              borderRadius: 32,
+              padding: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              shadowColor: theme.colors.primary[800],
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.12,
+              shadowRadius: 24,
+              elevation: 10,
+            }}
+          >
+            {user?.image ? (
+              <Image
+                source={{ uri: user.image }}
+                className="h-16 w-16 rounded-3xl"
+              />
+            ) : (
+              <View className="h-16 w-16 items-center justify-center rounded-3xl bg-white/70">
+                <Text className="text-xl font-bold text-primary-600">
+                  {user?.name?.[0] ?? "K"}
+                </Text>
+              </View>
+            )}
+            <View className="ml-4 flex-1">
+              <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
+                Member
+              </Text>
+              <Text className="mt-1 text-lg font-semibold text-slate-900">
+                {user?.name}
+              </Text>
+              <Text className="text-sm text-slate-500">{user?.email}</Text>
+            </View>
+          </LinearGradient>
+
+          <View
+            className="mt-6 rounded-3xl bg-white/85 p-6"
+            style={{
+              shadowColor: "rgba(12, 70, 65, 0.25)",
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.08,
+              shadowRadius: 18,
+              elevation: 7,
+            }}
+          >
+            <Text className="text-base font-semibold text-slate-900">
+              Quick stats
+            </Text>
+            <View className="mt-4 flex-row justify-between">
+              <View className="items-center">
+                <Text className="text-2xl font-bold text-slate-900">
+                  {stats?.orders.length ?? 0}
+                </Text>
+                <Text className="text-xs text-slate-500">Orders</Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-2xl font-bold text-slate-900">
+                  {stats?.pending ?? 0}
+                </Text>
+                <Text className="text-xs text-slate-500">Pending</Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-2xl font-bold text-slate-900">
+                  {stats?.delivered ?? 0}
+                </Text>
+                <Text className="text-xs text-slate-500">Delivered</Text>
+              </View>
+            </View>
+            {stats?.orders[0] ? (
+              <Text className="mt-4 text-xs text-slate-500">
+                Recent total: {formatCurrency(stats.orders[0].total, currency)}
+              </Text>
+            ) : null}
+            <EnhancedButton
+              title="View order history"
+              className="mt-5"
+              onPress={() => router.push("/orders")}
             />
-          ) : (
-            <View className="h-16 w-16 items-center justify-center rounded-3xl bg-white/70">
-              <Text className="text-xl font-bold text-primary-600">
-                {user?.name?.[0] ?? "K"}
-              </Text>
-            </View>
-          )}
-          <View className="ml-4 flex-1">
-            <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
-              Member
-            </Text>
-            <Text className="mt-1 text-lg font-semibold text-slate-900">
-              {user?.name}
-            </Text>
-            <Text className="text-sm text-slate-500">{user?.email}</Text>
           </View>
-        </LinearGradient>
 
-        <View
-          className="mt-6 rounded-3xl bg-white/85 p-6"
-          style={{
-            shadowColor: "rgba(12, 70, 65, 0.25)",
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.08,
-            shadowRadius: 18,
-            elevation: 7,
-          }}
-        >
-          <Text className="text-base font-semibold text-slate-900">
-            Quick stats
-          </Text>
-          <View className="mt-4 flex-row justify-between">
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-slate-900">
-                {stats?.orders.length ?? 0}
+          <View
+            className="mt-6 rounded-3xl bg-white/85 p-6"
+            style={{
+              shadowColor: "rgba(12, 70, 65, 0.25)",
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.08,
+              shadowRadius: 18,
+              elevation: 7,
+            }}
+          >
+            <Text className="text-base font-semibold text-slate-900">
+              Default delivery address
+            </Text>
+            {shippingAddress ? (
+              <View className="mt-3 space-y-1">
+                {shippingAddress.name ? (
+                  <Text className="text-sm text-slate-600">
+                    {shippingAddress.name}
+                  </Text>
+                ) : null}
+                {shippingAddress.contact ? (
+                  <Text className="text-sm text-slate-600">
+                    {shippingAddress.contact}
+                  </Text>
+                ) : null}
+                {shippingAddress.address ? (
+                  <Text className="text-sm text-slate-600">
+                    {shippingAddress.address}
+                  </Text>
+                ) : null}
+                <Text className="text-sm text-slate-600">
+                  {[shippingAddress.city, shippingAddress.country]
+                    .filter(Boolean)
+                    .join(", ")}{" "}
+                  {shippingAddress.zipCode}
+                </Text>
+              </View>
+            ) : (
+              <Text className="mt-3 text-sm text-slate-500">
+                Add an address during checkout to enjoy one tap ordering.
               </Text>
-              <Text className="text-xs text-slate-500">Orders</Text>
-            </View>
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-slate-900">
-                {stats?.pending ?? 0}
-              </Text>
-              <Text className="text-xs text-slate-500">Pending</Text>
-            </View>
-            <View className="items-center">
-              <Text className="text-2xl font-bold text-slate-900">
-                {stats?.delivered ?? 0}
-              </Text>
-              <Text className="text-xs text-slate-500">Delivered</Text>
-            </View>
+            )}
+            <EnhancedButton
+              title="Update profile"
+              variant="ghost"
+              className="mt-4"
+              onPress={() => router.push("/profile/edit")}
+            />
           </View>
-          {stats?.orders[0] ? (
-            <Text className="mt-4 text-xs text-slate-500">
-              Recent total: {formatCurrency(stats.orders[0].total, currency)}
-            </Text>
-          ) : null}
-          <EnhancedButton
-            title="View order history"
-            className="mt-5"
-            onPress={() => router.push("/orders")}
-          />
-        </View>
 
-        <View
-          className="mt-6 rounded-3xl bg-white/85 p-6"
-          style={{
-            shadowColor: "rgba(12, 70, 65, 0.25)",
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.08,
-            shadowRadius: 18,
-            elevation: 7,
-          }}
-        >
-          <Text className="text-base font-semibold text-slate-900">
-            Default delivery address
-          </Text>
-          {shippingAddress ? (
-            <View className="mt-3 space-y-1">
-              {shippingAddress.name ? (
-                <Text className="text-sm text-slate-600">
-                  {shippingAddress.name}
-                </Text>
-              ) : null}
-              {shippingAddress.contact ? (
-                <Text className="text-sm text-slate-600">
-                  {shippingAddress.contact}
-                </Text>
-              ) : null}
-              {shippingAddress.address ? (
-                <Text className="text-sm text-slate-600">
-                  {shippingAddress.address}
-                </Text>
-              ) : null}
-              <Text className="text-sm text-slate-600">
-                {[shippingAddress.city, shippingAddress.country]
-                  .filter(Boolean)
-                  .join(", ")}{" "}
-                {shippingAddress.zipCode}
-              </Text>
-            </View>
-          ) : (
-            <Text className="mt-3 text-sm text-slate-500">
-              Add an address during checkout to enjoy one tap ordering.
-            </Text>
-          )}
-          <EnhancedButton
-            title="Update profile"
-            variant="ghost"
-            className="mt-4"
-            onPress={() => router.push("/profile/edit")}
-          />
-        </View>
+          {/* Menu Items */}
+          <View className="mt-6 rounded-3xl bg-white px-6 py-2 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+            <MenuItem
+              icon="shopping-bag"
+              title="My Orders"
+              subtitle="View all your orders"
+              badge={stats?.pending}
+              onPress={() => router.push("/orders")}
+            />
+            <MenuItem
+              icon="tag"
+              title="Special Offers"
+              subtitle="Exclusive deals for you"
+              onPress={() => router.push("/offers")}
+            />
+            <MenuItem
+              icon="info"
+              title="About Us"
+              subtitle="Learn more about KachaBazar"
+              onPress={() => router.push("/about-us")}
+            />
+            <MenuItem
+              icon="phone"
+              title="Contact Us"
+              subtitle="Get in touch with support"
+              onPress={() => router.push("/contact-us")}
+            />
+            <MenuItem
+              icon="help-circle"
+              title="FAQs"
+              subtitle="Frequently asked questions"
+              onPress={() => router.push("/faq")}
+            />
+            <MenuItem
+              icon="file-text"
+              title="Terms & Conditions"
+              subtitle="Read our terms of service"
+              onPress={() => router.push("/terms-and-conditions")}
+            />
+            <MenuItem
+              icon="shield"
+              title="Privacy Policy"
+              subtitle="How we protect your data"
+              onPress={() => router.push("/privacy-policy")}
+            />
+          </View>
 
-        {/* Menu Items */}
-        <View className="mt-6 rounded-3xl bg-white px-6 py-2 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
-          <MenuItem
-            icon="shopping-bag"
-            title="My Orders"
-            subtitle="View all your orders"
-            badge={stats?.pending}
-            onPress={() => router.push("/orders")}
-          />
-          <MenuItem
-            icon="tag"
-            title="Special Offers"
-            subtitle="Exclusive deals for you"
-            onPress={() => router.push("/offers")}
-          />
-          <MenuItem
-            icon="info"
-            title="About Us"
-            subtitle="Learn more about KachaBazar"
-            onPress={() => router.push("/about-us")}
-          />
-          <MenuItem
-            icon="phone"
-            title="Contact Us"
-            subtitle="Get in touch with support"
-            onPress={() => router.push("/contact-us")}
-          />
-          <MenuItem
-            icon="help-circle"
-            title="FAQs"
-            subtitle="Frequently asked questions"
-            onPress={() => router.push("/faq")}
-          />
-          <MenuItem
-            icon="file-text"
-            title="Terms & Conditions"
-            subtitle="Read our terms of service"
-            onPress={() => router.push("/terms-and-conditions")}
-          />
-          <MenuItem
-            icon="shield"
-            title="Privacy Policy"
-            subtitle="How we protect your data"
-            onPress={() => router.push("/privacy-policy")}
-          />
+          <EnhancedButton title="Log out" className="mt-6" onPress={logout} />
         </View>
-
-        <EnhancedButton title="Log out" className="mt-6" onPress={logout} />
       </ScrollView>
     </Screen>
   );
