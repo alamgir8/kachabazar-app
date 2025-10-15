@@ -8,7 +8,7 @@ import { Highlights } from "@/components/home/Highlights";
 import { Hero } from "@/components/home/Hero";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
-import { Button } from "@/components/ui/Button";
+import { Button, EnhancedButton } from "@/components/ui";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
@@ -73,13 +73,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <Screen
-      className="pt-0"
-      innerClassName="px-0"
-      scrollable
-      edges={["bottom"]}
-      bgColor="white"
-    >
+    <Screen innerClassName="px-0" scrollable edges={["bottom"]} bgColor="white">
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -89,9 +83,11 @@ export default function HomeScreen() {
           paddingBottom: 100,
         }}
       >
-        <AppHeader />
+        <View className="pt-4">
+          <AppHeader />
+        </View>
 
-        <View className="px-5">
+        <View className="mt-2">
           <SearchBar
             placeholder="Search for fruits, veggies, snacks..."
             onSubmitSearch={onSearchSubmit}
@@ -99,22 +95,22 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View className="mb-4 px-5">
+        <View className="mb-5">
           <Hero onExplorePress={handleExplorePress} />
         </View>
 
-        <View className="mb-5">
+        <View className="mb-6">
           <CategoryStrip
             categories={categoriesQuery.data ?? []}
             onSeeAll={handleExplorePress}
           />
         </View>
 
-        <View className="mb-5 px-5">
+        <View className="mb-6">
           <Highlights />
         </View>
 
-        <View className="mb-5">
+        <View className="mb-6">
           <ProductCarousel
             title="Trending now"
             subtitle="Loved by our community"
@@ -126,7 +122,7 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View className="mb-5">
+        <View className="mb-6">
           <ProductCarousel
             title="Limited time offers"
             subtitle="Grab them before they are gone"
@@ -136,11 +132,12 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View className="px-5">
+        <View className="px-4">
           <Button
             title="Browse all products"
+            size="md"
             onPress={() => router.push("/search")}
-            size="lg"
+            className="self-start"
             fullWidth
           />
         </View>

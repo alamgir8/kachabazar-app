@@ -33,11 +33,11 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
         <View
           className="h-20 w-20 items-center justify-center rounded-2xl bg-white"
           style={{
-            shadowColor: "#0c4641",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.06,
-            shadowRadius: 6,
-            elevation: 3,
+            shadowColor: "rgba(22, 163, 74, 0.12)",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.12,
+            shadowRadius: 8,
+            elevation: 4,
           }}
         >
           {category.icon ? (
@@ -48,12 +48,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
             />
           ) : (
             <View className="h-12 w-12 items-center justify-center rounded-xl bg-primary-50">
-              <Feather name="tag" size={20} color={theme.colors.primary[600]} />
+              <Feather name="tag" size={20} color="#22c55e" />
             </View>
           )}
         </View>
         <Text
-          className="mt-2 text-center text-[12px] font-semibold leading-tight text-slate-800"
+          className="mt-2.5 text-center text-[12px] font-bold leading-tight text-slate-800"
           numberOfLines={2}
         >
           {categoryName}

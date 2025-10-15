@@ -1,8 +1,10 @@
+import { Feather } from "@expo/vector-icons";
 import { ScrollView, Text, View } from "react-native";
 
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { Product } from "@/types";
+import { theme } from "@/theme";
 
 interface ProductCarouselProps {
   title: string;
@@ -32,9 +34,19 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
       />
     </View>
     {products.length === 0 ? (
-      <View className="mx-5 rounded-2xl bg-slate-50 p-6">
-        <Text className="text-center text-sm text-slate-500">
-          {emptyLabel ?? "We are adding new items soon."}
+      <View className="mx-5 items-center justify-center rounded-2xl border border-dashed border-primary-100 bg-primary-50/40 px-6 py-10">
+        <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-white">
+          <Feather
+            name="package"
+            size={22}
+            color={theme.colors.primary[500]}
+          />
+        </View>
+        <Text className="text-center font-semibold text-slate-700">
+          {emptyLabel ?? "No items here yet"}
+        </Text>
+        <Text className="mt-1 text-center text-[12px] leading-5 text-slate-500">
+          Check back soon for freshly stocked picks curated for you.
         </Text>
       </View>
     ) : (
@@ -42,8 +54,9 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          gap: 12,
+          gap: 16,
           paddingHorizontal: 20,
+          paddingVertical: 8,
         }}
       >
         {products.map((product) => (

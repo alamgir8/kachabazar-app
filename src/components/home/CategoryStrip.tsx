@@ -27,9 +27,9 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
-        gap: 14,
+        gap: 16,
         paddingHorizontal: 20,
-        paddingVertical: 4,
+        paddingVertical: 12,
       }}
     >
       {categories.map((category) => (

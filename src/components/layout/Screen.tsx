@@ -46,30 +46,34 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
         <View className="absolute inset-0 bg-slate-50" />
       )}
 
-      <View
-        style={{
-          position: "absolute",
-          right: -120,
-          top: theme.spacing["4xl"],
-          height: 240,
-          width: 240,
-          borderRadius: 120,
-          backgroundColor: theme.colors.accent[100],
-          opacity: 0.45,
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          left: -100,
-          top: theme.spacing["5xl"],
-          height: 210,
-          width: 210,
-          borderRadius: 105,
-          backgroundColor: theme.colors.primary[100],
-          opacity: 0.4,
-        }}
-      />
+      {bgColor === "gradient" ? (
+        <>
+          <View
+            style={{
+              position: "absolute",
+              right: -120,
+              top: theme.spacing["4xl"],
+              height: 240,
+              width: 240,
+              borderRadius: 120,
+              backgroundColor: theme.colors.accent[100],
+              opacity: 0.45,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              left: -100,
+              top: theme.spacing["5xl"],
+              height: 210,
+              width: 210,
+              borderRadius: 105,
+              backgroundColor: theme.colors.primary[100],
+              opacity: 0.4,
+            }}
+          />
+        </>
+      ) : null}
       <Container
         className={cn("flex-1", className)}
         contentContainerClassName={contentContainerClassName}
@@ -78,11 +82,11 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
       >
         <View
           className={cn("w-full px-4", innerClassName)}
-          style={{
-            width: "100%",
-            maxWidth: theme.layout.maxWidth,
-            alignSelf: "center",
-          }}
+          // style={{
+          //   width: "100%",
+          //   maxWidth: theme.layout.maxWidth,
+          //   alignSelf: "center",
+          // }}
         >
           {children}
         </View>

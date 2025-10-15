@@ -2,7 +2,7 @@ import { ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { Button } from "@/components/ui/Button";
+import { EnhancedButton } from "@/components/ui";
 import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
@@ -31,7 +31,11 @@ export default function OrderDetailScreen() {
           <Text className="mt-2 text-sm text-slate-500">
             The order may have been archived or you might not have access.
           </Text>
-          <Button title="Try again" className="mt-4" onPress={() => refetch()} />
+          <EnhancedButton
+            title="Try again"
+            className="mt-4"
+            onPress={() => refetch()}
+          />
         </View>
       </Screen>
     );
@@ -41,7 +45,11 @@ export default function OrderDetailScreen() {
     <Screen innerClassName="px-0" scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 140, paddingTop: 32 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingBottom: 140,
+          paddingTop: 32,
+        }}
       >
         <View className="rounded-3xl bg-white p-6 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
           <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
@@ -68,16 +76,23 @@ export default function OrderDetailScreen() {
             Delivery information
           </Text>
           <View className="mt-3 space-y-1">
-            <Text className="text-sm text-slate-600">{order.user_info?.name}</Text>
-            <Text className="text-sm text-slate-600">{order.user_info?.contact}</Text>
-            <Text className="text-sm text-slate-600">{order.user_info?.email}</Text>
+            <Text className="text-sm text-slate-600">
+              {order.user_info?.name}
+            </Text>
+            <Text className="text-sm text-slate-600">
+              {order.user_info?.contact}
+            </Text>
+            <Text className="text-sm text-slate-600">
+              {order.user_info?.email}
+            </Text>
             <Text className="text-sm text-slate-600">
               {order.user_info?.address}
             </Text>
             <Text className="text-sm text-slate-600">
               {[order.user_info?.city, order.user_info?.country]
                 .filter(Boolean)
-                .join(", ")} {order.user_info?.zipCode}
+                .join(", ")}{" "}
+              {order.user_info?.zipCode}
             </Text>
           </View>
         </View>
@@ -87,7 +102,7 @@ export default function OrderDetailScreen() {
             Items ({order.cart.length})
           </Text>
           <View className="mt-4 space-y-4">
-            {order.cart.map((item, index) => (
+            {order.cart.map((item: any, index: number) => (
               <View
                 key={item.id ?? item.productId ?? `${item.slug ?? index}`}
                 className="rounded-2xl bg-slate-50 p-4"
@@ -112,7 +127,11 @@ export default function OrderDetailScreen() {
             />
             <DetailRow
               label="Shipping"
-              value={order.shippingCost ? formatCurrency(order.shippingCost, currency) : "Free"}
+              value={
+                order.shippingCost
+                  ? formatCurrency(order.shippingCost, currency)
+                  : "Free"
+              }
             />
             <DetailRow
               label="Discount"
@@ -133,12 +152,14 @@ export default function OrderDetailScreen() {
   );
 }
 
-const DetailRow: React.FC<{ label: string; value?: string | number | null }> = ({
-  label,
-  value
-}) => (
+const DetailRow: React.FC<{
+  label: string;
+  value?: string | number | null;
+}> = ({ label, value }) => (
   <View className="flex-row items-center justify-between">
     <Text className="text-sm text-slate-500">{label}</Text>
-    <Text className="text-sm font-semibold text-slate-900">{value ?? "--"}</Text>
+    <Text className="text-sm font-semibold text-slate-900">
+      {value ?? "--"}
+    </Text>
   </View>
 );

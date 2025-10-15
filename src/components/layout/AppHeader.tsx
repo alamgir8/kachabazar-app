@@ -25,26 +25,26 @@ export const AppHeader: React.FC = () => {
   return (
     <>
       <View className="pb-2">
-        <View className="flex-row items-center justify-between px-5 py-2">
+        <View className="flex-row items-center justify-between py-2">
           <Pressable
             onPress={() => setMenuOpen(true)}
             className="h-11 w-11 items-center justify-center rounded-xl bg-white active:scale-95"
             style={{
-              shadowColor: "#0c4641",
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.04,
-              shadowRadius: 4,
-              elevation: 2,
+              shadowColor: "rgba(22, 163, 74, 0.12)",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.12,
+              shadowRadius: 8,
+              elevation: 3,
             }}
           >
-            <Feather name="menu" size={22} color={theme.colors.slate[700]} />
+            <Feather name="menu" size={22} color="#22c55e" />
           </Pressable>
 
           <View className="flex-1 px-4">
-            <Text className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <Text className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               {greeting || "Welcome"}
             </Text>
-            <Text className="mt-0.5 text-[17px] font-bold text-slate-900">
+            <Text className="mt-0.5 text-[17px] font-extrabold text-slate-900">
               {isAuthenticated
                 ? `Hi ${user?.name?.split(" ")[0] || "there"}!`
                 : "Let's shop fresh"}
@@ -55,11 +55,11 @@ export const AppHeader: React.FC = () => {
             <Pressable
               className="h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white active:scale-95"
               style={{
-                shadowColor: "#0c4641",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.04,
-                shadowRadius: 4,
-                elevation: 2,
+                shadowColor: "rgba(22, 163, 74, 0.12)",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.12,
+                shadowRadius: 8,
+                elevation: 3,
               }}
             >
               {user?.image ? (
@@ -69,11 +69,7 @@ export const AppHeader: React.FC = () => {
                   resizeMode="cover"
                 />
               ) : (
-                <Feather
-                  name="user"
-                  size={22}
-                  color={theme.colors.slate[700]}
-                />
+                <Feather name="user" size={22} color="#22c55e" />
               )}
             </Pressable>
           </Link>

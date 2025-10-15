@@ -22,22 +22,29 @@ interface ButtonProps extends PressableProps {
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   className?: string;
+  contentClassName?: string;
 }
 
 const sizeStyles = {
   sm: {
-    container: "px-4 py-2.5 rounded-xl",
-    text: "text-sm",
+    paddingHorizontal: 16,
+    height: 40,
+    fontSize: 14,
   },
   md: {
-    container: "px-6 py-3 rounded-xl",
-    text: "text-base",
+    paddingHorizontal: 24,
+    height: 48,
+    fontSize: 15,
   },
   lg: {
-    container: "px-8 py-4 rounded-xl",
-    text: "text-base",
+    paddingHorizontal: 28,
+    height: 56,
+    fontSize: 16,
   },
-};
+} satisfies Record<
+  ButtonSize,
+  { paddingHorizontal: number; height: number; fontSize: number }
+>;
 
 export const Button: React.FC<ButtonProps> = ({
   title,
@@ -49,6 +56,7 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   iconPosition = "left",
   className,
+  contentClassName,
   ...props
 }) => {
   const isDisabled = disabled || loading;
@@ -68,9 +76,9 @@ export const Button: React.FC<ButtonProps> = ({
         <>
           {icon && iconPosition === "left" && icon}
           <Text
+            style={{ fontSize: sizeStyles[size].fontSize }}
             className={cn(
               "font-semibold",
-              sizeStyles[size].text,
               variant === "primary" && "text-white",
               variant === "secondary" && "text-white",
               variant === "outline" && "text-primary-600",
@@ -91,7 +99,6 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
           className
@@ -101,20 +108,23 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {({ pressed }) => (
           <LinearGradient
-            colors={[theme.colors.primary[500], theme.colors.primary[600]]}
+            colors={["#22c55e", "#16a34a"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className={cn(
-              "items-center justify-center rounded-xl",
-              sizeStyles[size].container,
+              "items-center justify-center",
+              contentClassName,
               pressed && !isDisabled && "opacity-90"
             )}
             style={{
-              shadowColor: theme.colors.primary[700],
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 8,
-              elevation: 6,
+              height: sizeStyles[size].height,
+              paddingHorizontal: sizeStyles[size].paddingHorizontal,
+              borderRadius: 16,
+              shadowColor: "#15803d",
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.3,
+              shadowRadius: 12,
+              elevation: 8,
             }}
           >
             {getButtonContent()}
@@ -128,24 +138,37 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "bg-slate-800",
-          sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
-          !isDisabled && "active:opacity-90",
           className
         )}
-        style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3,
-        }}
         disabled={isDisabled}
         {...props}
       >
-        {getButtonContent()}
+        {({ pressed }) => (
+          <LinearGradient
+            colors={["#64748b", "#475569"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className={cn(
+              "items-center justify-center",
+              contentClassName,
+              pressed && !isDisabled && "opacity-90"
+            )}
+            style={{
+              height: sizeStyles[size].height,
+              paddingHorizontal: sizeStyles[size].paddingHorizontal,
+              borderRadius: 16,
+              shadowColor: "#334155",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 5,
+            }}
+          >
+            {getButtonContent()}
+          </LinearGradient>
+        )}
       </Pressable>
     );
   }
@@ -154,13 +177,17 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "border-2 border-primary-500 bg-white",
-          sizeStyles[size].container,
+          "border-2 border-primary-500 bg-white items-center justify-center",
           fullWidth && "w-full",
           isDisabled && "opacity-50",
           !isDisabled && "active:bg-primary-50",
           className
         )}
+        style={{
+          height: sizeStyles[size].height,
+          paddingHorizontal: sizeStyles[size].paddingHorizontal,
+          borderRadius: 16,
+        }}
         disabled={isDisabled}
         {...props}
       >
@@ -173,24 +200,37 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "bg-primary-600",
-          sizeStyles[size].container,
           fullWidth && "w-full",
           isDisabled && "opacity-50",
-          !isDisabled && "active:bg-primary-700",
           className
         )}
-        style={{
-          shadowColor: theme.colors.primary[700],
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-          elevation: 3,
-        }}
         disabled={isDisabled}
         {...props}
       >
-        {getButtonContent()}
+        {({ pressed }) => (
+          <LinearGradient
+            colors={["#22c55e", "#16a34a"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className={cn(
+              "items-center justify-center",
+              contentClassName,
+              pressed && !isDisabled && "opacity-90"
+            )}
+            style={{
+              height: sizeStyles[size].height,
+              paddingHorizontal: sizeStyles[size].paddingHorizontal,
+              borderRadius: 16,
+              shadowColor: "#15803d",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 5,
+            }}
+          >
+            {getButtonContent()}
+          </LinearGradient>
+        )}
       </Pressable>
     );
   }
@@ -199,19 +239,21 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <Pressable
         className={cn(
-          "bg-red-600",
-          sizeStyles[size].container,
+          "bg-red-600 items-center justify-center",
           fullWidth && "w-full",
           isDisabled && "opacity-50",
           !isDisabled && "active:bg-red-700",
           className
         )}
         style={{
+          height: sizeStyles[size].height,
+          paddingHorizontal: sizeStyles[size].paddingHorizontal,
+          borderRadius: 16,
           shadowColor: "#dc2626",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-          elevation: 3,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          elevation: 5,
         }}
         disabled={isDisabled}
         {...props}
@@ -225,13 +267,17 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <Pressable
       className={cn(
-        "bg-transparent",
-        sizeStyles[size].container,
+        "bg-transparent items-center justify-center",
         fullWidth && "w-full",
         isDisabled && "opacity-50",
         !isDisabled && "active:bg-slate-100",
         className
       )}
+      style={{
+        height: sizeStyles[size].height,
+        paddingHorizontal: sizeStyles[size].paddingHorizontal,
+        borderRadius: 16,
+      }}
       disabled={isDisabled}
       {...props}
     >

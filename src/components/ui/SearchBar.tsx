@@ -62,20 +62,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View
-      className={cn("rounded-xl bg-white", containerClassName)}
+      className={cn(
+        "rounded-xl bg-white border border-slate-200",
+        containerClassName
+      )}
       style={{
-        shadowColor: "#0c4641",
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
-        shadowRadius: 4,
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
         elevation: 2,
       }}
     >
-      <View className="flex-row items-center px-4 py-3">
-        <Feather name="search" size={20} color={theme.colors.slate[400]} />
+      <View className="flex-row items-center px-3 py-2">
+        <Feather name="search" size={20} color="#10b981" />
         <TextInput
           className={cn(
-            "ml-3 flex-1 font-body text-[15px] text-slate-900",
+            "ml-3 flex-1 font-medium text-sm text-slate-900",
             className
           )}
           placeholderTextColor="#94a3b8"
@@ -83,6 +86,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           onChangeText={handleChangeText}
           onSubmitEditing={handleSubmit}
           returnKeyType="search"
+          style={{ lineHeight: 20 }}
           {...props}
         />
         {value.length > 0 && (

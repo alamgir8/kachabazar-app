@@ -4,7 +4,7 @@ import { ScrollView, Text, View } from "react-native";
 import { Screen } from "@/components/layout/Screen";
 import { CartItemRow } from "@/components/cart/CartItemRow";
 import { CartSummary } from "@/components/cart/CartSummary";
-import { Button } from "@/components/ui/Button";
+import { EnhancedButton } from "@/components/ui";
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
@@ -24,55 +24,64 @@ export default function CartScreen() {
   };
 
   return (
-    <Screen innerClassName="px-0">
+    <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        className="-mx-4"
       >
-        <View className="mb-6 mt-4 flex-row items-baseline justify-between">
-          <View>
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-              Your basket
-            </Text>
-            <Text className="mt-2 font-display text-3xl text-slate-900">
-              {isEmpty ? "It feels empty here" : "Ready to checkout"}
-            </Text>
+        <View className="px-4 pt-4 pb-4">
+          <View className="flex-row items-baseline justify-between">
+            <View className="flex-1">
+              <Text className="text-xs font-semibold uppercase tracking-wider text-primary-600">
+                Your basket
+              </Text>
+              <Text className="mt-1.5 font-display text-2xl font-bold text-slate-900">
+                {isEmpty ? "It feels empty here" : "Ready to checkout"}
+              </Text>
+            </View>
+            {!isEmpty ? (
+              <Text className="text-lg font-bold text-primary-600">
+                {formatCurrency(subtotal, currency)}
+              </Text>
+            ) : null}
           </View>
-          {!isEmpty ? (
-            <Text className="text-sm font-semibold text-primary-600">
-              {formatCurrency(subtotal, currency)}
-            </Text>
-          ) : null}
         </View>
 
         {isEmpty ? (
-          <View className="mt-16 items-center rounded-3xl bg-white p-10 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
-            <Text className="text-lg font-semibold text-slate-900">
+          <View className="mx-4 mt-6 items-center rounded-2xl bg-white p-8 shadow-sm border border-slate-100">
+            <Text className="text-lg font-bold text-slate-900">
               Your cart is craving something fresh
             </Text>
-            <Text className="mt-2 text-center text-sm text-slate-500">
+            <Text className="mt-2 text-center text-sm leading-relaxed text-slate-600">
               Explore seasonal picks, curate your weekly essentials, and come
               back to checkout.
             </Text>
-            <Button
+            <EnhancedButton
               title="Start shopping"
               className="mt-6 w-full"
+              size="lg"
               onPress={() => router.push("/search")}
             />
           </View>
         ) : (
-          <>
-            {items.map((item) => (
-              <CartItemRow key={item.id} item={item} />
-            ))}
-            <CartSummary onCheckout={handleCheckout} />
-            <Button
+          <View className="px-4">
+            <View className="space-y-3">
+              {items.map((item) => (
+                <CartItemRow key={item.id} item={item} />
+              ))}
+            </View>
+            <View className="mt-6">
+              <CartSummary onCheckout={handleCheckout} />
+            </View>
+            <EnhancedButton
               title="Clear cart"
-              variant="ghost"
+              variant="outline"
+              size="lg"
               className="mt-4"
               onPress={clearCart}
             />
-          </>
+          </View>
         )}
       </ScrollView>
     </Screen>

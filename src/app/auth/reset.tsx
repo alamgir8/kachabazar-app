@@ -1,22 +1,50 @@
-import { Text, View } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { Button } from "@/components/ui/Button";
+import { EnhancedButton } from "@/components/ui";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
 
   return (
-    <Screen className="px-5 pt-24">
-      <View className="rounded-3xl bg-white p-10 shadow-[0_15px_40px_rgba(15,118,110,0.1)]">
-        <Text className="text-lg font-semibold text-slate-900">
+    <Screen scrollable innerClassName="px-0">
+      <View className="px-6 pt-16">
+        <Pressable
+          onPress={() => router.back()}
+          className="mb-4 h-10 w-10 items-center justify-center rounded-xl bg-slate-100 active:bg-slate-200"
+        >
+          <Feather name="arrow-left" size={20} color="#334155" />
+        </Pressable>
+
+        <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+          Password Reset
+        </Text>
+        <Text className="mt-2 font-display text-3xl text-slate-900">
           Reset your password
         </Text>
-        <Text className="mt-2 text-sm text-slate-500">
-          Use the web experience or contact support to complete password reset. We will bring the full flow to the app soon.
+        <Text className="mt-3 text-sm text-slate-500">
+          Use the web experience or contact support to complete password reset.
+          We will bring the full flow to the app soon.
         </Text>
-        <Button title="Back" className="mt-6" onPress={() => router.back()} />
+
+        <View className="mt-6 rounded-2xl bg-white p-6 border border-slate-100 shadow-sm">
+          <View className="mb-4 rounded-xl bg-blue-50 p-3 flex-row items-start border border-blue-100">
+            <Feather name="info" size={18} color="#3b82f6" />
+            <Text className="ml-2 text-sm text-blue-600 flex-1">
+              For security reasons, password reset is currently available
+              through our web portal.
+            </Text>
+          </View>
+          <EnhancedButton
+            title="Back to login"
+            variant="primary"
+            size="lg"
+            gradient
+            onPress={() => router.push("/auth/login")}
+          />
+        </View>
       </View>
     </Screen>
   );

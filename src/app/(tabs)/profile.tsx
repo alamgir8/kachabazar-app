@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { Button } from "@/components/ui/Button";
+import { EnhancedButton } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 20,
-            paddingVertical: 80,
+            paddingVertical: 60,
           }}
         >
           <LinearGradient
@@ -89,13 +89,13 @@ export default function ProfileScreen() {
               Track orders, save multiple addresses, rate your favourites, and
               enjoy personalised deals tailored for you.
             </Text>
-            <Button
+            <EnhancedButton
               title="Login to your account"
               className="mt-6 w-full"
               size="lg"
               onPress={() => router.push("/auth/login")}
             />
-            <Button
+            <EnhancedButton
               title="Create a new account"
               variant="outline"
               className="mt-3 w-full"
@@ -113,7 +113,11 @@ export default function ProfileScreen() {
   return (
     <Screen innerClassName="px-0" scrollable>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingBottom: 160,
+          paddingTop: 8,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
@@ -121,7 +125,7 @@ export default function ProfileScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            marginTop: 24,
+            marginTop: 16,
             borderRadius: 32,
             padding: 20,
             flexDirection: "row",
@@ -194,7 +198,7 @@ export default function ProfileScreen() {
               Recent total: {formatCurrency(stats.orders[0].total, currency)}
             </Text>
           ) : null}
-          <Button
+          <EnhancedButton
             title="View order history"
             className="mt-5"
             onPress={() => router.push("/orders")}
@@ -243,7 +247,7 @@ export default function ProfileScreen() {
               Add an address during checkout to enjoy one tap ordering.
             </Text>
           )}
-          <Button
+          <EnhancedButton
             title="Update profile"
             variant="ghost"
             className="mt-4"
@@ -298,7 +302,7 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <Button title="Log out" className="mt-6" onPress={logout} />
+        <EnhancedButton title="Log out" className="mt-6" onPress={logout} />
       </ScrollView>
     </Screen>
   );

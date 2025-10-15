@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { Button } from "@/components/ui/Button";
+import { EnhancedButton } from "@/components/ui";
 import { BackButton } from "@/components/ui/BackButton";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
@@ -18,7 +18,7 @@ import {
   calculateDiscountPercentage,
   formatCurrency,
   getLocalizedValue,
-  getProductImage
+  getProductImage,
 } from "@/utils";
 import { theme } from "@/theme";
 
@@ -76,11 +76,13 @@ export default function ProductScreen() {
     <Screen innerClassName="px-0" scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 180 }}
+        contentContainerStyle={{ paddingBottom: 140 }}
       >
-        <View className="px-5 pt-4">
+        <View className="px-4 pt-6">
           <BackButton />
         </View>
+
+        {/* Product Images Carousel */}
         <ScrollView
           horizontal
           pagingEnabled
@@ -91,147 +93,177 @@ export default function ProductScreen() {
             <View
               key={`${img}-${index}`}
               style={{ width }}
-              className="items-center justify-center bg-[#e3f7e8] pb-10 pt-16"
+              className="items-center justify-center bg-slate-50 py-12"
             >
               {img ? (
                 <Image
                   source={{ uri: img }}
-                  className="h-64 w-64 rounded-3xl"
+                  className="h-72 w-72"
                   resizeMode="contain"
                 />
               ) : (
-                <View className="h-40 w-40 items-center justify-center rounded-3xl bg-primary-100">
-                  <Feather name="image" size={32} color="#1c7646" />
+                <View className="h-48 w-48 items-center justify-center rounded-2xl bg-primary-50">
+                  <Feather name="image" size={48} color="#10b981" />
                 </View>
               )}
             </View>
           ))}
         </ScrollView>
 
-        <View className="mt-[-32] rounded-t-3xl bg-white px-6 pb-12 pt-8 shadow-[0_-20px_60px_rgba(15,118,110,0.12)]">
-          <View className="flex-row items-center justify-between">
-            <View className="flex-1 pr-6">
-              <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+        {/* Product Info Card */}
+        <View className="px-4">
+          <View className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
+            {/* Category & Title */}
+            <View>
+              <Text className="text-xs font-semibold uppercase tracking-wider text-primary-600">
                 {product.category && typeof product.category === "object"
                   ? getLocalizedValue(
                       product.category.name as Record<string, string>
                     )
                   : "Fresh Pick"}
               </Text>
-              <Text className="mt-2 font-display text-3xl text-slate-900">
+              <Text className="mt-1.5 text-2xl font-bold text-slate-900 leading-tight">
                 {displayName}
               </Text>
             </View>
-            <View className="items-end">
-              <Text className="font-display text-2xl text-slate-900">
-                {formatCurrency(price, currency)}
-              </Text>
-              {originalPrice > price ? (
-                <Text className="text-sm text-slate-400 line-through">
-                  {formatCurrency(originalPrice, currency)}
-                </Text>
-              ) : null}
-              {discount > 0 ? (
-                <View className="mt-2 rounded-full bg-accent-500/90 px-3 py-1">
-                  <Text className="text-xs font-semibold text-white">
-                    Save {discount}%
+
+            {/* Price & Stock */}
+            <View className="mt-4 flex-row items-center justify-between">
+              <View className="flex-1">
+                <View className="flex-row items-baseline">
+                  <Text className="text-3xl font-bold text-primary-600">
+                    {formatCurrency(price, currency)}
+                  </Text>
+                  {originalPrice > price && (
+                    <Text className="ml-2 text-lg text-slate-400 line-through">
+                      {formatCurrency(originalPrice, currency)}
+                    </Text>
+                  )}
+                </View>
+                {discount > 0 && (
+                  <View className="mt-2 self-start rounded-lg bg-red-50 px-2.5 py-1">
+                    <Text className="text-xs font-bold text-red-600">
+                      Save {discount}%
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <View className="items-end">
+                <View
+                  className={`rounded-lg px-3 py-1.5 ${(product.stock ?? 0) > 0 ? "bg-emerald-50" : "bg-red-50"}`}
+                >
+                  <Text
+                    className={`text-xs font-semibold ${(product.stock ?? 0) > 0 ? "text-emerald-600" : "text-red-600"}`}
+                  >
+                    {(product.stock ?? 0) > 0
+                      ? `${product.stock} in stock`
+                      : "Out of stock"}
                   </Text>
                 </View>
-              ) : null}
+              </View>
+            </View>
+
+            {/* Quantity & Add to Cart */}
+            <View className="mt-5 flex-row items-center gap-3">
+              <QuantityStepper
+                value={quantity}
+                onIncrement={() => setQuantity((prev) => prev + 1)}
+                onDecrement={() =>
+                  setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
+                }
+              />
+              <EnhancedButton
+                title="Add to cart"
+                onPress={handleAddToCart}
+                className="flex-1"
+                size="lg"
+                gradient
+                disabled={(product.stock ?? 0) === 0}
+              />
             </View>
           </View>
 
-          <View className="mt-5 flex-row items-center space-x-3">
-            <QuantityStepper
-              value={quantity}
-              onIncrement={() => setQuantity((prev) => prev + 1)}
-              onDecrement={() =>
-                setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
-              }
-            />
-            <Button
-              title="Add to cart"
-              onPress={handleAddToCart}
-              className="flex-1"
-            />
-          </View>
-
-          <View className="mt-6 rounded-3xl bg-slate-50 p-5">
-            <Text className="text-sm font-semibold uppercase text-slate-500">
-              About this item
+          {/* Description */}
+          <View className="mt-4 rounded-2xl bg-white p-5 border border-slate-100">
+            <Text className="text-sm font-bold uppercase tracking-wider text-slate-700">
+              About this product
             </Text>
-            <Text className="mt-3 text-base text-slate-700 leading-relaxed">
+            <Text className="mt-3 text-sm text-slate-600 leading-relaxed">
               {description ||
                 "Detailed description will appear here once added from the dashboard."}
             </Text>
-            <View className="mt-4 flex-row flex-wrap gap-3">
-              <Tag icon="package">
-                {product.stock && product.stock > 0
-                  ? `${product.stock} available`
-                  : "Currently sold out"}
-              </Tag>
-              {product.average_rating ? (
-                <Tag icon="star">
-                  {product.average_rating.toFixed(1)} rating
-                </Tag>
-              ) : null}
-              <Tag icon="tag">
-                {product.tag?.slice(0, 1).join(", ") ?? "Everyday essential"}
-              </Tag>
+
+            {/* Product Tags */}
+            <View className="mt-4 flex-row flex-wrap gap-2">
+              {product.average_rating && product.average_rating > 0 && (
+                <View className="flex-row items-center rounded-lg bg-amber-50 px-2.5 py-1.5">
+                  <Feather name="star" size={14} color="#f59e0b" />
+                  <Text className="ml-1.5 text-xs font-semibold text-amber-700">
+                    {product.average_rating.toFixed(1)} rating
+                  </Text>
+                </View>
+              )}
+              {product.tag && product.tag.length > 0 && (
+                <View className="flex-row items-center rounded-lg bg-blue-50 px-2.5 py-1.5">
+                  <Feather name="tag" size={14} color="#3b82f6" />
+                  <Text className="ml-1.5 text-xs font-semibold text-blue-700">
+                    {product.tag[0]}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
 
-          {reviews.length ? (
-            <View className="mt-8">
-              <SectionHeader title="What shoppers say" />
-              <View className="space-y-4">
-                {reviews.slice(0, 3).map((review) => (
+          {/* Reviews Section */}
+          {reviews.length > 0 && (
+            <View className="mt-6">
+              <View className="mb-3 flex-row items-center justify-between px-1">
+                <Text className="text-lg font-bold text-slate-900">
+                  Customer Reviews
+                </Text>
+                <Text className="text-sm text-slate-500">
+                  {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+                </Text>
+              </View>
+              <View className="space-y-3">
+                {reviews.slice(0, 3).map((review: any) => (
                   <View
                     key={review._id}
-                    className="rounded-3xl bg-white p-5 shadow-[0_12px_30px_rgba(15,118,110,0.08)]"
+                    className="rounded-xl bg-white p-4 border border-slate-100"
                   >
                     <View className="mb-2 flex-row items-center justify-between">
                       <Text className="text-sm font-semibold text-slate-900">
                         {review.user?.name ?? "Anonymous"}
                       </Text>
-                      <View className="flex-row items-center">
-                        <Feather name="star" size={16} color="#f59e0b" />
-                        <Text className="ml-1 text-sm font-semibold text-slate-700">
+                      <View className="flex-row items-center rounded-md bg-amber-50 px-2 py-1">
+                        <Feather name="star" size={12} color="#f59e0b" />
+                        <Text className="ml-1 text-xs font-bold text-amber-700">
                           {review.rating}
                         </Text>
                       </View>
                     </View>
-                    <Text className="text-sm text-slate-600">
+                    <Text className="text-sm text-slate-600 leading-relaxed">
                       {review.review}
                     </Text>
                   </View>
                 ))}
               </View>
             </View>
-          ) : null}
+          )}
 
-          {relatedProducts.length ? (
-            <View className="mt-10">
+          {/* Related Products */}
+          {relatedProducts.length > 0 && (
+            <View className="mt-8 -mx-4">
               <ProductCarousel
-                title="Pairs beautifully with"
+                title="You might also like"
                 subtitle="Complementary picks curated for you"
                 products={relatedProducts}
                 onSeeAll={() => router.push("/search")}
               />
             </View>
-          ) : null}
+          )}
         </View>
       </ScrollView>
     </Screen>
   );
 }
-
-const Tag: React.FC<{ icon: React.ComponentProps<typeof Feather>["name"] }> = ({
-  icon,
-  children
-}) => (
-  <View className="flex-row items-center rounded-full bg-white px-3 py-2 shadow-[0_10px_25px_rgba(15,118,110,0.08)]">
-    <Feather name={icon} size={14} color="#1c7646" />
-    <Text className="ml-2 text-xs font-semibold text-slate-600">{children}</Text>
-  </View>
-);

@@ -18,65 +18,74 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
 
   return (
     <View
-      className="mb-4 flex-row rounded-3xl bg-white p-5 shadow-[0_12px_40px_rgba(15,118,110,0.08)]"
+      className="flex-row rounded-2xl bg-white p-4 border border-slate-100"
       style={{
-        shadowColor: "#0f7669",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.08,
-        shadowRadius: 20,
-        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
       }}
     >
       {/* Product Image */}
-      <View className="mr-4">
+      <View className="mr-3">
         {item.image ? (
           <Image
             source={{ uri: item.image }}
-            className="h-20 w-20 rounded-2xl bg-slate-50"
+            className="h-24 w-24 rounded-xl bg-slate-50"
             resizeMode="cover"
           />
         ) : (
-          <View className="h-20 w-20 items-center justify-center rounded-2xl bg-primary-100">
-            <Feather name="image" size={28} color="#10b981" />
+          <View className="h-24 w-24 items-center justify-center rounded-xl bg-primary-50">
+            <Feather name="image" size={32} color="#10b981" />
           </View>
         )}
       </View>
 
       {/* Product Info */}
-      <View className="flex-1 justify-between py-1">
-        <View>
+      <View className="flex-1 justify-between">
+        <View className="flex-1">
           <Text
-            className="text-base font-bold text-slate-900 leading-snug"
+            className="text-base font-bold text-slate-900 leading-tight"
             numberOfLines={2}
           >
             {item.name}
           </Text>
           {item.variant ? (
-            <Text className="mt-1 text-xs text-slate-500">{item.variant}</Text>
+            <View className="mt-1.5 inline-flex self-start rounded-md bg-slate-100 px-2 py-0.5">
+              <Text className="text-xs font-medium text-slate-600">
+                {item.variant}
+              </Text>
+            </View>
           ) : null}
         </View>
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-bold text-primary-600">
-            {formatCurrency(item.price, currency)}
-          </Text>
-          <Text className="text-sm text-slate-500">× {item.quantity}</Text>
+
+        <View className="mt-2 flex-row items-center justify-between">
+          <View>
+            <Text className="text-lg font-bold text-primary-600">
+              {formatCurrency(item.price * item.quantity, currency)}
+            </Text>
+            <Text className="text-xs text-slate-500">
+              {formatCurrency(item.price, currency)} each
+            </Text>
+          </View>
+          <QuantityStepper
+            value={item.quantity}
+            onIncrement={() => increment(item.id)}
+            onDecrement={() => decrement(item.id)}
+          />
         </View>
       </View>
 
-      {/* Actions */}
-      <View className="ml-3 items-end justify-between py-1">
+      {/* Remove Button */}
+      <View className="ml-2 justify-start">
         <Pressable
           onPress={() => removeItem(item.id)}
-          className="rounded-full bg-red-50 p-2 active:bg-red-100"
+          className="rounded-lg bg-red-50 p-2 active:bg-red-100"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="trash-2" size={16} color="#ef4444" />
+          <Feather name="trash-2" size={18} color="#ef4444" />
         </Pressable>
-        <QuantityStepper
-          value={item.quantity}
-          onIncrement={() => increment(item.id)}
-          onDecrement={() => decrement(item.id)}
-        />
       </View>
     </View>
   );

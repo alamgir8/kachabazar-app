@@ -44,33 +44,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const image = getProductImage(product);
 
-  const cardWidth = layout === "carousel" ? 180 : undefined;
+  const cardWidth = layout === "carousel" ? 170 : undefined;
+  const imageContainerHeight = layout === "carousel" ? 140 : 180;
+
   return (
     <View
       style={{
         width: cardWidth,
         flex: cardWidth ? undefined : 1,
-        borderRadius: 20,
-        backgroundColor: "#ffffff",
-        shadowColor: "rgba(12, 70, 65, 0.12)",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 5,
-        marginRight: layout === "carousel" ? 12 : 0,
-        marginLeft: layout === "carousel" ? 0 : 0,
       }}
+      className="rounded-2xl bg-white border border-slate-100 overflow-hidden"
     >
       <Link href={`/product/${product.slug}`} asChild>
-        <Pressable className="active:opacity-95">
-          {/* Product Image Container */}
-          <View className="relative h-44 w-full overflow-hidden rounded-t-[20px] bg-slate-50">
-            <LinearGradient
-              colors={["#f0fdf4", "#ecfdf5", "#ffffff"]}
-              className="h-full w-full items-center justify-center p-4"
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
+        <Pressable className="active:opacity-90">
+          {/* Product Image Container with modern gradient */}
+          <View
+            className="relative w-full bg-gradient-to-b from-slate-50 to-white"
+            style={{ height: imageContainerHeight }}
+          >
+            <View className="h-full w-full items-center justify-center p-3">
               {image ? (
                 <Image
                   source={{ uri: image }}
@@ -78,70 +70,97 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   resizeMode="contain"
                 />
               ) : (
-                <View className="h-24 w-24 items-center justify-center rounded-2xl bg-primary-100">
-                  <Feather
-                    name="image"
-                    size={40}
-                    color={theme.colors.primary[500]}
-                  />
+                <View className="h-16 w-16 items-center justify-center rounded-xl bg-primary-50">
+                  <Feather name="image" size={28} color="#10b981" />
                 </View>
               )}
-            </LinearGradient>
+            </View>
 
-            {/* Discount Badge */}
+            {/* Discount Badge - Top Right */}
             {discount > 0 ? (
-              <View className="absolute right-2.5 top-2.5 rounded-full bg-red-500 px-2.5 py-1.5 shadow-lg">
-                <Text className="text-[11px] font-bold text-white">
-                  -{discount}%
+              <View className="absolute right-2 top-2">
+                <LinearGradient
+                  colors={["#ef4444", "#dc2626"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="rounded-lg px-2 py-1 shadow-lg"
+                  style={{
+                    shadowColor: "#dc2626",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                  }}
+                >
+                  <Text className="text-xs font-bold text-white">
+                    -{discount}%
+                  </Text>
+                </LinearGradient>
+              </View>
+            ) : null}
+
+            {/* Stock badge - Top Left */}
+            {(product.stock ?? 0) < 10 && (product.stock ?? 0) > 0 ? (
+              <View className="absolute left-2 top-2 rounded-lg bg-amber-500 px-2 py-1">
+                <Text className="text-xs font-semibold text-white">
+                  Only {product.stock} left
                 </Text>
               </View>
             ) : null}
           </View>
 
-          {/* Product Info */}
-          <View className="space-y-1.5 px-3.5 pb-4 pt-3">
+          {/* Product Info with improved spacing */}
+          <View className="px-3 pb-3 pt-2.5">
             <Text
               numberOfLines={2}
-              className="min-h-[42px] text-[14px] font-semibold leading-snug text-slate-900"
+              className="mb-1 min-h-[36px] text-sm font-semibold leading-tight text-slate-900"
             >
               {getLocalizedValue(product.title)}
             </Text>
 
-            <Text className="text-[11px] text-slate-500">
-              {variantLabel ? variantLabel : `${product.stock ?? 0} in stock`}
-            </Text>
-
-            {/* Price and Add Button */}
-            <View className="flex-row items-center justify-between pt-1.5">
-              <View className="flex-1">
-                <Text className="font-display text-[17px] font-bold text-primary-600">
-                  {formatCurrency(price, currency)}
+            {variantLabel && (
+              <View className="mb-2 inline-flex self-start rounded-md bg-slate-100 px-1.5 py-0.5">
+                <Text className="text-[10px] font-medium text-slate-600">
+                  {variantLabel}
                 </Text>
-                {originalPrice > price ? (
-                  <Text className="text-[11px] text-slate-400 line-through">
-                    {formatCurrency(originalPrice, currency)}
+              </View>
+            )}
+
+            {/* Price Row with better alignment */}
+            <View className="flex-row items-end justify-between mt-1">
+              <View className="flex-1">
+                <View className="flex-row items-baseline">
+                  <Text className="text-lg font-bold text-primary-600">
+                    {formatCurrency(price, currency)}
                   </Text>
-                ) : null}
+                  {originalPrice > price && (
+                    <Text className="ml-1.5 text-xs text-slate-400 line-through">
+                      {formatCurrency(originalPrice, currency)}
+                    </Text>
+                  )}
+                </View>
               </View>
 
+              {/* Add to Cart Button */}
               <Pressable
                 onPress={handleAdd}
-                className="h-10 w-10 items-center justify-center rounded-xl active:scale-95"
-                style={{
-                  backgroundColor: theme.colors.primary[500],
-                  shadowColor: theme.colors.primary[700],
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: 4,
-                }}
+                className="active:scale-95"
                 accessibilityLabel="Add to cart"
               >
-                <Feather
-                  name="plus"
-                  size={18}
-                  color={theme.colors.text.inverse}
-                />
+                <LinearGradient
+                  colors={["#10b981", "#059669"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="h-9 w-9 items-center justify-center rounded-lg"
+                  style={{
+                    shadowColor: "#059669",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: 3,
+                  }}
+                >
+                  <Feather name="plus" size={18} color="#ffffff" />
+                </LinearGradient>
               </Pressable>
             </View>
           </View>

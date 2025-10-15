@@ -68,7 +68,7 @@ export const Input: React.FC<InputProps> = ({
 
         <TextInput
           className={cn(
-            "flex-1 py-3 text-[15px] text-slate-900",
+            "flex-1 py-1 text-[15px] text-slate-900",
             inputClassName
           )}
           placeholderTextColor="#94a3b8"

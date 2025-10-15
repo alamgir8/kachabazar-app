@@ -91,12 +91,12 @@ export default function CategoriesScreen() {
         contentContainerStyle={{
           paddingBottom: 140,
           paddingHorizontal: 12,
-          paddingTop: 16,
+          paddingTop: 8,
         }}
         ListHeaderComponent={
-          <View className="mb-6 px-3">
+          <View className="mb-4 px-3">
             <BackButton />
-            <View className="h-4" />
+            <View className="h-3" />
             <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
               Categories
             </Text>

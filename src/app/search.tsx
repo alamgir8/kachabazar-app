@@ -137,7 +137,11 @@ export default function SearchScreen() {
         data={products}
         keyExtractor={(item) => item._id}
         numColumns={2}
-        columnWrapperStyle={{ gap: 16, paddingHorizontal: 20, justifyContent: "space-between" }}
+        columnWrapperStyle={{
+          gap: 12,
+          paddingHorizontal: 16,
+          justifyContent: "space-between",
+        }}
         refreshControl={
           <RefreshControl
             refreshing={productsQuery.isFetching}
@@ -145,14 +149,14 @@ export default function SearchScreen() {
           />
         }
         ListHeaderComponent={
-          <View className="px-5 pt-14 pb-4">
+          <View className="px-4 pt-4 pb-3">
             <BackButton />
-            <View className="h-5" />
+            <View className="h-3" />
 
-            <Text className="text-xs font-bold uppercase tracking-[0.2em] text-primary-600">
+            <Text className="text-xs font-bold uppercase tracking-wider text-primary-600">
               Explore
             </Text>
-            <Text className="mt-2 font-display text-[28px] leading-tight font-bold text-slate-900">
+            <Text className="mt-1.5 text-2xl leading-tight font-bold text-slate-900">
               {headerTitle || "Discover everything"}
             </Text>
             <SearchBar
@@ -160,11 +164,11 @@ export default function SearchScreen() {
               onChangeText={setSearch}
               placeholder="Search for avocado, snacks, beverages..."
               onSubmitSearch={handleSubmit}
-              containerClassName="mt-5"
+              containerClassName="mt-4"
             />
 
             {/* Category Filters */}
-            <View className="mt-5 flex-row flex-wrap">
+            <View className="mt-4 flex-row flex-wrap gap-2">
               <FilterChip
                 label="All"
                 active={!selectedCategory}

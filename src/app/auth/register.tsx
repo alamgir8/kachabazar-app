@@ -11,8 +11,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { EnhancedButton, EnhancedInput } from "@/components/ui";
 import { requestEmailVerification } from "@/services/auth";
 
 interface RegisterFormValues {
@@ -83,7 +82,7 @@ export default function RegisterScreen() {
               name="name"
               rules={{ required: "Name is required" }}
               render={({ field: { value, onChange } }) => (
-                <Input
+                <EnhancedInput
                   label="Full name"
                   placeholder="Jane Doe"
                   value={value}
@@ -91,7 +90,6 @@ export default function RegisterScreen() {
                   error={errors.name?.message}
                   leftIcon="user"
                   containerClassName="mb-5"
-                  required
                 />
               )}
             />
@@ -100,7 +98,7 @@ export default function RegisterScreen() {
               name="email"
               rules={{ required: "Email is required" }}
               render={({ field: { value, onChange } }) => (
-                <Input
+                <EnhancedInput
                   label="Email"
                   placeholder="you@example.com"
                   keyboardType="email-address"
@@ -110,7 +108,6 @@ export default function RegisterScreen() {
                   error={errors.email?.message}
                   leftIcon="mail"
                   containerClassName="mb-5"
-                  required
                 />
               )}
             />
@@ -119,7 +116,7 @@ export default function RegisterScreen() {
               name="password"
               rules={{ required: "Password is required" }}
               render={({ field: { value, onChange } }) => (
-                <Input
+                <EnhancedInput
                   label="Password"
                   placeholder="••••••••"
                   secureTextEntry
@@ -128,13 +125,12 @@ export default function RegisterScreen() {
                   error={errors.password?.message}
                   leftIcon="lock"
                   containerClassName="mb-5"
-                  required
                 />
               )}
             />
 
             {responseMessage ? (
-              <View className="mb-4 rounded-xl bg-emerald-50 p-3 flex-row items-center">
+              <View className="mb-4 rounded-xl bg-emerald-50 p-3 flex-row items-center border border-emerald-100">
                 <Feather name="check-circle" size={18} color="#10b981" />
                 <Text className="ml-2 text-sm text-emerald-600 flex-1">
                   {responseMessage}
@@ -142,7 +138,7 @@ export default function RegisterScreen() {
               </View>
             ) : null}
             {error ? (
-              <View className="mb-4 rounded-xl bg-red-50 p-3 flex-row items-center">
+              <View className="mb-4 rounded-xl bg-red-50 p-3 flex-row items-center border border-red-100">
                 <Feather name="alert-triangle" size={18} color="#ef4444" />
                 <Text className="ml-2 text-sm text-red-600 flex-1">
                   {error}
@@ -150,19 +146,22 @@ export default function RegisterScreen() {
               </View>
             ) : null}
 
-            <Button
+            <EnhancedButton
               title={
                 isSubmitting
                   ? "Sending verification..."
                   : "Send verification email"
               }
-              className="mt-2"
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
+              loading={isSubmitting}
+              size="lg"
+              gradient
             />
-            <Button
+            <EnhancedButton
               title="Back to login"
-              variant="ghost"
+              variant="outline"
+              size="lg"
               className="mt-3"
               onPress={() => router.push("/auth/login")}
             />
