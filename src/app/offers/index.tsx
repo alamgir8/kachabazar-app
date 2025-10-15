@@ -1,10 +1,10 @@
-import { FlatList, RefreshControl, Text, View, Pressable } from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { useProducts } from "@/hooks/queries/useProducts";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function OffersScreen() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function OffersScreen() {
         data={discounted}
         keyExtractor={(item) => item._id}
         numColumns={2}
-        columnWrapperStyle={{ gap: 16 }}
+        columnWrapperStyle={{ gap: 16, paddingHorizontal: 20 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -25,13 +25,8 @@ export default function OffersScreen() {
           />
         }
         ListHeaderComponent={
-          <View className="bg-gradient-to-b from-primary-600 to-accent-600 px-5 pb-8 pt-16">
-            <Pressable
-              onPress={() => router.back()}
-              className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-            >
-              <Feather name="arrow-left" size={24} color="#fff" />
-            </Pressable>
+          <View className="bg-gradient-to-b from-primary-600 to-primary-500 px-5 pb-8 pt-16">
+            <BackButton tint="#ffffff" />
             <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">
               Exclusive offers
             </Text>
@@ -50,8 +45,8 @@ export default function OffersScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <View className="px-5 pb-6">
-            <ProductCard product={item} />
+          <View className="flex-1 pb-6">
+            <ProductCard product={item} layout="grid" />
           </View>
         )}
         ListEmptyComponent={

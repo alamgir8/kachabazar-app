@@ -4,7 +4,7 @@ import {
   FlatList,
   RefreshControl,
   Text,
-  View
+  View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
@@ -12,6 +12,7 @@ import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { FilterChip } from "@/components/ui/FilterChip";
+import { BackButton } from "@/components/ui/BackButton";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { useProducts } from "@/hooks/queries/useProducts";
@@ -24,7 +25,7 @@ const sortOptions = [
   { label: "Relevance", value: "relevance" },
   { label: "Price ↑", value: "price-asc" },
   { label: "Price ↓", value: "price-desc" },
-  { label: "Latest", value: "latest" }
+  { label: "Latest", value: "latest" },
 ] as const;
 
 type SortOption = (typeof sortOptions)[number]["value"];
@@ -48,7 +49,7 @@ export default function SearchScreen() {
 
   const productsQuery = useProducts({
     title: debouncedSearch,
-    category: selectedCategory
+    category: selectedCategory,
   });
 
   const categoriesQuery = useCategories();
@@ -100,7 +101,7 @@ export default function SearchScreen() {
     setSelectedCategory(category._id);
     router.setParams({
       category: category._id,
-      title: getLocalizedValue(category.name as Record<string, string>)
+      title: getLocalizedValue(category.name as Record<string, string>),
     });
   };
 
@@ -112,8 +113,8 @@ export default function SearchScreen() {
             ?.name as Record<string, string>
         )
       : debouncedSearch
-      ? `Results for "${debouncedSearch}"`
-      : "Discover everything");
+        ? `Results for "${debouncedSearch}"`
+        : "Discover everything");
 
   if (productsQuery.isLoading && !productsQuery.isFetching) {
     return <LoadingState message="Searching our catalogue..." />;
@@ -136,7 +137,7 @@ export default function SearchScreen() {
         data={products}
         keyExtractor={(item) => item._id}
         numColumns={2}
-        columnWrapperStyle={{ gap: 16 }}
+        columnWrapperStyle={{ gap: 16, paddingHorizontal: 20, justifyContent: "space-between" }}
         refreshControl={
           <RefreshControl
             refreshing={productsQuery.isFetching}
@@ -144,11 +145,14 @@ export default function SearchScreen() {
           />
         }
         ListHeaderComponent={
-          <View className="px-5 pt-16">
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+          <View className="px-5 pt-14 pb-4">
+            <BackButton />
+            <View className="h-5" />
+
+            <Text className="text-xs font-bold uppercase tracking-[0.2em] text-primary-600">
               Explore
             </Text>
-            <Text className="mt-2 font-display text-3xl text-slate-900">
+            <Text className="mt-2 font-display text-[28px] leading-tight font-bold text-slate-900">
               {headerTitle || "Discover everything"}
             </Text>
             <SearchBar
@@ -158,7 +162,9 @@ export default function SearchScreen() {
               onSubmitSearch={handleSubmit}
               containerClassName="mt-5"
             />
-            <View className="mt-4 flex-row flex-wrap">
+
+            {/* Category Filters */}
+            <View className="mt-5 flex-row flex-wrap">
               <FilterChip
                 label="All"
                 active={!selectedCategory}
@@ -175,7 +181,9 @@ export default function SearchScreen() {
                 />
               ))}
             </View>
-            <View className="mt-4 flex-row flex-wrap">
+
+            {/* Sort Filters */}
+            <View className="mt-2 flex-row flex-wrap">
               {sortOptions.map((option) => (
                 <FilterChip
                   key={option.value}
@@ -187,15 +195,11 @@ export default function SearchScreen() {
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <View className="px-5 pb-6">
-            <ProductCard product={item} />
-          </View>
-        )}
+        renderItem={({ item }) => <ProductCard product={item} />}
         ListEmptyComponent={
           <View className="px-5 py-20">
             {productsQuery.isFetching ? (
-              <ActivityIndicator size="large" color="#35b06f" />
+              <ActivityIndicator size="large" color="#10b981" />
             ) : (
               <Text className="text-center text-sm text-slate-500">
                 We could not find anything that matches your search. Try another
@@ -206,7 +210,6 @@ export default function SearchScreen() {
         }
         contentContainerStyle={{
           paddingBottom: 160,
-          paddingHorizontal: 4
         }}
       />
     </Screen>

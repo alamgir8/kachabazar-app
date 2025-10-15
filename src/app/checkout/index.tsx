@@ -7,7 +7,7 @@ import {
   ScrollView,
   Text,
   TextInput,
-  View
+  View,
 } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -19,6 +19,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { createOrder } from "@/services/orders";
 import { formatCurrency } from "@/utils";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface CheckoutFormValues {
   firstName: string;
@@ -35,8 +36,13 @@ interface CheckoutFormValues {
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const { user, isAuthenticated, accessToken, upsertShippingAddress, shippingAddress } =
-    useAuth();
+  const {
+    user,
+    isAuthenticated,
+    accessToken,
+    upsertShippingAddress,
+    shippingAddress,
+  } = useAuth();
   const { items, subtotal, clearCart, isEmpty } = useCart();
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
@@ -45,7 +51,7 @@ export default function CheckoutScreen() {
     control,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
   } = useForm<CheckoutFormValues>({
     defaultValues: {
       firstName: "",
@@ -57,8 +63,8 @@ export default function CheckoutScreen() {
       country: shippingAddress?.country ?? "",
       zipCode: shippingAddress?.zipCode ?? "",
       shippingOption: "Standard",
-      paymentMethod: "Cash"
-    }
+      paymentMethod: "Cash",
+    },
   });
 
   useEffect(() => {
@@ -88,7 +94,7 @@ export default function CheckoutScreen() {
         address: data.address,
         city: data.city,
         country: data.country,
-        zipCode: data.zipCode
+        zipCode: data.zipCode,
       };
 
       await upsertShippingAddress(userInfo);
@@ -102,7 +108,7 @@ export default function CheckoutScreen() {
         subTotal: subtotal,
         shippingCost: 0,
         discount: 0,
-        total: subtotal
+        total: subtotal,
       };
 
       return createOrder(orderPayload, accessToken);
@@ -111,9 +117,9 @@ export default function CheckoutScreen() {
       await clearCart();
       router.replace({
         pathname: "/checkout/success",
-        params: { orderId: order._id }
+        params: { orderId: order._id },
       });
-    }
+    },
   });
 
   const onSubmit = (data: CheckoutFormValues) => mutation.mutate(data);
@@ -172,6 +178,10 @@ export default function CheckoutScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
         >
+          <View className="mt-6">
+            <BackButton />
+          </View>
+
           <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
             <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
               Shipping Details
@@ -324,18 +334,19 @@ export default function CheckoutScreen() {
                     {
                       value: "Cash" as const,
                       title: "Cash on delivery",
-                      description: "Pay with cash or mobile wallet upon arrival"
+                      description:
+                        "Pay with cash or mobile wallet upon arrival",
                     },
                     {
                       value: "Card" as const,
                       title: "Card (coming soon)",
-                      description: "Securely pay with Visa, Mastercard"
+                      description: "Securely pay with Visa, Mastercard",
                     },
                     {
                       value: "RazorPay" as const,
                       title: "Razorpay (coming soon)",
-                      description: "Frictionless UPI & wallet payments"
-                    }
+                      description: "Frictionless UPI & wallet payments",
+                    },
                   ].map((method) => (
                     <PaymentOption
                       key={method.value}
@@ -356,9 +367,15 @@ export default function CheckoutScreen() {
               Order summary
             </Text>
             <View className="mt-4 space-y-3">
-              <SummaryRow label="Subtotal" value={formatCurrency(subtotal, currency)} />
+              <SummaryRow
+                label="Subtotal"
+                value={formatCurrency(subtotal, currency)}
+              />
               <SummaryRow label="Delivery" value="Free" />
-              <SummaryRow label="Discount" value={formatCurrency(0, currency)} />
+              <SummaryRow
+                label="Discount"
+                value={formatCurrency(0, currency)}
+              />
             </View>
             <View className="mt-4 flex-row items-center justify-between">
               <Text className="text-sm font-semibold uppercase text-slate-500">
@@ -402,7 +419,7 @@ const TextInputField: React.FC<
 
 const SummaryRow: React.FC<{ label: string; value: string }> = ({
   label,
-  value
+  value,
 }) => (
   <View className="flex-row items-center justify-between">
     <Text className="text-sm text-slate-500">{label}</Text>

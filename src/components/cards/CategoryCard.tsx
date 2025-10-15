@@ -20,51 +20,44 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
     <Link
       href={{
         pathname: "/search",
-        params: { category: category._id, title: categoryName }
+        params: { category: category._id, title: categoryName },
       }}
       asChild
     >
       <Pressable
-        className="min-w-[106px] items-center"
+        className="items-center active:scale-95"
         style={{
-          shadowColor: theme.colors.primary[900],
-          shadowOffset: { width: 0, height: 10 },
+          width: 100,
+          shadowColor: "#0f7669",
+          shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.08,
-          shadowRadius: 16,
-          elevation: 6,
+          shadowRadius: 12,
+          elevation: 4,
         }}
       >
-        <LinearGradient
-          colors={[
-            theme.colors.primary[50],
-            "rgba(162, 109, 255, 0.08)",
-            "#ffffff",
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="h-[110px] w-[110px] items-center justify-center rounded-3xl"
+        <View
+          className="h-24 w-24 items-center justify-center rounded-3xl bg-white"
           style={{
             borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.6)",
+            borderColor: "rgba(16, 185, 129, 0.1)",
           }}
         >
           {category.icon ? (
             <Image
               source={{ uri: category.icon }}
-              className="h-16 w-16 rounded-2xl"
+              className="h-14 w-14 rounded-2xl"
               resizeMode="contain"
             />
           ) : (
-            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-white/80">
-              <Feather
-                name="tag"
-                size={22}
-                color={theme.colors.accent[600]}
-              />
+            <View className="h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
+              <Feather name="tag" size={24} color={theme.colors.primary[600]} />
             </View>
           )}
-        </LinearGradient>
-        <Text className="mt-2 text-center text-sm font-semibold text-slate-700">
+        </View>
+        <Text
+          className="mt-2.5 text-center text-[13px] font-bold leading-tight text-slate-800"
+          numberOfLines={2}
+        >
           {categoryName}
         </Text>
       </Pressable>

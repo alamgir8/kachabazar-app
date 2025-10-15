@@ -10,6 +10,7 @@ interface SectionHeaderProps {
   actionLabel?: string;
   onActionPress?: () => void;
   className?: string;
+  badgeLabel?: string;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -17,15 +18,18 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   subtitle,
   actionLabel,
   onActionPress,
-  className
+  className,
+  badgeLabel = "Featured",
 }) => (
   <View className={cn("mb-5 flex-row items-center justify-between", className)}>
     <View className="flex-1">
-      <View className="mb-1 self-start rounded-full bg-white/70 px-3 py-1">
-        <Text className="text-[11px] font-semibold uppercase tracking-[0.32em] text-slate-500">
-          Featured
-        </Text>
-      </View>
+      {badgeLabel ? (
+        <View className="mb-1 self-start rounded-full bg-white/70 px-3 py-1">
+          <Text className="text-[11px] font-semibold uppercase tracking-[0.32em] text-slate-500">
+            {badgeLabel}
+          </Text>
+        </View>
+      ) : null}
       <Text className="font-display text-[22px] text-slate-900">{title}</Text>
       {subtitle ? (
         <Text className="mt-1 text-sm text-slate-500">{subtitle}</Text>

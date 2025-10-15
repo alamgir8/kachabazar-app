@@ -89,31 +89,31 @@ export default function HomeScreen() {
           paddingBottom: 120,
         }}
       >
-        <View className="px-5">
+        <View className="pt-2">
           <AppHeader />
           <SearchBar
             placeholder="Search for fruits, veggies, snacks..."
             onSubmitSearch={onSearchSubmit}
-            containerClassName="mb-5"
+            containerClassName="mb-6"
           />
         </View>
 
-        <View className="px-5">
+        <View className="mb-6">
           <Hero onExplorePress={handleExplorePress} />
         </View>
 
-        <View className="mb-6 px-5">
+        <View className="mb-7">
           <CategoryStrip
             categories={categoriesQuery.data ?? []}
             onSeeAll={handleExplorePress}
           />
         </View>
 
-        <View className="mb-6 px-5">
+        <View className="mb-7">
           <Highlights />
         </View>
 
-        <View className="mb-6">
+        <View className="mb-7">
           <ProductCarousel
             title="Trending now"
             subtitle="Loved by our community"
@@ -121,6 +121,7 @@ export default function HomeScreen() {
             onSeeAll={() =>
               router.push({ pathname: "/search", params: { sort: "popular" } })
             }
+            badgeLabel="Featured"
           />
         </View>
 
@@ -130,6 +131,7 @@ export default function HomeScreen() {
             subtitle="Grab them before they are gone"
             products={discountedProducts}
             onSeeAll={() => router.push("/offers")}
+            badgeLabel="Offers"
           />
         </View>
 
@@ -137,7 +139,6 @@ export default function HomeScreen() {
           <Button
             title="Browse all products"
             onPress={() => router.push("/search")}
-            variant="outline"
             size="lg"
             fullWidth
           />

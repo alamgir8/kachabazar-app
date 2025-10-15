@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, Text, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/contexts/AuthContext";
+import { BackButton } from "@/components/ui/BackButton";
 
 interface ProfileFormValues {
   name: string;
@@ -26,7 +33,7 @@ export default function EditProfileScreen() {
     control,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<ProfileFormValues>({
     defaultValues: {
       name: "",
@@ -34,8 +41,8 @@ export default function EditProfileScreen() {
       phone: "",
       address: "",
       city: "",
-      country: ""
-    }
+      country: "",
+    },
   });
 
   useEffect(() => {
@@ -67,6 +74,9 @@ export default function EditProfileScreen() {
     >
       <Screen innerClassName="px-0" scrollable>
         <View className="px-6 pt-32">
+          <BackButton />
+          <View className="h-5" />
+
           <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
             Profile
           </Text>
@@ -137,8 +147,12 @@ export default function EditProfileScreen() {
               )}
             />
 
-            {status ? <Text className="text-sm text-primary-600">{status}</Text> : null}
-            {error ? <Text className="text-sm text-rose-500">{error}</Text> : null}
+            {status ? (
+              <Text className="text-sm text-primary-600">{status}</Text>
+            ) : null}
+            {error ? (
+              <Text className="text-sm text-rose-500">{error}</Text>
+            ) : null}
 
             <Button
               title={isSubmitting ? "Saving..." : "Save changes"}

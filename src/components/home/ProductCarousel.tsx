@@ -10,6 +10,7 @@ interface ProductCarouselProps {
   products: Product[];
   emptyLabel?: string;
   onSeeAll?: () => void;
+  badgeLabel?: string | null;
 }
 
 export const ProductCarousel: React.FC<ProductCarouselProps> = ({
@@ -17,17 +18,21 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
   subtitle,
   products,
   emptyLabel,
-  onSeeAll
+  onSeeAll,
+  badgeLabel = "Featured",
 }) => (
-  <View className="mb-10">
-    <SectionHeader
-      title={title}
-      subtitle={subtitle}
-      actionLabel={products.length > 0 ? "See all" : undefined}
-      onActionPress={onSeeAll}
-    />
+  <View>
+    <View className="px-5">
+      <SectionHeader
+        title={title}
+        subtitle={subtitle}
+        actionLabel={products.length > 0 ? "See all" : undefined}
+        onActionPress={onSeeAll}
+        badgeLabel={badgeLabel}
+      />
+    </View>
     {products.length === 0 ? (
-      <View className="rounded-3xl bg-white/90 p-6 text-center">
+      <View className="mx-5 rounded-3xl bg-slate-50 p-8">
         <Text className="text-center text-sm text-slate-500">
           {emptyLabel ?? "We are adding new items soon."}
         </Text>
@@ -36,10 +41,10 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 18, paddingHorizontal: 4 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 6 }}
       >
-        {products.map(product => (
-          <ProductCard key={product._id} product={product} />
+        {products.map((product) => (
+          <ProductCard key={product._id} product={product} layout="carousel" />
         ))}
       </ScrollView>
     )}

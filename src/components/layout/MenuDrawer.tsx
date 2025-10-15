@@ -14,29 +14,34 @@ type MenuItemProps = {
 };
 
 const MenuItem = ({ icon, title, onPress, badge }: MenuItemProps) => (
-  <Pressable
-    onPress={onPress}
-    className="mb-2 flex-row items-center rounded-2xl bg-white/70 px-4 py-4"
-    style={{
-      shadowColor: theme.colors.primary[900],
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.04,
-      shadowRadius: 10,
-      elevation: 3,
-    }}
-  >
-    <View className="h-10 w-10 items-center justify-center rounded-2xl bg-primary-50">
-      <Feather name={icon} size={20} color={theme.colors.primary[700]} />
-    </View>
-    <Text className="ml-4 flex-1 text-base font-medium text-slate-900">
-      {title}
-    </Text>
-    {badge ? (
-      <View className="mr-2 h-6 min-w-[24px] items-center justify-center rounded-full bg-red-500 px-2">
-        <Text className="text-xs font-bold text-white">{badge}</Text>
+  <Pressable onPress={onPress} className="active:opacity-95">
+    <View
+      className="mb-3 flex-row items-center justify-between rounded-3xl bg-white px-5 py-4"
+      style={{
+        shadowColor: "rgba(12, 70, 65, 0.18)",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.08,
+        shadowRadius: 16,
+        elevation: 6,
+      }}
+    >
+      <View className="flex-row items-center">
+        <View className="h-11 w-11 items-center justify-center rounded-2xl bg-primary-50">
+          <Feather name={icon} size={22} color={theme.colors.primary[600]} />
+        </View>
+        <Text className="ml-4 text-[15px] font-semibold text-slate-800">
+          {title}
+        </Text>
       </View>
-    ) : null}
-    <Feather name="chevron-right" size={20} color="#94a3b8" />
+      <View className="flex-row items-center gap-2">
+        {badge ? (
+          <View className="mr-1 h-6 min-w-[24px] items-center justify-center rounded-full bg-accent-500 px-2">
+            <Text className="text-xs font-bold text-white">{badge}</Text>
+          </View>
+        ) : null}
+        <Feather name="chevron-right" size={20} color="#94a3b8" />
+      </View>
+    </View>
   </Pressable>
 );
 
@@ -67,7 +72,12 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
           colors={[theme.colors.primary[600], theme.colors.accent[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ paddingHorizontal: 24, paddingVertical: 32, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+          style={{
+            paddingHorizontal: 24,
+            paddingVertical: 32,
+            borderBottomLeftRadius: 32,
+            borderBottomRightRadius: 32,
+          }}
         >
           <Pressable
             onPress={onClose}
@@ -99,16 +109,16 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
                 </Text>
               </View>
             </View>
-            ) : (
-              <View>
-                <Text className="mb-2 font-display text-2xl font-bold text-white">
-                  Welcome to KachaBazar
-                </Text>
-                <Text className="text-sm text-white/90">
-                  Sign in to access your account
-                </Text>
-              </View>
-            )}
+          ) : (
+            <View>
+              <Text className="mb-2 font-display text-2xl font-bold text-white">
+                Welcome to KachaBazar
+              </Text>
+              <Text className="text-sm text-white/90">
+                Sign in to access your account
+              </Text>
+            </View>
+          )}
         </LinearGradient>
 
         {/* Main Navigation */}

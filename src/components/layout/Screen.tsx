@@ -77,7 +77,7 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
         {...props}
       >
         <View
-          className={cn("w-full px-5", innerClassName)}
+          className={cn("w-full px-4", innerClassName)}
           style={{
             width: "100%",
             maxWidth: theme.layout.maxWidth,
@@ -106,10 +106,7 @@ const ScrollableWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
 }) => (
   <ScrollView
     className={className}
-    contentContainerClassName={cn(
-      "pb-20",
-      contentContainerClassName
-    )}
+    contentContainerClassName={cn("pb-20", contentContainerClassName)}
     contentContainerStyle={{
       paddingBottom: extraPaddingBottom + theme.spacing["4xl"],
     }}

@@ -18,12 +18,14 @@ interface ProductCardProps {
   product: Product;
   variantLabel?: string;
   onPressAdd?: () => void;
+  layout?: "grid" | "carousel";
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   variantLabel,
   onPressAdd,
+  layout = "grid",
 }) => {
   const { addItem } = useCart();
   const { globalSetting } = useSettings();
@@ -42,67 +44,77 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const image = getProductImage(product);
 
+  const cardWidth = layout === "carousel" ? 200 : undefined;
   return (
     <View
       style={{
-        width: 188,
-        borderRadius: theme.borderRadius["2xl"],
-        backgroundColor: theme.colors.glass,
-        shadowColor: theme.colors.primary[900],
-        shadowOffset: { width: 0, height: 14 },
-        shadowOpacity: 0.12,
-        shadowRadius: 22,
-        elevation: 10,
+        width: cardWidth,
+        flex: cardWidth ? undefined : 1,
+        borderRadius: 28,
+        backgroundColor: "#ffffff",
+        shadowColor: "rgba(12, 70, 65, 0.16)",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.09,
+        shadowRadius: 20,
+        elevation: 8,
+        marginRight: layout === "carousel" ? 16 : 0,
+        marginLeft: layout === "carousel" ? 0 : 0,
       }}
     >
       <Link href={`/product/${product.slug}`} asChild>
-        <Pressable>
-          <LinearGradient
-            colors={[theme.colors.primary[50], "#ffffff"]}
-            className="h-40 w-full items-center justify-center"
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View className="relative h-[92%] w-[90%] items-center justify-center rounded-[26px] bg-white/75">
+        <Pressable className="active:opacity-95">
+          {/* Product Image Container */}
+          <View className="relative h-44 w-full overflow-hidden rounded-t-[28px] bg-slate-50">
+            <LinearGradient
+              colors={["#e8f5f1", "#f0fdf4", "#ffffff"]}
+              className="h-full w-full items-center justify-center p-3"
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
               {image ? (
                 <Image
                   source={{ uri: image }}
-                  className="h-full w-full rounded-[22px]"
+                  className="h-full w-full"
                   resizeMode="contain"
                 />
               ) : (
-                <View className="h-24 w-24 items-center justify-center rounded-3xl bg-primary-100">
+                <View className="h-20 w-20 items-center justify-center rounded-2xl bg-primary-100">
                   <Feather
                     name="image"
-                    size={28}
-                    color={theme.colors.primary[600]}
+                    size={32}
+                    color={theme.colors.primary[500]}
                   />
                 </View>
               )}
-              {discount > 0 ? (
-                <View className="absolute right-2 top-2 rounded-full bg-accent-500/90 px-2.5 py-1">
-                  <Text className="text-[11px] font-semibold text-white">
-                    -{discount}%
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-          </LinearGradient>
+            </LinearGradient>
 
-          <View className="space-y-3 px-4 pb-4 pt-3">
+            {/* Discount Badge */}
+            {discount > 0 ? (
+              <View className="absolute right-2 top-2 rounded-full bg-red-500 px-3 py-1.5 shadow-lg">
+                <Text className="text-xs font-bold text-white">
+                  -{discount}%
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Product Info */}
+          <View className="space-y-2 px-4 pb-5 pt-4">
             <Text
               numberOfLines={2}
-              className="text-base font-semibold leading-tight text-slate-900"
+              className="min-h-[40px] text-[15px] font-semibold leading-tight text-slate-900"
             >
               {getLocalizedValue(product.title)}
             </Text>
+
             <Text className="text-xs text-slate-500">
-              {variantLabel ? variantLabel : `${product.stock ?? 0} available`}
+              {variantLabel ? variantLabel : `${product.stock ?? 0} in stock`}
             </Text>
 
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className="font-display text-xl font-bold text-primary-700">
+            {/* Price and Add Button */}
+            <View className="flex-row items-center justify-between pt-1">
+              <View className="flex-1">
+                <Text className="font-display text-lg font-bold text-primary-600">
                   {formatCurrency(price, currency)}
                 </Text>
                 {originalPrice > price ? (
@@ -111,20 +123,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   </Text>
                 ) : null}
               </View>
+
               <Pressable
                 onPress={handleAdd}
-                className="h-11 w-11 items-center justify-center rounded-2xl"
+                className="h-11 w-11 items-center justify-center rounded-2xl active:scale-95"
                 style={{
-                  backgroundColor: theme.colors.primary[600],
+                  backgroundColor: theme.colors.primary[500],
                   shadowColor: theme.colors.primary[700],
-                  shadowOffset: { width: 0, height: 3 },
+                  shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.24,
                   shadowRadius: 6,
                   elevation: 6,
                 }}
                 accessibilityLabel="Add to cart"
               >
-                <Feather name="plus" size={20} color={theme.colors.text.inverse} />
+                <Feather
+                  name="plus"
+                  size={20}
+                  color={theme.colors.text.inverse}
+                />
               </Pressable>
             </View>
           </View>

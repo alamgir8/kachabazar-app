@@ -1,4 +1,4 @@
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { CategoryCard } from "@/components/cards/CategoryCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -11,21 +11,28 @@ interface CategoryStripProps {
 
 export const CategoryStrip: React.FC<CategoryStripProps> = ({
   categories,
-  onSeeAll
+  onSeeAll,
 }) => (
   <>
-    <SectionHeader
-      title="Shop by category"
-      subtitle="Discover curated collections"
-      actionLabel={categories.length > 0 ? "See all" : undefined}
-      onActionPress={onSeeAll}
-    />
+    <View className="px-5">
+      <SectionHeader
+        title="Shop by category"
+        subtitle="Discover curated collections"
+        actionLabel={categories.length > 0 ? "See all" : undefined}
+        onActionPress={onSeeAll}
+        badgeLabel={null}
+      />
+    </View>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: 18, paddingHorizontal: 4 }}
+      contentContainerStyle={{
+        gap: 16,
+        paddingHorizontal: 20,
+        paddingVertical: 4,
+      }}
     >
-      {categories.map(category => (
+      {categories.map((category) => (
         <CategoryCard key={category._id} category={category} />
       ))}
     </ScrollView>

@@ -7,6 +7,7 @@ import { useOrders } from "@/hooks/queries/useOrders";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function OrdersScreen() {
   const router = useRouter();
@@ -23,7 +24,8 @@ export default function OrdersScreen() {
             Track your orders in one place
           </Text>
           <Text className="mt-2 text-sm text-slate-500">
-            Sign in to view order history and reorder favourites in a single tap.
+            Sign in to view order history and reorder favourites in a single
+            tap.
           </Text>
           <Button
             title="Login"
@@ -65,15 +67,20 @@ export default function OrdersScreen() {
         data={data?.orders ?? []}
         keyExtractor={(item) => item._id}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+          />
         }
         contentContainerStyle={{
           paddingBottom: 140,
           paddingHorizontal: 20,
-          paddingTop: 24
+          paddingTop: 24,
         }}
         ListHeaderComponent={
           <View className="mb-6">
+            <BackButton />
+            <View className="h-4" />
             <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
               Orders
             </Text>
@@ -114,7 +121,7 @@ export default function OrdersScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/orders/[id]",
-                  params: { id: item._id }
+                  params: { id: item._id },
                 })
               }
             />

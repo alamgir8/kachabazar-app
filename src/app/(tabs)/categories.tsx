@@ -8,27 +8,39 @@ import { ErrorState } from "@/components/common/ErrorState";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { Category } from "@/types";
 import { getLocalizedValue } from "@/utils";
+import { BackButton } from "@/components/ui/BackButton";
 
 const CategoryTile: React.FC<{ category: Category; onPress: () => void }> = ({
   category,
-  onPress
+  onPress,
 }) => (
   <View className="w-1/2 p-2">
     <Pressable
-      className="h-full rounded-3xl bg-white p-5 shadow-[0_15px_35px_rgba(15,118,110,0.08)]"
+      className="min-h-[146px] justify-between rounded-3xl bg-white p-6 active:opacity-95"
       onPress={onPress}
+      style={{
+        shadowColor: "rgba(12, 70, 65, 0.16)",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.08,
+        shadowRadius: 18,
+        elevation: 8,
+      }}
     >
-      <Text className="text-lg font-semibold text-slate-900">
-        {getLocalizedValue(category.name as Record<string, string>)}
-      </Text>
-      {category.children?.length ? (
-        <Text className="mt-2 text-xs text-slate-500">
-          {category.children.length} sub categories
+      <View>
+        <Text className="text-base font-bold text-slate-900 leading-snug">
+          {getLocalizedValue(category.name as Record<string, string>)}
         </Text>
-      ) : null}
-      <Text className="mt-4 text-sm font-semibold text-primary-500">
-        Explore
-      </Text>
+        {category.children?.length ? (
+          <Text className="mt-2 text-xs text-slate-500">
+            {category.children.length}{" "}
+            {category.children.length === 1 ? "subcategory" : "subcategories"}
+          </Text>
+        ) : null}
+      </View>
+      <View className="mt-4 flex-row items-center">
+        <Text className="text-sm font-semibold text-primary-600">Explore</Text>
+        <Text className="ml-1 text-primary-600">→</Text>
+      </View>
     </Pressable>
   </View>
 );
@@ -46,8 +58,8 @@ export default function CategoriesScreen() {
       pathname: "/search",
       params: {
         category: category._id,
-        title: getLocalizedValue(category.name as Record<string, string>)
-      }
+        title: getLocalizedValue(category.name as Record<string, string>),
+      },
     });
   };
 
@@ -79,10 +91,12 @@ export default function CategoriesScreen() {
         contentContainerStyle={{
           paddingBottom: 140,
           paddingHorizontal: 12,
-          paddingTop: 16
+          paddingTop: 16,
         }}
         ListHeaderComponent={
           <View className="mb-6 px-3">
+            <BackButton />
+            <View className="h-4" />
             <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
               Categories
             </Text>
