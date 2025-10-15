@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
-  content: [
-    "./app/**/*.{js,jsx,ts,tsx}",
-    "./src/**/*.{js,jsx,ts,tsx}"
-  ],
   theme: {
     extend: {
       colors: {
@@ -18,24 +15,24 @@ module.exports = {
           600: "#27945a",
           700: "#1c7646",
           800: "#145934",
-          900: "#0c3b21"
+          900: "#0c3b21",
         },
         accent: {
           100: "#fdf2f2",
           200: "#fde8e8",
           300: "#fbd5d5",
           400: "#f8b4b4",
-          500: "#f98080"
-        }
+          500: "#f98080",
+        },
       },
       fontFamily: {
-        display: ["Lora_600SemiBold", "System"],
-        body: ["Lora_400Regular", "System"]
+        display: ["System"],
+        body: ["System"],
       },
       boxShadow: {
-        card: "0 10px 30px rgba(15, 118, 110, 0.08)"
-      }
-    }
+        card: "0 10px 30px rgba(15, 118, 110, 0.08)",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
