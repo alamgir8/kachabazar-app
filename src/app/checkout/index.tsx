@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -20,6 +21,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { createOrder } from "@/services/orders";
 import { formatCurrency } from "@/utils";
 import { BackButton } from "@/components/ui/BackButton";
+import { cn } from "@/utils/cn";
 
 interface CheckoutFormValues {
   firstName: string;
@@ -176,227 +178,263 @@ export default function CheckoutScreen() {
       <Screen innerClassName="px-0" scrollable>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 160 }}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingTop: 32,
+            paddingBottom: 200,
+          }}
         >
-          <View className="mt-6">
-            <BackButton />
-          </View>
-
-          <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-              Shipping Details
-            </Text>
-            <Text className="mt-2 font-display text-3xl text-slate-900">
-              Where should we deliver?
-            </Text>
-
-            <View className="mt-6 flex-row space-x-4">
-              <Controller
-                control={control}
-                name="firstName"
-                rules={{ required: "First name is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="First name"
-                    placeholder="John"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.firstName?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="lastName"
-                rules={{ required: "Last name is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="Last name"
-                    placeholder="Doe"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.lastName?.message}
-                  />
-                )}
-              />
+          <View className="space-y-6">
+            <View className="flex-row">
+              <BackButton />
             </View>
 
-            <Controller
-              control={control}
-              name="email"
-              rules={{ required: "Email is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="Email"
-                  placeholder="john@kachabazar.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.email?.message}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="contact"
-              rules={{ required: "Contact number is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="Phone number"
-                  placeholder="(+880)"
-                  keyboardType="phone-pad"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.contact?.message}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="address"
-              rules={{ required: "Address is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="Street address"
-                  placeholder="House 57, Road 25, Gulshan"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.address?.message}
-                />
-              )}
-            />
-
-            <View className="mt-2 flex-row space-x-4">
-              <Controller
-                control={control}
-                name="city"
-                rules={{ required: "City is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="City"
-                    placeholder="Dhaka"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.city?.message}
+            <CheckoutSection
+              eyebrow="Shipping details"
+              headline="Where should we deliver?"
+              description="Double-check your contact info so we can hand off your groceries without a hitch."
+            >
+              <View>
+                <View className="flex-row gap-4">
+                  <Controller
+                    control={control}
+                    name="firstName"
+                    rules={{ required: "First name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextInputField
+                        label="First name"
+                        placeholder="John"
+                        value={value}
+                        onChangeText={onChange}
+                        error={errors.firstName?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                control={control}
-                name="country"
-                rules={{ required: "Country is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="Country"
-                    placeholder="Bangladesh"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.country?.message}
+                  <Controller
+                    control={control}
+                    name="lastName"
+                    rules={{ required: "Last name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextInputField
+                        label="Last name"
+                        placeholder="Doe"
+                        value={value}
+                        onChangeText={onChange}
+                        error={errors.lastName?.message}
+                      />
+                    )}
                   />
-                )}
-              />
-            </View>
-
-            <Controller
-              control={control}
-              name="zipCode"
-              rules={{ required: "ZIP code is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="Postal code"
-                  placeholder="1212"
-                  keyboardType="number-pad"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.zipCode?.message}
-                />
-              )}
-            />
-          </View>
-
-          <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-              Payment
-            </Text>
-            <Text className="mt-2 font-display text-3xl text-slate-900">
-              Choose how to pay
-            </Text>
-
-            <Controller
-              control={control}
-              name="paymentMethod"
-              render={({ field: { onChange, value } }) => (
-                <View className="mt-6 space-y-3">
-                  {[
-                    {
-                      value: "Cash" as const,
-                      title: "Cash on delivery",
-                      description:
-                        "Pay with cash or mobile wallet upon arrival",
-                    },
-                    {
-                      value: "Card" as const,
-                      title: "Card (coming soon)",
-                      description: "Securely pay with Visa, Mastercard",
-                    },
-                    {
-                      value: "RazorPay" as const,
-                      title: "Razorpay (coming soon)",
-                      description: "Frictionless UPI & wallet payments",
-                    },
-                  ].map((method) => (
-                    <PaymentOption
-                      key={method.value}
-                      title={method.title}
-                      description={method.description}
-                      active={value === method.value}
-                      disabled={method.value !== "Cash"}
-                      onPress={() => onChange(method.value)}
-                    />
-                  ))}
                 </View>
-              )}
-            />
-          </View>
 
-          <View className="mt-6 rounded-3xl bg-white p-6 shadow-[0_15px_40px_rgba(15,118,110,0.08)]">
-            <Text className="text-base font-semibold text-slate-900">
-              Order summary
-            </Text>
-            <View className="mt-4 space-y-3">
-              <SummaryRow
-                label="Subtotal"
-                value={formatCurrency(subtotal, currency)}
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{ required: "Email is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInputField
+                      label="Email"
+                      placeholder="john@kachabazar.com"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.email?.message}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="contact"
+                  rules={{ required: "Contact number is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInputField
+                      label="Phone number"
+                      placeholder="(+880)"
+                      keyboardType="phone-pad"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.contact?.message}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="address"
+                  rules={{ required: "Address is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInputField
+                      label="Street address"
+                      placeholder="House 57, Road 25, Gulshan"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.address?.message}
+                    />
+                  )}
+                />
+
+                <View className="flex-row gap-4">
+                  <Controller
+                    control={control}
+                    name="city"
+                    rules={{ required: "City is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextInputField
+                        label="City"
+                        placeholder="Dhaka"
+                        value={value}
+                        onChangeText={onChange}
+                        error={errors.city?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="country"
+                    rules={{ required: "Country is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextInputField
+                        label="Country"
+                        placeholder="Bangladesh"
+                        value={value}
+                        onChangeText={onChange}
+                        error={errors.country?.message}
+                      />
+                    )}
+                  />
+                </View>
+
+                <Controller
+                  control={control}
+                  name="zipCode"
+                  rules={{ required: "ZIP code is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInputField
+                      label="Postal code"
+                      placeholder="1212"
+                      keyboardType="number-pad"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.zipCode?.message}
+                    />
+                  )}
+                />
+              </View>
+            </CheckoutSection>
+
+            <CheckoutSection
+              eyebrow="Payment"
+              headline="Choose how to pay"
+              description="Only cash on delivery is available right now—digital payments are on the way."
+            >
+              <Controller
+                control={control}
+                name="paymentMethod"
+                render={({ field: { onChange, value } }) => (
+                  <View className="space-y-3">
+                    {[
+                      {
+                        value: "Cash" as const,
+                        title: "Cash on delivery",
+                        description:
+                          "Pay with cash or mobile wallet when your shopper arrives.",
+                      },
+                      {
+                        value: "Card" as const,
+                        title: "Card (coming soon)",
+                        description: "Secure card payments launch shortly.",
+                      },
+                      {
+                        value: "RazorPay" as const,
+                        title: "Razorpay (coming soon)",
+                        description: "Frictionless UPI and wallet checkout.",
+                      },
+                    ].map((method) => (
+                      <PaymentOption
+                        key={method.value}
+                        title={method.title}
+                        description={method.description}
+                        active={value === method.value}
+                        disabled={method.value !== "Cash"}
+                        onPress={() => onChange(method.value)}
+                      />
+                    ))}
+                  </View>
+                )}
               />
-              <SummaryRow label="Delivery" value="Free" />
-              <SummaryRow
-                label="Discount"
-                value={formatCurrency(0, currency)}
-              />
-            </View>
-            <View className="mt-4 flex-row items-center justify-between">
-              <Text className="text-sm font-semibold uppercase text-slate-500">
-                Total due today
-              </Text>
-              <Text className="text-2xl font-bold text-slate-900">
-                {formatCurrency(subtotal, currency)}
-              </Text>
-            </View>
-            <EnhancedButton
-              title={mutation.isPending ? "Placing order..." : "Confirm order"}
-              className="mt-6"
-              onPress={handleSubmit(onSubmit)}
-              loading={mutation.isPending}
-            />
+            </CheckoutSection>
+
+            <CheckoutSection
+              eyebrow="Order summary"
+              headline="Review and confirm"
+              description="Check your totals before placing the order."
+            >
+              <View>
+                <View className="space-y-3">
+                  <SummaryRow
+                    label="Subtotal"
+                    value={formatCurrency(subtotal, currency)}
+                  />
+                  <SummaryRow label="Delivery" value="Free" />
+                  <SummaryRow
+                    label="Discount"
+                    value={formatCurrency(0, currency)}
+                  />
+                </View>
+                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <Text className="text-xs font-semibold uppercase text-slate-500">
+                    Total due today
+                  </Text>
+                  <Text className="text-2xl font-bold text-slate-900">
+                    {formatCurrency(subtotal, currency)}
+                  </Text>
+                </View>
+                <EnhancedButton
+                  title={
+                    mutation.isPending ? "Placing order..." : "Confirm order"
+                  }
+                  className="mt-6 rounded-2xl"
+                  contentClassName="gap-2"
+                  onPress={handleSubmit(onSubmit)}
+                  loading={mutation.isPending}
+                />
+              </View>
+            </CheckoutSection>
           </View>
         </ScrollView>
       </Screen>
     </KeyboardAvoidingView>
   );
 }
+
+const CheckoutSection = ({
+  eyebrow,
+  headline,
+  description,
+  children,
+}: {
+  eyebrow: string;
+  headline: string;
+  description?: string;
+  children: ReactNode;
+}) => (
+  <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_60px_rgba(15,118,110,0.1)]">
+    <View className="h-1.5 w-full bg-primary-200" />
+    <View className="p-6">
+      <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">
+        {eyebrow}
+      </Text>
+      <Text className="mt-2 font-display text-3xl text-slate-900">
+        {headline}
+      </Text>
+      {description ? (
+        <Text className="mt-2 text-sm text-slate-500">{description}</Text>
+      ) : null}
+      <View className="mt-6">{children}</View>
+    </View>
+  </View>
+);
 
 const TextInputField: React.FC<
   {
@@ -409,7 +447,11 @@ const TextInputField: React.FC<
       {label}
     </Text>
     <TextInput
-      className={`rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 shadow-[0_8px_20px_rgba(15,118,110,0.05)] ${className ?? ""}`}
+      className={cn(
+        "rounded-2xl border px-4 py-3 text-base text-slate-900",
+        error ? "border-rose-400 bg-rose-50/40" : "border-slate-200 bg-white",
+        className
+      )}
       placeholderTextColor="#94a3b8"
       {...props}
     />
@@ -434,19 +476,30 @@ const PaymentOption: React.FC<{
   disabled?: boolean;
   onPress: () => void;
 }> = ({ title, description, active, disabled, onPress }) => (
-  <View
-    className={`rounded-3xl border px-4 py-4 ${
-      active ? "border-primary-500 bg-primary-50" : "border-slate-200 bg-white"
-    } ${disabled ? "opacity-60" : ""}`}
+  <Pressable
+    onPress={disabled ? undefined : onPress}
+    className={cn(
+      "flex-row items-center rounded-2xl border px-4 py-4",
+      active ? "border-primary-500 bg-primary-50/80" : "border-slate-200 bg-white",
+      disabled ? "opacity-60" : "active:bg-primary-50/60"
+    )}
   >
-    <Text className="text-base font-semibold text-slate-900">{title}</Text>
-    <Text className="mt-1 text-sm text-slate-500">{description}</Text>
-    <EnhancedButton
-      title={disabled ? "Coming soon" : active ? "Selected" : "Choose"}
-      variant={active ? "primary" : "ghost"}
-      className="mt-3"
-      disabled={disabled}
-      onPress={onPress}
-    />
-  </View>
+    <View className="flex-1 pr-3">
+      <Text className="text-base font-semibold text-slate-900">{title}</Text>
+      <Text className="mt-1 text-sm text-slate-500">{description}</Text>
+      {disabled ? (
+        <Text className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Coming soon
+        </Text>
+      ) : null}
+    </View>
+    <View
+      className={cn(
+        "h-6 w-6 items-center justify-center rounded-full border-2",
+        active ? "border-primary-500" : "border-slate-300"
+      )}
+    >
+      {active ? <View className="h-3 w-3 rounded-full bg-primary-500" /> : null}
+    </View>
+  </Pressable>
 );
