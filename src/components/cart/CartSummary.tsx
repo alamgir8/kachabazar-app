@@ -21,32 +21,34 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
   const estimatedDelivery = subtotal > 0 ? "Arrives in 30-45 mins" : "";
 
   return (
-    <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_60px_rgba(15,118,110,0.12)]">
-      <View className="h-1.5 w-full bg-primary-200" />
-      <View className="p-6">
-        <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">
+    <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_20px_50px_rgba(15,118,110,0.12)]">
+      <View className="h-1.5 w-full bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600" />
+      <View className="p-5">
+        <Text className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary-500">
           Order overview
         </Text>
         <View className="mt-4 flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-slate-600">
+          <Text className="text-[15px] font-semibold text-slate-600">
             Subtotal
           </Text>
-          <Text className="text-2xl font-bold text-slate-900">
+          <Text className="font-display text-3xl font-bold text-slate-900">
             {formatCurrency(subtotal, currency)}
           </Text>
         </View>
-        <Text className="mt-2 text-xs text-slate-500">{estimatedDelivery}</Text>
-        <View className="mt-5 flex-row items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-          <Text className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <Text className="mt-2 text-[12px] text-slate-400">
+          {estimatedDelivery}
+        </Text>
+        <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-gradient-to-br from-primary-50 to-emerald-50/60 px-4 py-3">
+          <Text className="text-[11px] font-bold uppercase tracking-wider text-primary-700">
             Delivery
           </Text>
-          <Text className="text-sm font-semibold text-primary-600">Free</Text>
+          <Text className="text-[14px] font-bold text-primary-600">Free</Text>
         </View>
         <Button
           title="Proceed to Checkout"
           onPress={onCheckout}
           disabled={isCheckoutDisabled}
-          className="mt-6"
+          className="mt-5"
         />
       </View>
     </View>

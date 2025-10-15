@@ -28,8 +28,8 @@ export default function CartScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 160,
-          paddingHorizontal: 20,
+          paddingBottom: 60,
+          // paddingHorizontal: 16,
           paddingTop: 32,
         }}
       >

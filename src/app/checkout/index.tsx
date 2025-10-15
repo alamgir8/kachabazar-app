@@ -128,7 +128,7 @@ export default function CheckoutScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="px-5 pt-24">
+      <Screen className="px-4 pt-24">
         <View className="rounded-3xl bg-white p-10 shadow-[0_15px_35px_rgba(15,118,110,0.1)]">
           <Text className="text-lg font-semibold text-slate-900">
             Almost there!
@@ -148,7 +148,7 @@ export default function CheckoutScreen() {
 
   if (isEmpty) {
     return (
-      <Screen className="px-5 pt-24">
+      <Screen className="px-4 pt-24">
         <View className="rounded-3xl bg-white p-10 shadow-[0_15px_35px_rgba(15,118,110,0.1)]">
           <Text className="text-lg font-semibold text-slate-900">
             Your cart is empty
@@ -179,13 +179,11 @@ export default function CheckoutScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingHorizontal: 20,
-            paddingTop: 32,
-            paddingBottom: 200,
+            paddingBottom: 60,
           }}
         >
-          <View className="space-y-6">
-            <View className="flex-row">
+          <View className="space-y-1">
+            <View className="flex-row mb-2">
               <BackButton />
             </View>
 
@@ -382,11 +380,11 @@ export default function CheckoutScreen() {
                     value={formatCurrency(0, currency)}
                   />
                 </View>
-                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-                  <Text className="text-xs font-semibold uppercase text-slate-500">
+                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 px-4 py-4 shadow-sm">
+                  <Text className="text-[11px] font-bold uppercase tracking-wider text-primary-700">
                     Total due today
                   </Text>
-                  <Text className="text-2xl font-bold text-slate-900">
+                  <Text className="font-display text-3xl font-bold text-slate-900">
                     {formatCurrency(subtotal, currency)}
                   </Text>
                 </View>
@@ -394,7 +392,7 @@ export default function CheckoutScreen() {
                   title={
                     mutation.isPending ? "Placing order..." : "Confirm order"
                   }
-                  className="mt-6 rounded-2xl"
+                  className="mt-5 rounded-2xl"
                   contentClassName="gap-2"
                   onPress={handleSubmit(onSubmit)}
                   loading={mutation.isPending}
@@ -419,19 +417,21 @@ const CheckoutSection = ({
   description?: string;
   children: ReactNode;
 }) => (
-  <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_60px_rgba(15,118,110,0.1)]">
-    <View className="h-1.5 w-full bg-primary-200" />
-    <View className="p-6">
-      <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">
+  <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_20px_50px_rgba(15,118,110,0.1)]">
+    <View className="h-1.5 w-full bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600" />
+    <View className="p-5">
+      <Text className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary-500">
         {eyebrow}
       </Text>
-      <Text className="mt-2 font-display text-3xl text-slate-900">
+      <Text className="mt-2 font-display text-2xl font-bold text-slate-900">
         {headline}
       </Text>
       {description ? (
-        <Text className="mt-2 text-sm text-slate-500">{description}</Text>
+        <Text className="mt-2 text-[13px] leading-relaxed text-slate-500">
+          {description}
+        </Text>
       ) : null}
-      <View className="mt-6">{children}</View>
+      <View className="mt-5">{children}</View>
     </View>
   </View>
 );
@@ -443,19 +443,23 @@ const TextInputField: React.FC<
   } & React.ComponentProps<typeof TextInput>
 > = ({ label, error, className, ...props }) => (
   <View className="mb-4 flex-1">
-    <Text className="mb-2 text-xs font-semibold uppercase text-slate-500">
+    <Text className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">
       {label}
     </Text>
     <TextInput
       className={cn(
-        "rounded-2xl border px-4 py-3 text-base text-slate-900",
-        error ? "border-rose-400 bg-rose-50/40" : "border-slate-200 bg-white",
+        "rounded-2xl border px-4 py-3.5 text-[15px] text-slate-900",
+        error
+          ? "border-rose-400 bg-rose-50/40"
+          : "border-slate-200 bg-slate-50/50",
         className
       )}
       placeholderTextColor="#94a3b8"
       {...props}
     />
-    {error ? <Text className="mt-1 text-xs text-rose-500">{error}</Text> : null}
+    {error ? (
+      <Text className="mt-1.5 text-xs text-rose-500">{error}</Text>
+    ) : null}
   </View>
 );
 
@@ -464,8 +468,8 @@ const SummaryRow: React.FC<{ label: string; value: string }> = ({
   value,
 }) => (
   <View className="flex-row items-center justify-between">
-    <Text className="text-sm text-slate-500">{label}</Text>
-    <Text className="text-sm font-semibold text-slate-900">{value}</Text>
+    <Text className="text-[13px] font-medium text-slate-600">{label}</Text>
+    <Text className="text-[14px] font-bold text-slate-900">{value}</Text>
   </View>
 );
 
@@ -479,27 +483,35 @@ const PaymentOption: React.FC<{
   <Pressable
     onPress={disabled ? undefined : onPress}
     className={cn(
-      "flex-row items-center rounded-2xl border px-4 py-4",
-      active ? "border-primary-500 bg-primary-50/80" : "border-slate-200 bg-white",
-      disabled ? "opacity-60" : "active:bg-primary-50/60"
+      "flex-row items-center rounded-2xl border-2 px-4 py-4",
+      active
+        ? "border-primary-500 bg-gradient-to-br from-primary-50 to-primary-100/40"
+        : "border-slate-200 bg-slate-50/30",
+      disabled ? "opacity-50" : "active:bg-primary-50/60"
     )}
   >
     <View className="flex-1 pr-3">
-      <Text className="text-base font-semibold text-slate-900">{title}</Text>
-      <Text className="mt-1 text-sm text-slate-500">{description}</Text>
+      <Text className="text-[15px] font-bold text-slate-900">{title}</Text>
+      <Text className="mt-1 text-[13px] leading-relaxed text-slate-600">
+        {description}
+      </Text>
       {disabled ? (
-        <Text className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Coming soon
-        </Text>
+        <View className="mt-2 inline-flex self-start rounded-full bg-amber-50 px-2.5 py-1">
+          <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-600">
+            Coming soon
+          </Text>
+        </View>
       ) : null}
     </View>
     <View
       className={cn(
-        "h-6 w-6 items-center justify-center rounded-full border-2",
-        active ? "border-primary-500" : "border-slate-300"
+        "h-7 w-7 items-center justify-center rounded-full border-2",
+        active ? "border-primary-500 bg-white" : "border-slate-300 bg-white"
       )}
     >
-      {active ? <View className="h-3 w-3 rounded-full bg-primary-500" /> : null}
+      {active ? (
+        <View className="h-3.5 w-3.5 rounded-full bg-primary-500" />
+      ) : null}
     </View>
   </Pressable>
 );
