@@ -40,8 +40,14 @@ export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
         colors={[item.palette[0], item.palette[1]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        className="flex-row items-center rounded-[28px] border border-white/70 px-5 py-4"
         style={{
+          flexDirection: "row",
+          alignItems: "center",
+          borderRadius: 28,
+          borderWidth: 1,
+          borderColor: "rgba(255, 255, 255, 0.7)",
+          paddingHorizontal: 20,
+          paddingVertical: 16,
           shadowColor: "rgba(22, 163, 74, 0.16)",
           shadowOffset: { width: 0, height: 12 },
           shadowOpacity: 0.18,
@@ -53,11 +59,18 @@ export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
           colors={["rgba(255,255,255,0.85)", "rgba(255,255,255,0.3)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="mr-4 h-14 w-14 items-center justify-center rounded-2xl"
+          style={{
+            marginRight: 16,
+            width: 56,
+            height: 56,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 16,
+          }}
         >
           <Feather name={item.icon} size={22} color="#16a34a" />
         </LinearGradient>
-        <View className="flex-1">
+        <View style={{ flex: 1 }}>
           <Text className="mb-1 text-[15px] font-extrabold text-slate-900">
             {item.title}
           </Text>
