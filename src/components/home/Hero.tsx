@@ -72,17 +72,11 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
               end={{ x: 0.9, y: 1 }}
               className="absolute inset-0 rounded-[48px]"
             />
-            {heroImage ? (
-              <Image
-                source={{ uri: heroImage }}
-                className="h-[180px] w-[160px] rounded-[48px]"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="h-[160px] w-[140px] items-center justify-center rounded-[40px] bg-white/80">
-                <Feather name="shopping-bag" size={42} color="#16a34a" />
-              </View>
-            )}
+            <Image
+              source={require("../../assets/icon.png")}
+              className="h-[180px] w-[160px] rounded-[48px]"
+              resizeMode="cover"
+            />
           </View>
         </View>
       </LinearGradient>
