@@ -41,7 +41,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
     </View>
     <Pressable
       accessibilityRole="button"
-      className="bg-primary-500 items-center justify-center w-10 h-10 active:bg-primary-600"
+      className="bg-primary-500 items-center justify-center w-10 h-12 active:bg-primary-600"
       onPress={onIncrement}
     >
       <Feather name="plus" size={18} color="#ffffff" />

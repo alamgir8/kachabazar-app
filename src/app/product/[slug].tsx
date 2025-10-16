@@ -15,7 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
+import { CMButton, EnhancedButton } from "@/components/ui";
 import { BackButton } from "@/components/ui/BackButton";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
@@ -188,10 +188,17 @@ export default function ProductScreen() {
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
-    <Screen scrollable>
+    <Screen
+      scrollable
+      edges={["bottom"]}
+      contentContainerClassName="gap-6 pb-28"
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 160, paddingHorizontal: 24, paddingTop: 16 }}
+        contentContainerStyle={{
+          paddingBottom: 160,
+          paddingTop: 16,
+        }}
       >
         {/* Header with Back Button */}
         <View className="absolute top-6 left-6 right-6 z-10 flex-row items-center justify-between">
@@ -418,10 +425,7 @@ export default function ProductScreen() {
               )}
 
               <View className="flex-row items-center gap-3">
-                <View className="rounded-[28px] border border-white/70 bg-white/95 px-4 py-3">
-                  <Text className="text-[12px] font-semibold uppercase tracking-wider text-slate-500">
-                    Qty
-                  </Text>
+                <View className="rounded-[28px] border border-white/70 bg-white/95 px-4">
                   <QuantityStepper
                     value={quantity}
                     onIncrement={() => setQuantity((prev) => prev + 1)}
@@ -430,13 +434,14 @@ export default function ProductScreen() {
                     }
                   />
                 </View>
-                <EnhancedButton
+
+                <CMButton
                   title="Add to cart"
                   onPress={handleAddToCartClick}
-                  className="flex-1 rounded-full"
-                  size="lg"
-                  glass
-                  disabled={stock === 0}
+                  variant="cyan"
+                  rounded="rounded-sm"
+                  size="md"
+                  width="50%"
                 />
               </View>
             </View>
@@ -622,7 +627,7 @@ export default function ProductScreen() {
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <View className="mt-8 -mx-4">
+            <View className="mt-8 mx-4">
               <ProductCarousel
                 title="You might also like"
                 subtitle="Complementary picks curated for you"
