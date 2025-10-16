@@ -118,12 +118,17 @@ export default function HomeScreen() {
         />
       </View>
 
-      <CMButton
-        title="Browse all products"
-        onPress={() => router.push("/search")}
-        className="rounded-full"
-        fullWidth
-      />
+      <View className="mt-20">
+        <CMButton
+          title="Browse all products"
+          onPress={() => router.push("/search")}
+          variant="success"
+          rounded="rounded-sm"
+          width="50%"
+          height="10px"
+          alignSelf="center"
+        />
+      </View>
     </Screen>
   );
 }

@@ -36,7 +36,7 @@ interface CMButtonProps {
   py?: string;
   px?: string;
   mx?: string;
-  height?: string;
+  height?: number | string;
   rounded?: string | boolean;
   shadow?: string;
   bgColor?: string;
@@ -53,7 +53,13 @@ interface CMButtonProps {
   textSize?: string;
   textColor?: string;
   fontWeight?: string;
+
+  /** horizontal alignment: 'flex-start' | 'center' | 'flex-end' | 'stretch' */
+  alignSelf?: "flex-start" | "center" | "flex-end" | "stretch" | "auto";
+
+  /** deprecated: use alignSelf instead */
   alignItems?: string;
+
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   className?: string;
@@ -234,6 +240,7 @@ const CMButton: React.FC<CMButtonProps> = ({
   textSize,
   textColor,
   fontWeight,
+  alignSelf,
   alignItems,
   icon,
   iconPosition = "left",
@@ -274,7 +281,7 @@ const CMButton: React.FC<CMButtonProps> = ({
     px,
     mx,
     w,
-    height,
+    typeof height === "string" && height,
     !bgColor && !gradient && !glass && config.bg,
     !borderColor && config.border,
     fullWidth && "w-full",
@@ -328,6 +335,33 @@ const CMButton: React.FC<CMButtonProps> = ({
 
     return sizeStyle.radius;
   }, [className, rounded, roundedClass, sizeStyle.minHeight, sizeStyle.radius]);
+
+  // Calculate final width style
+  const getWidthStyle = () => {
+    if (width !== undefined) {
+      return { width: width as any };
+    }
+    if (fullWidth) {
+      return { width: "100%" };
+    }
+    return {};
+  };
+
+  // Calculate final height style
+  const getHeightStyle = () => {
+    if (height !== undefined) {
+      return { height: height as any };
+    }
+    return {};
+  };
+
+  // Calculate alignment style
+  const getAlignmentStyle = () => {
+    if (alignSelf) {
+      return { alignSelf };
+    }
+    return {};
+  };
 
   const renderContent = (useInlineStyle = false) => {
     // For gradient buttons on Android, use inline styles for better compatibility
@@ -409,7 +443,9 @@ const CMButton: React.FC<CMButtonProps> = ({
       hueColors?.[0] ?? config.hue?.[0] ?? "rgba(16,185,129,0.35)";
 
     const glassStyle = {
-      ...(width !== undefined && { width: width as any }),
+      ...getWidthStyle(),
+      ...getHeightStyle(),
+      ...getAlignmentStyle(),
       borderRadius,
       overflow: "hidden" as const,
       opacity: interactiveOpacity,
@@ -433,10 +469,9 @@ const CMButton: React.FC<CMButtonProps> = ({
         onPress={onPress}
         disabled={isDisabled}
         className={cn(
-          fullWidth && "w-full",
-          w,
+          !width && !fullWidth && w,
           mx,
-          roundedClass,
+          !width && !fullWidth && !w && roundedClass,
           shadow || "shadow-lg shadow-black/10"
         )}
         style={[glassStyle, shadowStyle] as any}
@@ -588,13 +623,15 @@ const CMButton: React.FC<CMButtonProps> = ({
       <TouchableOpacity
         onPress={onPress}
         disabled={isDisabled}
+        className={cn(!width && !fullWidth && w, mx)}
         style={[
           {
             borderRadius,
             overflow: "hidden",
             opacity: interactiveOpacity,
-            ...(fullWidth && { width: "100%" }),
-            ...(width !== undefined && { width: width as any }),
+            ...getWidthStyle(),
+            ...getHeightStyle(),
+            ...getAlignmentStyle(),
           },
           shadowStyle,
         ]}
@@ -605,11 +642,12 @@ const CMButton: React.FC<CMButtonProps> = ({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
+            flex: 1,
             justifyContent: "center",
             alignItems: "center",
             paddingHorizontal: sizeStyle.paddingHorizontal,
             paddingVertical: sizeStyle.paddingVertical,
-            minHeight: sizeStyle.minHeight,
+            minHeight: height ? undefined : sizeStyle.minHeight,
           }}
         >
           {renderContent(Platform.OS === "android")}
@@ -648,13 +686,15 @@ const CMButton: React.FC<CMButtonProps> = ({
       <TouchableOpacity
         onPress={onPress}
         disabled={isDisabled}
+        className={cn(!width && !fullWidth && w, mx)}
         style={[
           {
             borderRadius,
             overflow: "hidden",
             opacity: interactiveOpacity,
-            ...(fullWidth && { width: "100%" }),
-            ...(width !== undefined && { width: width as any }),
+            ...getWidthStyle(),
+            ...getHeightStyle(),
+            ...getAlignmentStyle(),
           },
           shadowStyle,
         ]}
@@ -665,11 +705,12 @@ const CMButton: React.FC<CMButtonProps> = ({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
+            flex: 1,
             justifyContent: "center",
             alignItems: "center",
             paddingHorizontal: sizeStyle.paddingHorizontal,
             paddingVertical: sizeStyle.paddingVertical,
-            minHeight: sizeStyle.minHeight,
+            minHeight: height ? undefined : sizeStyle.minHeight,
           }}
         >
           {renderContent(Platform.OS === "android")}
@@ -687,8 +728,10 @@ const CMButton: React.FC<CMButtonProps> = ({
       style={[
         {
           borderRadius,
-          ...(width !== undefined && { width: width as any }),
           opacity: interactiveOpacity,
+          ...getWidthStyle(),
+          ...getHeightStyle(),
+          ...getAlignmentStyle(),
         },
       ]}
       activeOpacity={0.9}

@@ -128,7 +128,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
                 title={cta}
                 size={isSmallDevice ? "sm" : "md"}
                 onPress={onExplorePress}
-                className="rounded-full bg-primary-500 self-start"
+                width="50%"
               />
             </View>
           </View>
