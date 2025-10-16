@@ -34,7 +34,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         gap: 18,
         paddingLeft: 6,
         paddingRight: 28,
-        paddingVertical: 14,
+        paddingBottom: 14,
       }}
     >
       {categories?.[0]?.children?.map((category) => (

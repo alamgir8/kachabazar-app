@@ -329,31 +329,64 @@ const CMButton: React.FC<CMButtonProps> = ({
     return sizeStyle.radius;
   }, [className, rounded, roundedClass, sizeStyle.minHeight, sizeStyle.radius]);
 
-  const renderContent = () => (
-    <View
-      className={cn(
-        "flex-row items-center justify-center gap-2",
-        contentClassName
-      )}
-    >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={color || config.spinner || "#ffffff"}
-        />
-      ) : (
-        <>
-          {icon && iconPosition === "left" && icon}
-          {(title || children) && (
-            <Text className={textClasses} style={style as TextStyle}>
-              {title || children}
-            </Text>
-          )}
-          {icon && iconPosition === "right" && icon}
-        </>
-      )}
-    </View>
-  );
+  const renderContent = (useInlineStyle = false) => {
+    // For gradient buttons on Android, use inline styles for better compatibility
+    const textStyle = useInlineStyle
+      ? {
+          fontSize:
+            size === "xs"
+              ? 12
+              : size === "sm"
+                ? 14
+                : size === "md"
+                  ? 15
+                  : size === "lg"
+                    ? 16
+                    : 20,
+          fontWeight: "600" as const,
+          color: glass
+            ? "#FFFFFF"
+            : textColor ||
+              (config.text.includes("white")
+                ? "#FFFFFF"
+                : config.text.includes("slate-700")
+                  ? "#334155"
+                  : config.text.includes("primary-600")
+                    ? "#16a34a"
+                    : "#FFFFFF"),
+          ...(style as TextStyle),
+        }
+      : (style as TextStyle);
+
+    return (
+      <View
+        className={cn(
+          "flex-row items-center justify-center gap-2",
+          contentClassName
+        )}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={color || config.spinner || "#ffffff"}
+          />
+        ) : (
+          <>
+            {icon && iconPosition === "left" && icon}
+            {(title || children) &&
+              (useInlineStyle ? (
+                <Text style={textStyle}>{title || children}</Text>
+              ) : (
+                <Text className={textClasses} style={textStyle}>
+                  {title || children}
+                </Text>
+              ))}
+            {icon && iconPosition === "right" && icon}
+          </>
+        )}
+      </View>
+    );
+  };
 
   // ----- GLASS / LIQUID MODE -----
   if (glass) {
@@ -522,7 +555,7 @@ const CMButton: React.FC<CMButtonProps> = ({
             alignItems: "center",
           }}
         >
-          {renderContent()}
+          {renderContent(Platform.OS === "android")}
         </View>
       </TouchableOpacity>
     );
@@ -530,24 +563,31 @@ const CMButton: React.FC<CMButtonProps> = ({
 
   // ----- CLASSIC GRADIENT MODE -----
   if (gradient) {
+    const shadowStyle = Platform.select({
+      ios: {
+        shadowColor: "#22c55e",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    });
+
     return (
       <TouchableOpacity
         onPress={onPress}
         disabled={isDisabled}
-        className={cn(
-          fullWidth && "w-full",
-          w,
-          mx,
-          roundedClass,
-          shadow || "shadow-md"
-        )}
         style={[
-          width !== undefined ? ({ width } as any) : null,
           {
             borderRadius,
             overflow: "hidden",
             opacity: interactiveOpacity,
+            ...(fullWidth && { width: "100%" }),
+            ...(width !== undefined && { width: width as any }),
           },
+          shadowStyle,
         ]}
         activeOpacity={0.88}
       >
@@ -556,7 +596,6 @@ const CMButton: React.FC<CMButtonProps> = ({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            borderRadius,
             justifyContent: "center",
             alignItems: "center",
             paddingHorizontal: sizeStyle.paddingHorizontal,
@@ -564,21 +603,84 @@ const CMButton: React.FC<CMButtonProps> = ({
             minHeight: sizeStyle.minHeight,
           }}
         >
-          {renderContent()}
+          {renderContent(Platform.OS === "android")}
         </LinearGradient>
       </TouchableOpacity>
     );
   }
 
-  // ----- STANDARD BUTTON -----
+  // ----- STANDARD BUTTON (ALL VARIANTS WITH GRADIENT) -----
+  // Convert all standard buttons to use gradient for consistency
+  const shouldUseGradient = variant !== "ghost" && variant !== "outline";
+
+  if (shouldUseGradient) {
+    const shadowStyle = Platform.select({
+      ios: {
+        shadowColor:
+          variant === "primary"
+            ? "#22c55e"
+            : variant === "danger"
+              ? "#ef4444"
+              : variant === "warning"
+                ? "#f59e0b"
+                : variant === "success"
+                  ? "#22c55e"
+                  : "#64748b",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    });
+
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={isDisabled}
+        style={[
+          {
+            borderRadius,
+            overflow: "hidden",
+            opacity: interactiveOpacity,
+            ...(fullWidth && { width: "100%" }),
+            ...(width !== undefined && { width: width as any }),
+          },
+          shadowStyle,
+        ]}
+        activeOpacity={0.88}
+      >
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: sizeStyle.paddingHorizontal,
+            paddingVertical: sizeStyle.paddingVertical,
+            minHeight: sizeStyle.minHeight,
+          }}
+        >
+          {renderContent(Platform.OS === "android")}
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
+  // ----- OUTLINE & GHOST BUTTONS (NO GRADIENT) -----
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
       className={containerClasses}
       style={[
-        width !== undefined ? ({ width } as any) : {},
-        { opacity: interactiveOpacity },
+        {
+          borderRadius,
+          ...(width !== undefined && { width: width as any }),
+          opacity: interactiveOpacity,
+        },
       ]}
       activeOpacity={0.9}
     >

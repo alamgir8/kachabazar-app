@@ -123,7 +123,6 @@ export default function HomeScreen() {
         onPress={() => router.push("/search")}
         className="rounded-full"
         fullWidth
-        glass
       />
     </Screen>
   );

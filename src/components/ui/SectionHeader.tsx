@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, Platform } from "react-native";
 
 import { theme } from "@/theme";
 import { cn } from "@/utils/cn";
@@ -22,24 +22,39 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   className,
   badgeLabel,
 }) => (
-  <View
-    className={cn(
-      "mb-6 flex-row items-end justify-between",
-      className
-    )}
-  >
+  <View className={cn("mb-6 flex-row items-end justify-between", className)}>
     <View className="flex-1">
       {badgeLabel ? (
-        <LinearGradient
-          colors={["rgba(34,197,94,0.16)", "rgba(34,197,94,0.05)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="mb-2 self-start rounded-full px-3 py-1.5"
+        <View
+          style={{
+            marginBottom: 8,
+            alignSelf: "flex-start",
+            borderRadius: 9999,
+            overflow: "hidden",
+          }}
         >
-          <Text className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-primary-700">
-            {badgeLabel}
-          </Text>
-        </LinearGradient>
+          <LinearGradient
+            colors={["rgba(34,197,94,0.16)", "rgba(34,197,94,0.05)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 10,
+                fontWeight: "800",
+                textTransform: "uppercase",
+                letterSpacing: 2.5,
+                color: theme.colors.primary[700],
+              }}
+            >
+              {badgeLabel}
+            </Text>
+          </LinearGradient>
+        </View>
       ) : null}
       <Text className="font-display text-[22px] font-bold text-slate-900">
         {title}
@@ -50,17 +65,48 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     </View>
     {actionLabel ? (
       <Pressable
-        className="flex-row items-center rounded-full border border-emerald-100/80 bg-white/80 px-3 py-1.5 active:bg-primary-50/60"
         onPress={onActionPress}
+        style={({ pressed }) => [
+          {
+            borderRadius: 9999,
+            overflow: "hidden",
+            opacity: pressed ? 0.9 : 1,
+          },
+          Platform.OS === "ios" && {
+            shadowColor: "#22c55e",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 6,
+          },
+          Platform.OS === "android" && {
+            elevation: 3,
+          },
+        ]}
       >
-        <Text className="mr-1 text-[13px] font-semibold text-primary-600">
-          {actionLabel}
-        </Text>
-        <Feather
-          name="arrow-right"
-          size={14}
-          color={theme.colors.primary[600]}
-        />
+        <LinearGradient
+          colors={["#22c55e", "#16a34a", "#15803d"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            minHeight: 28,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: "600",
+              color: "#FFFFFF",
+              marginRight: 4,
+            }}
+          >
+            {actionLabel}
+          </Text>
+          <Feather name="arrow-right" size={14} color="#FFFFFF" />
+        </LinearGradient>
       </Pressable>
     ) : null}
   </View>

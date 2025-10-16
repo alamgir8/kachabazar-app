@@ -49,7 +49,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
       }}
     >
       <View
-        className="overflow-hidden rounded-3xl mb-10"
+        className="overflow-hidden rounded-3xl my-8"
         style={{
           borderWidth: 1,
           borderColor: "rgba(34, 197, 94, 0.2)",
