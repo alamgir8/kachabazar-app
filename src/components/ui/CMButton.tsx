@@ -21,7 +21,15 @@ type Variant =
   | "ghost"
   | "success"
   | "danger"
-  | "warning";
+  | "warning"
+  | "lime"
+  | "amber"
+  | "teal"
+  | "cyan"
+  | "sky"
+  | "blue"
+  | "purple"
+  | "pink";
 
 interface CMButtonProps {
   title?: React.ReactNode;
@@ -210,6 +218,102 @@ const variantConfig: Record<
       "rgba(245,158,11,0.35)",
       "rgba(217,119,6,0.10)",
       "rgba(217,119,6,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  lime: {
+    bg: "bg-lime-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#BEF264", "#84CC16", "#65A30D"],
+    hue: [
+      "rgba(132,204,22,0.35)",
+      "rgba(101,163,13,0.10)",
+      "rgba(101,163,13,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  amber: {
+    bg: "bg-amber-600",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#FCD34D", "#F59E0B", "#D97706"],
+    hue: [
+      "rgba(245,158,11,0.35)",
+      "rgba(217,119,6,0.10)",
+      "rgba(217,119,6,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  teal: {
+    bg: "bg-teal-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#5EEAD4", "#14B8A6", "#0D9488"],
+    hue: [
+      "rgba(20,184,166,0.35)",
+      "rgba(13,148,136,0.10)",
+      "rgba(13,148,136,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  cyan: {
+    bg: "bg-cyan-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#67E8F9", "#06B6D4", "#0891B2"],
+    hue: [
+      "rgba(6,182,212,0.35)",
+      "rgba(8,145,178,0.10)",
+      "rgba(8,145,178,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  sky: {
+    bg: "bg-sky-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#7DD3FC", "#0EA5E9", "#0284C7"],
+    hue: [
+      "rgba(14,165,233,0.35)",
+      "rgba(2,132,199,0.10)",
+      "rgba(2,132,199,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  blue: {
+    bg: "bg-blue-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#60A5FA", "#3B82F6", "#2563EB"],
+    hue: [
+      "rgba(59,130,246,0.35)",
+      "rgba(37,99,235,0.10)",
+      "rgba(37,99,235,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  purple: {
+    bg: "bg-purple-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#C084FC", "#A855F7", "#9333EA"],
+    hue: [
+      "rgba(168,85,247,0.35)",
+      "rgba(147,51,234,0.10)",
+      "rgba(147,51,234,0.05)",
+    ],
+    spinner: "#FFFFFF",
+  },
+  pink: {
+    bg: "bg-pink-500",
+    text: "text-white",
+    border: "border-transparent",
+    gradient: ["#F9A8D4", "#EC4899", "#DB2777"],
+    hue: [
+      "rgba(236,72,153,0.35)",
+      "rgba(219,39,119,0.10)",
+      "rgba(219,39,119,0.05)",
     ],
     spinner: "#FFFFFF",
   },
@@ -592,9 +696,10 @@ const CMButton: React.FC<CMButtonProps> = ({
 
         <View
           style={{
+            flex: 1,
             paddingHorizontal: sizeStyle.paddingHorizontal,
             paddingVertical: sizeStyle.paddingVertical,
-            minHeight: sizeStyle.minHeight,
+            minHeight: height ? undefined : sizeStyle.minHeight,
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -661,18 +766,29 @@ const CMButton: React.FC<CMButtonProps> = ({
   const shouldUseGradient = variant !== "ghost" && variant !== "outline";
 
   if (shouldUseGradient) {
+    // Map variant to shadow color
+    const getShadowColor = () => {
+      const shadowMap: Record<string, string> = {
+        primary: "#22c55e",
+        success: "#22c55e",
+        danger: "#ef4444",
+        warning: "#f59e0b",
+        lime: "#84cc16",
+        amber: "#f59e0b",
+        teal: "#14b8a6",
+        cyan: "#06b6d4",
+        sky: "#0ea5e9",
+        blue: "#3b82f6",
+        purple: "#a855f7",
+        pink: "#ec4899",
+        secondary: "#64748b",
+      };
+      return shadowMap[variant] || "#64748b";
+    };
+
     const shadowStyle = Platform.select({
       ios: {
-        shadowColor:
-          variant === "primary"
-            ? "#22c55e"
-            : variant === "danger"
-              ? "#ef4444"
-              : variant === "warning"
-                ? "#f59e0b"
-                : variant === "success"
-                  ? "#22c55e"
-                  : "#64748b",
+        shadowColor: getShadowColor(),
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 8,

@@ -122,7 +122,7 @@ export default function HomeScreen() {
         <CMButton
           title="Browse all products"
           onPress={() => router.push("/search")}
-          variant="success"
+          variant="teal"
           rounded="rounded-sm"
           width="50%"
           height="10px"

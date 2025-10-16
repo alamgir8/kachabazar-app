@@ -13,6 +13,7 @@ import {
   getLocalizedValue,
   getProductImage,
 } from "@/utils";
+import { CMButton } from "../ui";
 
 interface ProductCardProps {
   product: Product;
@@ -144,16 +145,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </Pressable>
       </Link>
 
-      <Pressable
+      <CMButton
+        title="Add to cart"
         onPress={handleAdd}
-        className="mx-4 mb-4 flex-row items-center justify-center rounded-full bg-emerald-500 py-3 active:scale-95"
-        accessibilityLabel="Add to cart"
-      >
-        <Text className="mr-2 text-[13px] font-bold uppercase tracking-widest text-white">
-          Add to cart
-        </Text>
-        <Feather name="plus" size={18} color="#ffffff" />
-      </Pressable>
+        variant="cyan"
+        rounded="rounded-sm"
+        width="80%"
+        size="xs"
+        alignSelf="center"
+      />
     </View>
   );
 };

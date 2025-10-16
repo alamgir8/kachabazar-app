@@ -128,7 +128,8 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
                 title={cta}
                 size={isSmallDevice ? "sm" : "md"}
                 onPress={onExplorePress}
-                width="50%"
+                width="60%"
+                variant="teal"
               />
             </View>
           </View>
