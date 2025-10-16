@@ -52,17 +52,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       style={{
         width: cardWidth,
         flex: cardWidth ? undefined : 1,
+        shadowColor: "rgba(22, 163, 74, 0.18)",
+        shadowOffset: { width: 0, height: 18 },
+        shadowOpacity: 0.16,
+        shadowRadius: 28,
+        elevation: 12,
       }}
-      className="rounded-2xl bg-white border border-slate-100 overflow-hidden"
+      className="overflow-hidden rounded-[32px] border border-white/70 bg-white/95"
     >
       <Link href={`/product/${product.slug}`} asChild>
-        <Pressable className="active:opacity-90">
-          {/* Product Image Container with modern gradient */}
-          <View
-            className="relative w-full bg-gradient-to-b from-slate-50 to-white"
-            style={{ height: imageContainerHeight }}
+        <Pressable className="active:opacity-95">
+          <LinearGradient
+            colors={["rgba(255,255,255,0.98)", "rgba(240,253,244,0.95)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="relative w-full"
+            style={{
+              height: imageContainerHeight,
+            }}
           >
-            <View className="h-full w-full items-center justify-center p-3">
+            <View className="h-full w-full items-center justify-center p-4">
               {image ? (
                 <Image
                   source={{ uri: image }}
@@ -70,103 +79,81 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   resizeMode="contain"
                 />
               ) : (
-                <View className="h-16 w-16 items-center justify-center rounded-xl bg-primary-50">
+                <LinearGradient
+                  colors={["rgba(16,185,129,0.16)", "rgba(16,185,129,0.05)"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="h-16 w-16 items-center justify-center rounded-2xl"
+                >
                   <Feather name="image" size={28} color="#10b981" />
-                </View>
+                </LinearGradient>
               )}
             </View>
 
-            {/* Discount Badge - Top Right */}
             {discount > 0 ? (
-              <View className="absolute right-2 top-2">
-                <LinearGradient
-                  colors={["#ef4444", "#dc2626"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  className="rounded-lg px-2 py-1 shadow-lg"
-                  style={{
-                    shadowColor: "#dc2626",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                  }}
-                >
-                  <Text className="text-xs font-bold text-white">
-                    -{discount}%
-                  </Text>
-                </LinearGradient>
-              </View>
+              <LinearGradient
+                colors={["#f97316", "#f59e0b"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="absolute right-3 top-3 rounded-full px-3 py-1.5"
+              >
+                <Text className="text-[11px] font-extrabold uppercase tracking-wider text-white">
+                  {discount}% OFF
+                </Text>
+              </LinearGradient>
             ) : null}
 
-            {/* Stock badge - Top Left */}
             {(product.stock ?? 0) < 10 && (product.stock ?? 0) > 0 ? (
-              <View className="absolute left-2 top-2 rounded-lg bg-amber-500 px-2 py-1">
-                <Text className="text-xs font-semibold text-white">
-                  Only {product.stock} left
+              <View className="absolute left-3 top-3 rounded-full bg-emerald-100/90 px-3 py-1.5">
+                <Text className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+                  {product.stock} left
                 </Text>
               </View>
             ) : null}
-          </View>
+          </LinearGradient>
 
-          {/* Product Info with improved spacing */}
-          <View className="px-3 pb-3 pt-2.5">
+          <View className="px-4 pb-4 pt-3">
             <Text
               numberOfLines={2}
-              className="mb-1 min-h-[36px] text-sm font-semibold leading-tight text-slate-900"
+              className="text-[15px] font-semibold leading-tight text-slate-900"
             >
               {getLocalizedValue(product.title)}
             </Text>
 
-            {variantLabel && (
-              <View className="mb-2 inline-flex self-start rounded-md bg-slate-100 px-1.5 py-0.5">
-                <Text className="text-[10px] font-medium text-slate-600">
+            {variantLabel ? (
+              <View className="mt-2 self-start rounded-full bg-slate-100 px-3 py-1">
+                <Text className="text-[11px] font-semibold text-slate-600">
                   {variantLabel}
                 </Text>
               </View>
-            )}
+            ) : null}
 
-            {/* Price Row with better alignment */}
-            <View className="flex-row items-end justify-between mt-1">
-              <View className="flex-1">
-                <View className="flex-row items-baseline">
-                  <Text className="text-lg font-bold text-primary-600">
-                    {formatCurrency(price, currency)}
+            <View className="mt-3 flex-row items-end justify-between">
+              <View>
+                <Text className="text-[20px] font-extrabold text-emerald-600">
+                  {formatCurrency(price, currency)}
+                </Text>
+                {originalPrice > price ? (
+                  <Text className="mt-0.5 text-[12px] font-semibold text-slate-400 line-through">
+                    {formatCurrency(originalPrice, currency)}
                   </Text>
-                  {originalPrice > price && (
-                    <Text className="ml-1.5 text-xs text-slate-400 line-through">
-                      {formatCurrency(originalPrice, currency)}
-                    </Text>
-                  )}
-                </View>
+                ) : null}
               </View>
-
-              {/* Add to Cart Button */}
-              <Pressable
-                onPress={handleAdd}
-                className="active:scale-95 rounded-md"
-                accessibilityLabel="Add to cart"
-              >
-                <LinearGradient
-                  colors={["#10b981", "#059669"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  className="h-9 w-9 items-center justify-center rounded-md shadow-lg"
-                  style={{
-                    shadowColor: "#059669",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                    elevation: 3,
-                    borderRadius: 2,
-                  }}
-                >
-                  <Feather name="plus" size={18} color="#ffffff" />
-                </LinearGradient>
-              </Pressable>
             </View>
           </View>
         </Pressable>
       </Link>
+
+      <Pressable
+        onPress={handleAdd}
+        className="mx-4 mb-4 flex-row items-center justify-center rounded-full bg-emerald-500 py-3 active:scale-95"
+        accessibilityLabel="Add to cart"
+      >
+        <Text className="mr-2 text-[13px] font-bold uppercase tracking-widest text-white">
+          Add to cart
+        </Text>
+        <Feather name="plus" size={18} color="#ffffff" />
+      </Pressable>
     </View>
   );
 };

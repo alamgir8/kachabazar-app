@@ -35,7 +35,8 @@ import {
 } from "@/utils";
 import { theme } from "@/theme";
 
-const { width } = Dimensions.get("window");
+const windowWidth = Dimensions.get("window").width;
+const carouselWidth = Math.max(windowWidth - 48, 320);
 
 export default function ProductScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -187,13 +188,13 @@ export default function ProductScreen() {
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
-    <Screen noHorizontalPadding scrollable>
+    <Screen scrollable>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: 160, paddingHorizontal: 24, paddingTop: 16 }}
       >
         {/* Header with Back Button */}
-        <View className="absolute top-6 left-4 z-10 flex-row items-center justify-between w-full pr-8">
+        <View className="absolute top-6 left-6 right-6 z-10 flex-row items-center justify-between">
           <BackButton />
           <View className="flex-row gap-2">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
@@ -211,10 +212,10 @@ export default function ProductScreen() {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            style={{ width }}
+            style={{ width: carouselWidth }}
             onScroll={(event) => {
               const index = Math.round(
-                event.nativeEvent.contentOffset.x / width
+                event.nativeEvent.contentOffset.x / carouselWidth
               );
               setActiveImageIndex(index);
             }}
@@ -223,7 +224,7 @@ export default function ProductScreen() {
             {displayCarouselImages.map((img, index) => (
               <View
                 key={`${img}-${index}`}
-                style={{ width }}
+                style={{ width: carouselWidth }}
                 className="items-center justify-center bg-gradient-to-b from-slate-50 to-white py-16"
               >
                 {img ? (
@@ -277,8 +278,17 @@ export default function ProductScreen() {
         </View>
 
         {/* Product Info Card */}
-        <View className="px-4 -mt-6">
-          <View className="rounded-3xl bg-white p-5 shadow-xl border border-slate-100">
+        <View className="-mt-12">
+          <View
+            className="rounded-[40px] border border-white/70 bg-white/96 px-6 py-6"
+            style={{
+              shadowColor: "rgba(15,118,110,0.16)",
+              shadowOffset: { width: 0, height: 24 },
+              shadowOpacity: 0.18,
+              shadowRadius: 36,
+              elevation: 16,
+            }}
+          >
             {/* Category & Rating */}
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
@@ -306,7 +316,7 @@ export default function ProductScreen() {
             </View>
 
             {/* Title */}
-            <Text className="text-2xl font-bold text-slate-900 leading-tight mb-1">
+            <Text className="mb-1 text-[28px] font-extrabold leading-tight text-slate-900">
               {displayName}
             </Text>
 
@@ -319,17 +329,17 @@ export default function ProductScreen() {
             )}
 
             {/* Price & Stock Row */}
-            <View className="mt-4 flex-row items-end justify-between pb-4 border-b border-slate-100">
+            <View className="mt-6 flex-row items-end justify-between rounded-[28px] border border-emerald-100/60 bg-emerald-50/40 px-4 py-4">
               <View className="flex-1">
-                <Text className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                <Text className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-600">
                   Price
                 </Text>
                 <View className="flex-row items-baseline gap-2">
-                  <Text className="text-3xl font-bold text-primary-600">
+                  <Text className="text-3xl font-extrabold text-emerald-600">
                     {formatCurrency(price, currency)}
                   </Text>
                   {originalPrice > price && (
-                    <Text className="text-base text-slate-400 line-through">
+                    <Text className="text-base font-semibold text-slate-400 line-through">
                       {formatCurrency(originalPrice, currency)}
                     </Text>
                   )}
@@ -358,7 +368,7 @@ export default function ProductScreen() {
             </View>
 
             {/* Quantity & Add to Cart */}
-            <View className="mt-5 gap-3">
+            <View className="mt-6 gap-4">
               {/* Product Variants/Combinations */}
               {variantTitle && variantTitle.length > 0 && (
                 <View className="mb-3">
@@ -407,22 +417,25 @@ export default function ProductScreen() {
                 </View>
               )}
 
-              <View className="flex-row items-center gap-2">
-                <Text className="text-sm font-semibold text-slate-700">
-                  Qty:
-                </Text>
-                <QuantityStepper
-                  value={quantity}
-                  onIncrement={() => setQuantity((prev) => prev + 1)}
-                  onDecrement={() =>
-                    setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
-                  }
-                />
+              <View className="flex-row items-center gap-3">
+                <View className="rounded-[28px] border border-white/70 bg-white/95 px-4 py-3">
+                  <Text className="text-[12px] font-semibold uppercase tracking-wider text-slate-500">
+                    Qty
+                  </Text>
+                  <QuantityStepper
+                    value={quantity}
+                    onIncrement={() => setQuantity((prev) => prev + 1)}
+                    onDecrement={() =>
+                      setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
+                    }
+                  />
+                </View>
                 <EnhancedButton
-                  title="Add to Cart"
+                  title="Add to cart"
                   onPress={handleAddToCartClick}
-                  className="flex-1"
+                  className="flex-1 rounded-full"
                   size="lg"
+                  glass
                   disabled={stock === 0}
                 />
               </View>
@@ -430,7 +443,16 @@ export default function ProductScreen() {
           </View>
 
           {/* Description with Toggle */}
-          <View className="mt-4 rounded-3xl bg-white p-6 shadow-lg border border-slate-100">
+          <View
+            className="mt-6 rounded-[32px] border border-white/70 bg-white/96 px-5 py-6"
+            style={{
+              shadowColor: "rgba(15,118,110,0.12)",
+              shadowOffset: { width: 0, height: 18 },
+              shadowOpacity: 0.16,
+              shadowRadius: 28,
+              elevation: 12,
+            }}
+          >
             <View className="flex-row items-center gap-2 mb-3">
               <Feather name="file-text" size={16} color="#10b981" />
               <Text className="text-base font-bold text-slate-900">

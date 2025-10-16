@@ -78,7 +78,7 @@ export default function CategoriesScreen() {
   return (
     <Screen innerClassName="px-0">
       <FlatList
-        data={categoriesQuery.data ?? []}
+        data={categoriesQuery.data?.[0]?.children ?? []}
         keyExtractor={(item) => item._id}
         numColumns={2}
         refreshControl={

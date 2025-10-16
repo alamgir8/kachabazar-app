@@ -14,28 +14,27 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
   onSeeAll,
 }) => (
   <>
-    <View className="px-5">
-      <SectionHeader
-        title="Shop by category"
-        subtitle="Discover curated collections"
-        actionLabel={
-          categories[0] &&
-          categories[0].children &&
-          categories[0].children.length > 0
-            ? "See all"
-            : undefined
-        }
-        onActionPress={onSeeAll}
-        badgeLabel={undefined}
-      />
-    </View>
+    <SectionHeader
+      title="Shop by category"
+      subtitle="Discover curated collections"
+      actionLabel={
+        categories[0] &&
+        categories[0].children &&
+        categories[0].children.length > 0
+          ? "See all"
+          : undefined
+      }
+      onActionPress={onSeeAll}
+      badgeLabel={undefined}
+    />
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
-        gap: 16,
-        paddingHorizontal: 20,
-        paddingVertical: 12,
+        gap: 18,
+        paddingLeft: 6,
+        paddingRight: 28,
+        paddingVertical: 14,
       }}
     >
       {categories?.[0]?.children?.map((category) => (

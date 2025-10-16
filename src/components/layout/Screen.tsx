@@ -1,4 +1,11 @@
-import { ScrollView, ScrollViewProps, View, ViewProps } from "react-native";
+import {
+  RefreshControl,
+  RefreshControlProps,
+  ScrollView,
+  ScrollViewProps,
+  View,
+  ViewProps,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -13,6 +20,10 @@ interface ScreenProps extends ViewProps {
   innerClassName?: string;
   noPadding?: boolean; // Allow opt-out of default padding
   noHorizontalPadding?: boolean; // Allow opt-out of horizontal padding only
+  refreshControl?: React.ReactElement<
+    RefreshControlProps,
+    typeof RefreshControl
+  >;
 }
 
 export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
@@ -25,6 +36,7 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
   innerClassName,
   noPadding = false,
   noHorizontalPadding = false,
+  refreshControl,
   ...props
 }) => {
   const insets = useSafeAreaInsets();
@@ -39,14 +51,14 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
   const innerPaddingClass = noPadding
     ? ""
     : noHorizontalPadding
-      ? "py-4"
-      : "px-4 py-4";
+      ? "py-6"
+      : "px-6 py-6";
 
   return (
     <View className="flex-1" style={{ paddingTop, paddingLeft, paddingRight }}>
       {bgColor === "gradient" && (
         <LinearGradient
-          colors={["#f4f6fb", "#f1fcfa", "#ffffff"]}
+          colors={["#f7fafc", "#f5fff6", "#ffffff"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           className="absolute inset-0"
@@ -59,28 +71,45 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
 
       {bgColor === "gradient" ? (
         <>
-          <View
+          <LinearGradient
+            colors={["rgba(22,197,94,0.12)", "rgba(22,197,94,0.04)", "transparent"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
               position: "absolute",
-              right: -120,
-              top: theme.spacing["4xl"],
-              height: 240,
-              width: 240,
-              borderRadius: 120,
-              backgroundColor: theme.colors.accent[100],
-              opacity: 0.45,
+              top: theme.spacing["5xl"],
+              right: -140,
+              width: 320,
+              height: 380,
+              borderRadius: 180,
+              transform: [{ rotate: "-18deg" }],
             }}
           />
-          <View
+          <LinearGradient
+            colors={["rgba(134,239,172,0.28)", "rgba(134,239,172,0.12)", "transparent"]}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
             style={{
               position: "absolute",
-              left: -100,
-              top: theme.spacing["5xl"],
-              height: 210,
-              width: 210,
-              borderRadius: 105,
-              backgroundColor: theme.colors.primary[100],
-              opacity: 0.4,
+              bottom: -220,
+              left: -160,
+              width: 420,
+              height: 420,
+              borderRadius: 210,
+            }}
+          />
+          <LinearGradient
+            colors={["rgba(241,245,249,0.85)", "rgba(244,246,251,0.45)", "transparent"]}
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
+            style={{
+              position: "absolute",
+              top: -140,
+              left: -120,
+              width: 360,
+              height: 360,
+              borderRadius: 180,
+              transform: [{ rotate: "12deg" }],
             }}
           />
         </>
@@ -89,6 +118,7 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
         className={cn("flex-1", className)}
         contentContainerClassName={contentContainerClassName}
         extraPaddingBottom={paddingBottom}
+        refreshControl={refreshControl}
         {...props}
       >
         <View
@@ -111,13 +141,9 @@ interface WrapperProps extends ScrollViewProps {
   extraPaddingBottom?: number;
 }
 
-const ScrollableWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
-  children,
-  className,
-  contentContainerClassName,
-  extraPaddingBottom = 0,
-  ...props
-}) => (
+const ScrollableWrapper: React.FC<
+  React.PropsWithChildren<WrapperProps>
+> = ({ children, className, contentContainerClassName, extraPaddingBottom = 0, ...props }) => (
   <ScrollView
     className={className}
     contentContainerClassName={cn("pb-20", contentContainerClassName)}
@@ -135,6 +161,7 @@ const ViewWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
   children,
   className,
   extraPaddingBottom = 0,
+  refreshControl: _refreshControl,
   ...props
 }) => (
   <View

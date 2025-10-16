@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { RefreshControl, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -8,13 +8,13 @@ import { Highlights } from "@/components/home/Highlights";
 import { Hero } from "@/components/home/Hero";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
-import { Button, EnhancedButton } from "@/components/ui";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useSettings } from "@/contexts/SettingsContext";
+import CMButton from "@/components/ui/CMButton";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function HomeScreen() {
     [productsQuery.data?.discountedProducts]
   );
 
-  console.log("categoriesQuery?.data", categoriesQuery?.data);
+  // console.log("categoriesQuery?.data", categoriesQuery?.data);
 
   if (isLoading) {
     return <LoadingState message="Curating fresh picks..." />;
@@ -75,75 +75,57 @@ export default function HomeScreen() {
   }
 
   return (
-    <Screen innerClassName="px-0" scrollable edges={["bottom"]} bgColor="white">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={false} onRefresh={refresh} />
-        }
-        contentContainerStyle={{
-          paddingBottom: 100,
-        }}
-      >
-        <View className="pt-8">
-          <AppHeader />
-        </View>
+    <Screen
+      scrollable
+      edges={["bottom"]}
+      refreshControl={
+        <RefreshControl refreshing={false} onRefresh={refresh} tintColor="#10b981" />
+      }
+      contentContainerClassName="gap-8 pb-24"
+    >
+      <AppHeader />
 
-        <View className="mt-2">
-          <SearchBar
-            placeholder="Search for fruits, veggies, snacks..."
-            onSubmitSearch={onSearchSubmit}
-            containerClassName="mb-4"
-          />
-        </View>
+      <SearchBar
+        placeholder="Search for fruits, veggies, snacks..."
+        onSubmitSearch={onSearchSubmit}
+      />
 
-        <View className="mb-5">
-          <Hero onExplorePress={handleExplorePress} />
-        </View>
+      <Hero onExplorePress={handleExplorePress} />
 
-        <View className="mb-6">
-          <CategoryStrip
-            onSeeAll={handleExplorePress}
-            categories={categoriesQuery?.data ?? []}
-          />
-        </View>
+      <View className="gap-8">
+        <CategoryStrip
+          onSeeAll={handleExplorePress}
+          categories={categoriesQuery?.data ?? []}
+        />
 
-        <View className="mb-6">
-          <Highlights />
-        </View>
+        <Highlights />
 
-        <View className="mb-6">
-          <ProductCarousel
-            title="Trending now"
-            subtitle="Loved by our community"
-            products={popularProducts}
-            onSeeAll={() =>
-              router.push({ pathname: "/search", params: { sort: "popular" } })
-            }
-            badgeLabel="Featured"
-          />
-        </View>
+        <ProductCarousel
+          title="Trending now"
+          subtitle="Loved by our community"
+          products={popularProducts}
+          onSeeAll={() =>
+            router.push({ pathname: "/search", params: { sort: "popular" } })
+          }
+          badgeLabel="Featured"
+        />
 
-        <View className="mb-6">
-          <ProductCarousel
-            title="Limited time offers"
-            subtitle="Grab them before they are gone"
-            products={discountedProducts}
-            onSeeAll={() => router.push("/offers")}
-            badgeLabel="Offers"
-          />
-        </View>
+        <ProductCarousel
+          title="Limited time offers"
+          subtitle="Grab them before they are gone"
+          products={discountedProducts}
+          onSeeAll={() => router.push("/offers")}
+          badgeLabel="Offers"
+        />
+      </View>
 
-        <View className="px-4">
-          <Button
-            title="Browse all products"
-            size="md"
-            onPress={() => router.push("/search")}
-            className="self-start"
-            fullWidth
-          />
-        </View>
-      </ScrollView>
+      <CMButton
+        title="Browse all products"
+        onPress={() => router.push("/search")}
+        className="rounded-full"
+        fullWidth
+        glass
+      />
     </Screen>
   );
 }

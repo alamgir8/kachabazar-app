@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
   Pressable,
@@ -60,36 +61,59 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onChangeText?.(text);
   };
 
+  const hasValue = value.length > 0;
+
+  const containerShadow = useMemo(
+    () => ({
+      shadowColor: "rgba(34,197,94,0.22)",
+      shadowOffset: { width: 0, height: 18 },
+      shadowOpacity: 0.15,
+      shadowRadius: 28,
+      elevation: 14,
+    }),
+    []
+  );
+
   return (
-    <View
+    <LinearGradient
+      colors={["rgba(255,255,255,0.9)", "rgba(240,253,244,0.92)"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       className={cn(
-        "rounded-xl bg-white border border-slate-200 shadow-sm",
+        "rounded-3xl border border-white/70 bg-white/80",
         containerClassName
       )}
+      style={containerShadow}
     >
-      <View className="flex-row items-center px-3 py-2">
-        <Feather name="search" size={20} color="#10b981" />
+      <View className="flex-row items-center px-4 py-3">
+        <View className="h-9 w-9 items-center justify-center rounded-full bg-emerald-100/80">
+          <Feather name="search" size={20} color="#059669" />
+        </View>
         <TextInput
           className={cn(
-            "ml-3 flex-1 font-medium text-sm text-slate-900 leading-5",
+            "ml-3 flex-1 text-[15px] font-semibold text-slate-900",
             className
           )}
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor="#9ca3af"
           value={value}
           onChangeText={handleChangeText}
           onSubmitEditing={handleSubmit}
           returnKeyType="search"
           {...props}
         />
-        {value.length > 0 && (
+        {hasValue ? (
           <Pressable
             onPress={handleClear}
-            className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-slate-100 active:bg-slate-200"
+            className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-slate-100 active:bg-slate-200"
           >
-            <Feather name="x" size={14} color="#64748b" />
+            <Feather name="x" size={16} color="#64748b" />
           </Pressable>
+        ) : (
+          <View className="ml-3 h-9 w-9 items-center justify-center rounded-full bg-white/60">
+            <Feather name="mic" size={18} color="#94a3b8" />
+          </View>
         )}
       </View>
-    </View>
+    </LinearGradient>
   );
 };

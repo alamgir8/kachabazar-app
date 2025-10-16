@@ -2,8 +2,6 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, View } from "react-native";
 
-import { theme } from "@/theme";
-
 interface HighlightItem {
   icon: React.ComponentProps<typeof Feather>["name"];
   title: string;
@@ -35,36 +33,39 @@ const defaultHighlights: HighlightItem[] = [
 export const Highlights: React.FC<{ items?: HighlightItem[] }> = ({
   items = defaultHighlights,
 }) => (
-  <View className="gap-3">
+  <View className="gap-4">
     {items.map((item, index) => (
-      <View
+      <LinearGradient
         key={`${item.title}-${index}`}
-        className="flex-row items-center rounded-2xl bg-white p-4"
+        colors={[item.palette[0], item.palette[1]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="flex-row items-center rounded-[28px] border border-white/70 px-5 py-4"
         style={{
-          shadowColor: "rgba(22, 163, 74, 0.1)",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 3,
+          shadowColor: "rgba(22, 163, 74, 0.16)",
+          shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 0.18,
+          shadowRadius: 20,
+          elevation: 8,
         }}
       >
-        <View
-          className="mr-4 h-12 w-12 items-center justify-center rounded-full"
-          style={{
-            backgroundColor: item.palette[0],
-          }}
+        <LinearGradient
+          colors={["rgba(255,255,255,0.85)", "rgba(255,255,255,0.3)"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="mr-4 h-14 w-14 items-center justify-center rounded-2xl"
         >
           <Feather name={item.icon} size={22} color="#16a34a" />
-        </View>
+        </LinearGradient>
         <View className="flex-1">
-          <Text className="mb-1 text-[14px] font-extrabold text-slate-900">
+          <Text className="mb-1 text-[15px] font-extrabold text-slate-900">
             {item.title}
           </Text>
-          <Text className="text-[12px] leading-5 text-slate-600">
+          <Text className="text-[12px] leading-5 text-slate-700/80">
             {item.subtitle}
           </Text>
         </View>
-      </View>
+      </LinearGradient>
     ))}
   </View>
 );

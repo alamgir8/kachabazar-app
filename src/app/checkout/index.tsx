@@ -36,6 +36,37 @@ interface CheckoutFormValues {
   paymentMethod: "Cash" | "Card" | "RazorPay";
 }
 
+const shippingOptions = [
+  {
+    value: "Standard",
+    title: "Standard delivery",
+    description: "Arrives within 30-45 minutes with temperature-controlled bags.",
+  },
+  {
+    value: "Express",
+    title: "Express priority",
+    description: "Limited availability — prioritised picking and doorstep drop-off.",
+  },
+];
+
+const paymentMethods = [
+  {
+    value: "Cash" as const,
+    title: "Cash on delivery",
+    description: "Pay with cash or mobile wallet when your shopper arrives.",
+  },
+  {
+    value: "Card" as const,
+    title: "Card (coming soon)",
+    description: "Secure card payments launch shortly.",
+  },
+  {
+    value: "RazorPay" as const,
+    title: "Razorpay (coming soon)",
+    description: "Frictionless UPI and wallet checkout.",
+  },
+];
+
 export default function CheckoutScreen() {
   const router = useRouter();
   const {
@@ -139,6 +170,10 @@ export default function CheckoutScreen() {
           <EnhancedButton
             title="Login"
             className="mt-6"
+            glass={true}
+            variant="primary"
+            size="lg"
+            fullWidth
             onPress={() => router.push("/auth/login")}
           />
         </View>
@@ -159,6 +194,10 @@ export default function CheckoutScreen() {
           <EnhancedButton
             title="Browse products"
             className="mt-6"
+            glass={true}
+            variant="primary"
+            size="lg"
+            fullWidth
             onPress={() => router.push("/search")}
           />
         </View>
@@ -175,232 +214,260 @@ export default function CheckoutScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen innerClassName="px-0" scrollable>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 60,
-          }}
+      <Screen
+        scrollable
+        edges={["bottom"]}
+        contentContainerClassName="gap-8 pb-28"
+      >
+        <View className="flex-row items-center justify-between">
+          <BackButton />
+          <View className="flex-1 pl-3">
+            <Text className="text-[12px] font-semibold uppercase tracking-[0.3em] text-primary-500">
+              Checkout
+            </Text>
+            <Text className="mt-1 font-display text-[28px] font-extrabold text-slate-900">
+              Almost there
+            </Text>
+            <Text className="mt-1 text-[12px] text-slate-500">
+              Provide delivery details and confirm your order.
+            </Text>
+          </View>
+        </View>
+
+        <CheckoutSection
+          eyebrow="Shipping details"
+          headline="Where should we deliver?"
+          description="Double-check your contact info so we can hand off your groceries without a hitch."
         >
-          <View className="space-y-1">
-            <View className="flex-row mb-2">
-              <BackButton />
-            </View>
-
-            <CheckoutSection
-              eyebrow="Shipping details"
-              headline="Where should we deliver?"
-              description="Double-check your contact info so we can hand off your groceries without a hitch."
-            >
-              <View>
-                <View className="flex-row gap-4">
-                  <Controller
-                    control={control}
-                    name="firstName"
-                    rules={{ required: "First name is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <TextInputField
-                        label="First name"
-                        placeholder="John"
-                        value={value}
-                        onChangeText={onChange}
-                        error={errors.firstName?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="lastName"
-                    rules={{ required: "Last name is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <TextInputField
-                        label="Last name"
-                        placeholder="Doe"
-                        value={value}
-                        onChangeText={onChange}
-                        error={errors.lastName?.message}
-                      />
-                    )}
-                  />
-                </View>
-
-                <Controller
-                  control={control}
-                  name="email"
-                  rules={{ required: "Email is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInputField
-                      label="Email"
-                      placeholder="john@kachabazar.com"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.email?.message}
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name="contact"
-                  rules={{ required: "Contact number is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInputField
-                      label="Phone number"
-                      placeholder="(+880)"
-                      keyboardType="phone-pad"
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.contact?.message}
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name="address"
-                  rules={{ required: "Address is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInputField
-                      label="Street address"
-                      placeholder="House 57, Road 25, Gulshan"
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.address?.message}
-                    />
-                  )}
-                />
-
-                <View className="flex-row gap-4">
-                  <Controller
-                    control={control}
-                    name="city"
-                    rules={{ required: "City is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <TextInputField
-                        label="City"
-                        placeholder="Dhaka"
-                        value={value}
-                        onChangeText={onChange}
-                        error={errors.city?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="country"
-                    rules={{ required: "Country is required" }}
-                    render={({ field: { onChange, value } }) => (
-                      <TextInputField
-                        label="Country"
-                        placeholder="Bangladesh"
-                        value={value}
-                        onChangeText={onChange}
-                        error={errors.country?.message}
-                      />
-                    )}
-                  />
-                </View>
-
-                <Controller
-                  control={control}
-                  name="zipCode"
-                  rules={{ required: "ZIP code is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInputField
-                      label="Postal code"
-                      placeholder="1212"
-                      keyboardType="number-pad"
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.zipCode?.message}
-                    />
-                  )}
-                />
-              </View>
-            </CheckoutSection>
-
-            <CheckoutSection
-              eyebrow="Payment"
-              headline="Choose how to pay"
-              description="Only cash on delivery is available right now—digital payments are on the way."
-            >
+          <View>
+            <View className="flex-row gap-4">
               <Controller
                 control={control}
-                name="paymentMethod"
+                name="firstName"
+                rules={{ required: "First name is required" }}
                 render={({ field: { onChange, value } }) => (
-                  <View className="space-y-3">
-                    {[
-                      {
-                        value: "Cash" as const,
-                        title: "Cash on delivery",
-                        description:
-                          "Pay with cash or mobile wallet when your shopper arrives.",
-                      },
-                      {
-                        value: "Card" as const,
-                        title: "Card (coming soon)",
-                        description: "Secure card payments launch shortly.",
-                      },
-                      {
-                        value: "RazorPay" as const,
-                        title: "Razorpay (coming soon)",
-                        description: "Frictionless UPI and wallet checkout.",
-                      },
-                    ].map((method) => (
-                      <PaymentOption
-                        key={method.value}
-                        title={method.title}
-                        description={method.description}
-                        active={value === method.value}
-                        disabled={method.value !== "Cash"}
-                        onPress={() => onChange(method.value)}
-                      />
-                    ))}
-                  </View>
+                  <TextInputField
+                    label="First name"
+                    placeholder="John"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.firstName?.message}
+                  />
                 )}
               />
-            </CheckoutSection>
+              <Controller
+                control={control}
+                name="lastName"
+                rules={{ required: "Last name is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputField
+                    label="Last name"
+                    placeholder="Doe"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.lastName?.message}
+                  />
+                )}
+              />
+            </View>
 
-            <CheckoutSection
-              eyebrow="Order summary"
-              headline="Review and confirm"
-              description="Check your totals before placing the order."
-            >
-              <View>
-                <View className="space-y-3">
-                  <SummaryRow
-                    label="Subtotal"
-                    value={formatCurrency(subtotal, currency)}
-                  />
-                  <SummaryRow label="Delivery" value="Free" />
-                  <SummaryRow
-                    label="Discount"
-                    value={formatCurrency(0, currency)}
-                  />
-                </View>
-                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 px-4 py-4 shadow-sm">
-                  <Text className="text-[11px] font-bold uppercase tracking-wider text-primary-700">
-                    Total due today
-                  </Text>
-                  <Text className="font-display text-3xl font-bold text-slate-900">
-                    {formatCurrency(subtotal, currency)}
-                  </Text>
-                </View>
-                <EnhancedButton
-                  title={
-                    mutation.isPending ? "Placing order..." : "Confirm order"
-                  }
-                  className="mt-5 rounded-2xl"
-                  contentClassName="gap-2"
-                  onPress={handleSubmit(onSubmit)}
-                  loading={mutation.isPending}
+            <Controller
+              control={control}
+              name="email"
+              rules={{ required: "Email is required" }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputField
+                  label="Email"
+                  placeholder="you@example.com"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                 />
-              </View>
-            </CheckoutSection>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="contact"
+              rules={{ required: "Contact number is required" }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputField
+                  label="Contact number"
+                  placeholder="+1 234 567 890"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.contact?.message}
+                  keyboardType="phone-pad"
+                />
+              )}
+            />
           </View>
-        </ScrollView>
+        </CheckoutSection>
+
+        <CheckoutSection
+          eyebrow="Delivery address"
+          headline="Where should the groceries go?"
+          description="Accurate address details help us get your groceries to you on time."
+        >
+          <View>
+            <Controller
+              control={control}
+              name="address"
+              rules={{ required: "Address is required" }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputField
+                  label="Address"
+                  placeholder="123 Greenway Ave"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.address?.message}
+                />
+              )}
+            />
+
+            <View className="flex-row gap-4">
+              <Controller
+                control={control}
+                name="city"
+                rules={{ required: "City is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputField
+                    label="City"
+                    placeholder="San Francisco"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.city?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="country"
+                rules={{ required: "Country is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputField
+                    label="Country"
+                    placeholder="USA"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.country?.message}
+                  />
+                )}
+              />
+            </View>
+
+            <Controller
+              control={control}
+              name="zipCode"
+              rules={{ required: "ZIP code is required" }}
+              render={({ field: { onChange, value } }) => (
+                <TextInputField
+                  label="ZIP code"
+                  placeholder="94105"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.zipCode?.message}
+                />
+              )}
+            />
+          </View>
+        </CheckoutSection>
+
+        <CheckoutSection
+          eyebrow="Delivery preferences"
+          headline="Choose your shipping & payment"
+          description="Cash on delivery is available right now; more options coming soon."
+        >
+          <View className="space-y-4">
+            <Controller
+              control={control}
+              name="shippingOption"
+              render={({ field: { onChange, value } }) => (
+                <View className="space-y-3">
+                  {shippingOptions.map((option) => (
+                    <Pressable
+                      key={option.value}
+                      onPress={() => onChange(option.value)}
+                      className={cn(
+                        "rounded-[28px] border px-4 py-4",
+                        value === option.value
+                          ? "border-primary-500 bg-emerald-50/60"
+                          : "border-slate-200 bg-white/70"
+                      )}
+                    >
+                      <Text className="text-[15px] font-bold text-slate-900">
+                        {option.title}
+                      </Text>
+                      <Text className="mt-1 text-[12px] leading-relaxed text-slate-600">
+                        {option.description}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="paymentMethod"
+              render={({ field: { onChange, value } }) => (
+                <View className="space-y-3">
+                  {paymentMethods.map((method) => (
+                    <PaymentOption
+                      key={method.value}
+                      title={method.title}
+                      description={method.description}
+                      active={value === method.value}
+                      disabled={method.value !== "Cash"}
+                      onPress={() => onChange(method.value)}
+                    />
+                  ))}
+                </View>
+              )}
+            />
+          </View>
+        </CheckoutSection>
+
+        <CheckoutSection
+          eyebrow="Order summary"
+          headline="Review and confirm"
+          description="Check your totals before placing the order."
+        >
+          <View>
+            <View className="space-y-3">
+              <SummaryRow
+                label="Subtotal"
+                value={formatCurrency(subtotal, currency)}
+              />
+              <SummaryRow label="Delivery" value="Free" />
+              <SummaryRow
+                label="Discount"
+                value={formatCurrency(0, currency)}
+              />
+            </View>
+            <View className="mt-4 flex-row items-center justify-between rounded-[28px] bg-emerald-50/60 px-4 py-4 shadow-sm">
+              <Text className="text-[12px] font-semibold uppercase tracking-[0.2em] text-primary-600">
+                Total due today
+              </Text>
+              <Text className="font-display text-[30px] font-extrabold text-slate-900">
+                {formatCurrency(subtotal, currency)}
+              </Text>
+            </View>
+            <EnhancedButton
+              title={mutation.isPending ? "Placing order..." : "Confirm order"}
+              className="mt-6 rounded-full"
+              contentClassName="gap-2"
+              glass
+              variant="primary"
+              size="lg"
+              fullWidth
+              onPress={handleSubmit(onSubmit)}
+              loading={mutation.isPending}
+            />
+          </View>
+        </CheckoutSection>
       </Screen>
     </KeyboardAvoidingView>
   );
@@ -417,22 +484,28 @@ const CheckoutSection = ({
   description?: string;
   children: ReactNode;
 }) => (
-  <View className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_20px_50px_rgba(15,118,110,0.1)]">
-    <View className="h-1.5 w-full bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600" />
-    <View className="p-5">
-      <Text className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary-500">
-        {eyebrow}
+  <View
+    className="overflow-hidden rounded-[36px] border border-white/70 bg-white/96 px-5 py-6"
+    style={{
+      shadowColor: "rgba(15,118,110,0.14)",
+      shadowOffset: { width: 0, height: 18 },
+      shadowOpacity: 0.16,
+      shadowRadius: 28,
+      elevation: 12,
+    }}
+  >
+    <Text className="text-[11px] font-bold uppercase tracking-[0.35em] text-primary-500">
+      {eyebrow}
+    </Text>
+    <Text className="mt-2 font-display text-[24px] font-extrabold text-slate-900">
+      {headline}
+    </Text>
+    {description ? (
+      <Text className="mt-2 text-[13px] leading-relaxed text-slate-500">
+        {description}
       </Text>
-      <Text className="mt-2 font-display text-2xl font-bold text-slate-900">
-        {headline}
-      </Text>
-      {description ? (
-        <Text className="mt-2 text-[13px] leading-relaxed text-slate-500">
-          {description}
-        </Text>
-      ) : null}
-      <View className="mt-5">{children}</View>
-    </View>
+    ) : null}
+    <View className="mt-5">{children}</View>
   </View>
 );
 
@@ -443,15 +516,15 @@ const TextInputField: React.FC<
   } & React.ComponentProps<typeof TextInput>
 > = ({ label, error, className, ...props }) => (
   <View className="mb-4 flex-1">
-    <Text className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+    <Text className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
       {label}
     </Text>
     <TextInput
       className={cn(
-        "rounded-2xl border px-4 py-3.5 text-[15px] text-slate-900",
+        "rounded-[26px] border px-4 py-3.5 text-[15px] text-slate-900 shadow-[0_12px_24px_rgba(15,118,110,0.08)]",
         error
           ? "border-rose-400 bg-rose-50/40"
-          : "border-slate-200 bg-slate-50/50",
+          : "border-white/70 bg-white/96",
         className
       )}
       placeholderTextColor="#94a3b8"
@@ -468,8 +541,8 @@ const SummaryRow: React.FC<{ label: string; value: string }> = ({
   value,
 }) => (
   <View className="flex-row items-center justify-between">
-    <Text className="text-[13px] font-medium text-slate-600">{label}</Text>
-    <Text className="text-[14px] font-bold text-slate-900">{value}</Text>
+    <Text className="text-[13px] font-semibold text-slate-600">{label}</Text>
+    <Text className="text-[15px] font-bold text-slate-900">{value}</Text>
   </View>
 );
 
@@ -483,13 +556,13 @@ const PaymentOption: React.FC<{
   <Pressable
     onPress={disabled ? undefined : onPress}
     className={cn(
-      "flex-row items-center rounded-2xl border-2 px-4 py-4",
+      "flex-row items-center rounded-[28px] border px-4 py-4",
       active
-        ? "border-primary-500 bg-gradient-to-br from-primary-50 to-primary-100/40"
-        : "border-slate-200 bg-slate-50/30",
+        ? "border-primary-500 bg-emerald-50/60"
+        : "border-white/70 bg-white/95",
       disabled ? "opacity-50" : "active:bg-primary-50/60"
     )}
-  >
+    >
     <View className="flex-1 pr-3">
       <Text className="text-[15px] font-bold text-slate-900">{title}</Text>
       <Text className="mt-1 text-[13px] leading-relaxed text-slate-600">
