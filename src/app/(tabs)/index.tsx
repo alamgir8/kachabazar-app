@@ -79,16 +79,15 @@ export default function HomeScreen() {
       scrollable
       edges={["bottom"]}
       refreshControl={
-        <RefreshControl refreshing={false} onRefresh={refresh} tintColor="#10b981" />
+        <RefreshControl
+          refreshing={false}
+          onRefresh={refresh}
+          tintColor="#10b981"
+        />
       }
       contentContainerClassName="gap-8 pb-24"
     >
       <AppHeader />
-
-      <SearchBar
-        placeholder="Search for fruits, veggies, snacks..."
-        onSubmitSearch={onSearchSubmit}
-      />
 
       <Hero onExplorePress={handleExplorePress} />
 

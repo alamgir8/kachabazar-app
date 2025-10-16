@@ -147,6 +147,7 @@ export const theme = {
   },
   layout: {
     maxWidth: 1080,
+    gutter: 24,
   },
 } as const;
 

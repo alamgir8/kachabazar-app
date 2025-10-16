@@ -47,12 +47,12 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
   const paddingLeft = edges.includes("left") ? insets.left : 0;
   const paddingRight = edges.includes("right") ? insets.right : 0;
 
-  // Determine inner padding class
+  // Determine inner padding class - use px-4 (16px) for consistency
   const innerPaddingClass = noPadding
     ? ""
     : noHorizontalPadding
-      ? "py-6"
-      : "px-6 py-6";
+      ? "py-4"
+      : "px-4 py-4";
 
   return (
     <View className="flex-1" style={{ paddingTop, paddingLeft, paddingRight }}>
@@ -72,7 +72,11 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
       {bgColor === "gradient" ? (
         <>
           <LinearGradient
-            colors={["rgba(22,197,94,0.12)", "rgba(22,197,94,0.04)", "transparent"]}
+            colors={[
+              "rgba(22,197,94,0.12)",
+              "rgba(22,197,94,0.04)",
+              "transparent",
+            ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -86,7 +90,11 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
             }}
           />
           <LinearGradient
-            colors={["rgba(134,239,172,0.28)", "rgba(134,239,172,0.12)", "transparent"]}
+            colors={[
+              "rgba(134,239,172,0.28)",
+              "rgba(134,239,172,0.12)",
+              "transparent",
+            ]}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 0.9, y: 1 }}
             style={{
@@ -99,7 +107,11 @@ export const Screen: React.FC<React.PropsWithChildren<ScreenProps>> = ({
             }}
           />
           <LinearGradient
-            colors={["rgba(241,245,249,0.85)", "rgba(244,246,251,0.45)", "transparent"]}
+            colors={[
+              "rgba(241,245,249,0.85)",
+              "rgba(244,246,251,0.45)",
+              "transparent",
+            ]}
             start={{ x: 0.1, y: 0 }}
             end={{ x: 0.9, y: 1 }}
             style={{
@@ -141,9 +153,13 @@ interface WrapperProps extends ScrollViewProps {
   extraPaddingBottom?: number;
 }
 
-const ScrollableWrapper: React.FC<
-  React.PropsWithChildren<WrapperProps>
-> = ({ children, className, contentContainerClassName, extraPaddingBottom = 0, ...props }) => (
+const ScrollableWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
+  children,
+  className,
+  contentContainerClassName,
+  extraPaddingBottom = 0,
+  ...props
+}) => (
   <ScrollView
     className={className}
     contentContainerClassName={cn("pb-20", contentContainerClassName)}

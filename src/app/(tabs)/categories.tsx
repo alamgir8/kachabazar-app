@@ -76,7 +76,11 @@ export default function CategoriesScreen() {
   }
 
   return (
-    <Screen innerClassName="px-0">
+    <Screen
+      scrollable
+      edges={["bottom"]}
+      contentContainerClassName="gap-6 pb-28"
+    >
       <FlatList
         data={categoriesQuery.data?.[0]?.children ?? []}
         keyExtractor={(item) => item._id}
@@ -90,8 +94,6 @@ export default function CategoriesScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 140,
-          paddingHorizontal: 12,
-          paddingTop: 8,
         }}
         ListHeaderComponent={
           <View className="mb-4 px-3">

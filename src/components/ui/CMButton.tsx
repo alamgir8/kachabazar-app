@@ -106,11 +106,11 @@ const sizeConfig = {
   },
 } as const;
 
-const DEFAULT_GRADIENT = [
-  "#34D399",
-  "#10B981",
-  "#059669",
-] as [string, string, string];
+const DEFAULT_GRADIENT = ["#22c55e", "#16a34a", "#15803d"] as [
+  string,
+  string,
+  string,
+];
 
 const variantConfig: Record<
   Variant,
@@ -124,14 +124,14 @@ const variantConfig: Record<
   }
 > = {
   primary: {
-    bg: "bg-emerald-500",
+    bg: "bg-primary-500",
     text: "text-white",
     border: "border-transparent",
-    gradient: ["#34D399", "#10B981", "#059669"],
+    gradient: ["#22c55e", "#16a34a", "#15803d"],
     hue: [
-      "rgba(16,185,129,0.35)",
-      "rgba(5,150,105,0.08)",
-      "rgba(5,150,105,0.04)",
+      "rgba(34,197,94,0.35)",
+      "rgba(22,163,74,0.08)",
+      "rgba(22,163,74,0.04)",
     ],
     spinner: "#FFFFFF",
   },
@@ -149,15 +149,15 @@ const variantConfig: Record<
   },
   outline: {
     bg: "bg-white",
-    text: "text-emerald-600",
-    border: "border-2 border-emerald-500",
+    text: "text-primary-600",
+    border: "border-2 border-primary-500",
     gradient: undefined,
     hue: [
       "rgba(255,255,255,0.45)",
       "rgba(255,255,255,0.12)",
       "rgba(255,255,255,0.06)",
     ],
-    spinner: "#10B981",
+    spinner: "#16a34a",
   },
   ghost: {
     bg: "bg-transparent",
@@ -251,13 +251,11 @@ const CMButton: React.FC<CMButtonProps> = ({
     string,
     ...string[],
   ];
-  const hueColors =
-    (config.hue ??
-      [
-        "rgba(16,185,129,0.3)",
-        "rgba(16,185,129,0.12)",
-        "rgba(16,185,129,0.05)",
-      ]) as [string, string, ...string[]];
+  const hueColors = (config.hue ?? [
+    "rgba(16,185,129,0.3)",
+    "rgba(16,185,129,0.12)",
+    "rgba(16,185,129,0.05)",
+  ]) as [string, string, ...string[]];
   const interactiveOpacity = loading ? 0.82 : disabled ? 0.6 : 1;
 
   const roundedClass =
@@ -329,13 +327,7 @@ const CMButton: React.FC<CMButtonProps> = ({
     }
 
     return sizeStyle.radius;
-  }, [
-    className,
-    rounded,
-    roundedClass,
-    sizeStyle.minHeight,
-    sizeStyle.radius,
-  ]);
+  }, [className, rounded, roundedClass, sizeStyle.minHeight, sizeStyle.radius]);
 
   const renderContent = () => (
     <View

@@ -1,6 +1,13 @@
+import {
+  Image,
+  Platform,
+  Pressable,
+  Text,
+  View,
+  Dimensions,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
-import { Image, Pressable, Text, View } from "react-native";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
@@ -9,6 +16,9 @@ import { CMButton } from "@/components/ui/CMButton";
 interface HeroProps {
   onExplorePress?: () => void;
 }
+
+const { width: screenWidth } = Dimensions.get("window");
+const isSmallDevice = screenWidth < 375;
 
 export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
   const { storeCustomization } = useSettings();
@@ -27,59 +37,133 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
     typeof banner?.hero_image === "string" ? banner?.hero_image : undefined;
 
   return (
-    <Pressable onPress={onExplorePress} className="active:scale-[0.99]">
-      <LinearGradient
-        colors={["#e7ffe9", "#c7f9d7", "#b8f5d0"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="overflow-hidden rounded-[40px]"
+    <Pressable
+      onPress={onExplorePress}
+      className="active:opacity-95"
+      style={{
+        shadowColor: "#47f587",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
+      }}
+    >
+      <View
+        className="overflow-hidden rounded-3xl mb-10"
         style={{
-          shadowColor: "rgba(34, 197, 94, 0.35)",
-          shadowOffset: { width: 0, height: 22 },
-          shadowOpacity: 0.25,
-          shadowRadius: 32,
-          elevation: 18,
+          borderWidth: 1,
+          borderColor: "rgba(34, 197, 94, 0.2)",
         }}
       >
-        <View className="flex-row items-center px-7 py-8">
-          <View className="flex-1 pr-4">
-            <View className="mb-4 self-start rounded-full bg-white/85 px-4 py-2 shadow-sm">
-              <Text className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-emerald-600">
-                Seasonal Picks
+        {/* Linear Gradient Background */}
+        <LinearGradient
+          colors={["#dcfce7", "#bbf7d0", "#339467"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+          }}
+        />
+
+        {/* Decorative circles for visual interest */}
+        <View
+          style={{
+            position: "absolute",
+            right: -32,
+            top: -32,
+            width: 128,
+            height: 128,
+            borderRadius: 64,
+            backgroundColor: "white",
+            opacity: 0.2,
+          }}
+        />
+        <View
+          style={{
+            position: "absolute",
+            left: -16,
+            bottom: -16,
+            width: 96,
+            height: 96,
+            borderRadius: 48,
+            backgroundColor: "white",
+            opacity: 0.15,
+          }}
+        />
+
+        <View className="flex-row items-center justify-between p-5">
+          {/* Left Content */}
+          <View className="flex-1 pr-3">
+            <View className="mb-3 self-start rounded-full bg-primary-500 px-3 py-1.5">
+              <Text className="text-[10px] font-bold uppercase tracking-wider text-white">
+                🎉 Fresh Deals
               </Text>
             </View>
-            <Text className="text-[28px] font-extrabold leading-tight text-slate-900">
+
+            <Text
+              className="text-2xl font-bold leading-tight text-slate-900"
+              style={{
+                fontSize: isSmallDevice ? 20 : 24,
+                lineHeight: isSmallDevice ? 26 : 30,
+              }}
+              numberOfLines={2}
+            >
               {headline}
             </Text>
-            <Text className="mt-3 text-[15px] leading-relaxed text-emerald-900/70">
+
+            <Text
+              className="mt-2 text-sm leading-relaxed text-slate-600"
+              style={{ fontSize: isSmallDevice ? 12 : 14 }}
+              numberOfLines={2}
+            >
               {subheading}
             </Text>
-            <View className="mt-6 w-44">
+
+            <View className="mt-4">
               <CMButton
                 title={cta}
-                size="md"
-                glass
+                size={isSmallDevice ? "sm" : "md"}
                 onPress={onExplorePress}
-                className="rounded-full"
+                className="rounded-full bg-primary-500 self-start"
               />
             </View>
           </View>
 
-          <View className="h-[180px] w-[160px] items-center justify-center">
-            <LinearGradient
-              colors={["rgba(255,255,255,0.65)", "rgba(255,255,255,0.15)"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0.9, y: 1 }}
-              className="absolute inset-0 rounded-[48px]"
-            />
+          {/* Right Image */}
+          <View
+            className="items-center justify-center overflow-hidden rounded-2xl bg-white"
+            style={{
+              width: isSmallDevice ? 100 : 120,
+              height: isSmallDevice ? 100 : 120,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+          >
             <Image
-              source={require("../../assets/icon.png")}
-              className="h-[180px] w-[160px] rounded-[48px]"
+              source={
+                heroImage
+                  ? { uri: heroImage }
+                  : require("../../assets/icon.png")
+              }
+              style={{
+                width: isSmallDevice ? 100 : 120,
+                height: isSmallDevice ? 100 : 120,
+              }}
               resizeMode="cover"
             />
           </View>
         </View>
-      </LinearGradient>
+
+        {/* Bottom Accent Bar */}
+        {/* <View className="h-1.5 bg-primary-500" /> */}
+      </View>
     </Pressable>
   );
 };
