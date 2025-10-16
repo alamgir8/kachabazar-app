@@ -331,29 +331,38 @@ const CMButton: React.FC<CMButtonProps> = ({
 
   const renderContent = (useInlineStyle = false) => {
     // For gradient buttons on Android, use inline styles for better compatibility
+    const getFontSize = () => {
+      if (textSize) return undefined; // Let className handle it
+      switch (size) {
+        case "xs":
+          return 12;
+        case "sm":
+          return 14;
+        case "md":
+          return 15;
+        case "lg":
+          return 16;
+        case "xl":
+          return 20;
+        default:
+          return 15;
+      }
+    };
+
+    const getTextColor = () => {
+      if (textColor) return textColor;
+      if (glass) return "#FFFFFF";
+      if (config.text.includes("white")) return "#FFFFFF";
+      if (config.text.includes("slate-700")) return "#334155";
+      if (config.text.includes("primary-600")) return "#16a34a";
+      return "#FFFFFF";
+    };
+
     const textStyle = useInlineStyle
       ? {
-          fontSize:
-            size === "xs"
-              ? 12
-              : size === "sm"
-                ? 14
-                : size === "md"
-                  ? 15
-                  : size === "lg"
-                    ? 16
-                    : 20,
-          fontWeight: "600" as const,
-          color: glass
-            ? "#FFFFFF"
-            : textColor ||
-              (config.text.includes("white")
-                ? "#FFFFFF"
-                : config.text.includes("slate-700")
-                  ? "#334155"
-                  : config.text.includes("primary-600")
-                    ? "#16a34a"
-                    : "#FFFFFF"),
+          fontSize: getFontSize(),
+          fontWeight: (fontWeight || "600") as any,
+          color: getTextColor(),
           ...(style as TextStyle),
         }
       : (style as TextStyle);

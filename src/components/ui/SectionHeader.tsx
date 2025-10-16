@@ -64,13 +64,11 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
       ) : null}
     </View>
     {actionLabel ? (
-      <Pressable
-        onPress={onActionPress}
-        style={({ pressed }) => [
+      <View
+        style={[
           {
             borderRadius: 9999,
             overflow: "hidden",
-            opacity: pressed ? 0.9 : 1,
           },
           Platform.OS === "ios" && {
             shadowColor: "#22c55e",
@@ -83,31 +81,39 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           },
         ]}
       >
-        <LinearGradient
-          colors={["#22c55e", "#16a34a", "#15803d"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            minHeight: 28,
-          }}
+        <Pressable
+          onPress={onActionPress}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.9 : 1,
+          })}
         >
-          <Text
+          <LinearGradient
+            colors={["#22c55e", "#16a34a", "#15803d"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              fontSize: 13,
-              fontWeight: "600",
-              color: "#FFFFFF",
-              marginRight: 4,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              minHeight: 28,
+              borderRadius: 9999,
             }}
           >
-            {actionLabel}
-          </Text>
-          <Feather name="arrow-right" size={14} color="#FFFFFF" />
-        </LinearGradient>
-      </Pressable>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "600",
+                color: "#FFFFFF",
+                marginRight: 4,
+              }}
+            >
+              {actionLabel}
+            </Text>
+            <Feather name="arrow-right" size={14} color="#FFFFFF" />
+          </LinearGradient>
+        </Pressable>
+      </View>
     ) : null}
   </View>
 );
