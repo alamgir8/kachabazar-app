@@ -247,11 +247,13 @@ export default function ProductScreen() {
               {displayCarouselImages.map((_, index) => (
                 <View
                   key={index}
-                  className={`h-2 rounded-full transition-all ${
-                    index === activeImageIndex
-                      ? "w-8 bg-primary-600"
-                      : "w-2 bg-slate-300"
-                  }`}
+                  style={{
+                    height: 8,
+                    borderRadius: 4,
+                    width: index === activeImageIndex ? 32 : 8,
+                    backgroundColor:
+                      index === activeImageIndex ? "#059669" : "#cbd5e1",
+                  }}
                 />
               ))}
             </View>

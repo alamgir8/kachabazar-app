@@ -4,8 +4,7 @@ import {
   Pressable,
   Text,
   View,
-  ViewStyle,
-  TextStyle,
+  StyleSheet,
   PressableProps,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -37,43 +36,28 @@ export interface EnhancedButtonProps extends Omit<PressableProps, "children"> {
   gradient?: boolean;
 }
 
-const sizeConfig = {
+const sizeStyles = {
   xs: {
-    paddingX: "px-3",
-    paddingY: "py-2",
-    text: "text-xs",
-    height: "h-8",
-    gap: "gap-1",
+    height: 32,
+    paddingHorizontal: 12,
   },
   sm: {
-    paddingX: "px-4",
-    paddingY: "py-2.5",
-    text: "text-xs",
-    height: "h-10",
-    gap: "gap-1.5",
+    height: 40,
+    paddingHorizontal: 16,
   },
   md: {
-    paddingX: "px-6",
-    paddingY: "py-3",
-    text: "text-sm",
-    height: "h-12",
-    gap: "gap-2",
+    height: 48,
+    paddingHorizontal: 24,
   },
   lg: {
-    paddingX: "px-8",
-    paddingY: "py-4",
-    text: "text-base",
-    height: "h-14",
-    gap: "gap-2",
+    height: 56,
+    paddingHorizontal: 32,
   },
   xl: {
-    paddingX: "px-10",
-    paddingY: "py-5",
-    text: "text-xl",
-    height: "h-16",
-    gap: "gap-2.5",
+    height: 64,
+    paddingHorizontal: 40,
   },
-};
+} as const;
 
 const variantConfig = {
   primary: {
@@ -148,28 +132,31 @@ export const EnhancedButton = React.forwardRef<View, EnhancedButtonProps>(
     ref
   ) => {
     const isDisabled = disabled || loading;
-    const sizeStyle = sizeConfig[size];
     const variantStyle = variantConfig[variant];
 
     const buttonClasses = cn(
       "items-center justify-center",
-      sizeStyle.height,
-      sizeStyle.paddingX,
       !gradient && variantStyle.bg,
       variantStyle.border,
-      rounded ? "rounded-full" : "rounded-xl",
       fullWidth && "w-full",
       isDisabled && "opacity-50",
       className
     );
 
     const contentClasses = cn(
-      "flex-row items-center justify-center",
-      sizeStyle.gap,
+      "flex-row items-center justify-center gap-2",
       contentClassName
     );
 
-    const textClasses = cn("font-semibold", sizeStyle.text, variantStyle.text);
+    const textClasses = cn(
+      "font-semibold",
+      size === "xs" && "text-xs",
+      size === "sm" && "text-xs",
+      size === "md" && "text-sm",
+      size === "lg" && "text-base",
+      size === "xl" && "text-xl",
+      variantStyle.text
+    );
 
     const renderContent = () => (
       <View className={contentClasses}>
@@ -194,24 +181,33 @@ export const EnhancedButton = React.forwardRef<View, EnhancedButtonProps>(
       </View>
     );
 
+    const buttonStyle = [
+      styles.button,
+      sizeStyles[size],
+      rounded && styles.rounded,
+    ];
+
     if (gradient && variantStyle.gradient && !isDisabled) {
       return (
         <Pressable
           disabled={isDisabled}
+          className={cn(fullWidth && "w-full", className)}
           {...props}
-          style={({ pressed }) => [
-            { opacity: pressed ? variantStyle.activeOpacity : 1 },
-            fullWidth && { width: "100%" },
-          ]}
         >
-          <LinearGradient
-            colors={variantStyle.gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className={buttonClasses}
-          >
-            {renderContent()}
-          </LinearGradient>
+          {({ pressed }) => (
+            <LinearGradient
+              colors={variantStyle.gradient!}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[
+                buttonStyle,
+                { opacity: pressed ? variantStyle.activeOpacity : 1 },
+              ]}
+              className="items-center justify-center"
+            >
+              {renderContent()}
+            </LinearGradient>
+          )}
         </Pressable>
       );
     }
@@ -221,10 +217,8 @@ export const EnhancedButton = React.forwardRef<View, EnhancedButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={buttonClasses}
+        style={buttonStyle}
         {...props}
-        style={({ pressed }) => [
-          { opacity: pressed ? variantStyle.activeOpacity : 1 },
-        ]}
       >
         {renderContent()}
       </Pressable>
@@ -233,3 +227,12 @@ export const EnhancedButton = React.forwardRef<View, EnhancedButtonProps>(
 );
 
 EnhancedButton.displayName = "EnhancedButton";
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 12,
+  },
+  rounded: {
+    borderRadius: 9999,
+  },
+});
