@@ -14,7 +14,11 @@ SplashScreen.preventAutoHideAsync();
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { theme } from "@/theme";
+import { logger } from "@/utils/logger";
+import { analytics } from "@/utils/analytics";
+import { env, validateEnvironmentConfig } from "@/config/environment";
 import "../styles/global.css";
 
 const RootContent = () => {
@@ -77,29 +81,62 @@ export default function RootLayout() {
         defaultOptions: {
           queries: {
             refetchOnWindowFocus: false,
+            retry: env.maxRetries,
+            staleTime: 1000 * 60,
+            cacheTime: env.cacheTimeout,
+          },
+          mutations: {
             retry: 1,
           },
         },
       })
   );
+
   useEffect(() => {
+    // Initialize app
+    const initializeApp = async () => {
+      try {
+        // Validate environment configuration
+        const validation = validateEnvironmentConfig();
+        if (!validation.valid) {
+          logger.warn("Environment configuration issues", validation.errors, "App");
+        }
+
+        // Initialize analytics
+        analytics.initialize({ enabled: env.enableAnalytics });
+
+        logger.info("App initialized successfully", {
+          environment: env.env,
+          version: "1.0.0",
+        }, "App");
+      } catch (error) {
+        logger.error("App initialization failed", error, "App");
+      }
+    };
+
+    initializeApp();
+
     // Silence animation warnings during development
-    LogBox.ignoreAllLogs();
+    if (__DEV__) {
+      LogBox.ignoreAllLogs();
+    }
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <SettingsProvider>
-            <AuthProvider>
-              <CartProvider>
-                <RootContent />
-              </CartProvider>
-            </AuthProvider>
-          </SettingsProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <SettingsProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <RootContent />
+                </CartProvider>
+              </AuthProvider>
+            </SettingsProvider>
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
