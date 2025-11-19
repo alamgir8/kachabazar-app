@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
@@ -17,6 +18,7 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useCategories } from "@/hooks/queries/useCategories";
+import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Category } from "@/types";
 import { getLocalizedValue } from "@/utils";
@@ -53,6 +55,7 @@ export default function SearchScreen() {
   });
 
   const categoriesQuery = useCategories();
+  const attributesQuery = useAttributes();
 
   useEffect(() => {
     if (params.q && params.q !== search) {
@@ -149,26 +152,32 @@ export default function SearchScreen() {
           />
         }
         ListHeaderComponent={
-          <View className="px-4 pt-4 pb-3">
+          <LinearGradient
+            colors={["#ecfdf5", "#ffffff"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ paddingTop: 48, paddingBottom: 24, paddingHorizontal: 16 }}
+          >
             <BackButton />
-            <View className="h-3" />
-
-            <Text className="text-xs font-bold uppercase tracking-wider text-primary-600">
+            <Text className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-primary-500">
               Explore
             </Text>
-            <Text className="mt-1.5 text-2xl leading-tight font-bold text-slate-900">
+            <Text className="mt-2 text-3xl font-extrabold leading-tight text-slate-900">
               {headerTitle || "Discover everything"}
+            </Text>
+            <Text className="mt-2 text-sm text-slate-500">
+              Browse by category, filter by price, or jump straight to trending picks.
             </Text>
             <SearchBar
               value={search}
               onChangeText={setSearch}
               placeholder="Search for avocado, snacks, beverages..."
               onSubmitSearch={handleSubmit}
-              containerClassName="mt-4"
+              containerClassName="mt-5"
             />
 
             {/* Category Filters */}
-            <View className="mt-4 flex-row flex-wrap gap-2">
+            <View className="mt-5 flex-row flex-wrap gap-2">
               <FilterChip
                 label="All"
                 active={!selectedCategory}
@@ -187,7 +196,7 @@ export default function SearchScreen() {
             </View>
 
             {/* Sort Filters */}
-            <View className="mt-2 flex-row flex-wrap">
+            <View className="mt-3 flex-row flex-wrap gap-2">
               {sortOptions.map((option) => (
                 <FilterChip
                   key={option.value}
@@ -197,9 +206,14 @@ export default function SearchScreen() {
                 />
               ))}
             </View>
-          </View>
+          </LinearGradient>
         }
-        renderItem={({ item }) => <ProductCard product={item} />}
+        renderItem={({ item }) => (
+          <ProductCard
+            product={item}
+            attributes={attributesQuery.data || []}
+          />
+        )}
         ListEmptyComponent={
           <View className="px-5 py-20">
             {productsQuery.isFetching ? (

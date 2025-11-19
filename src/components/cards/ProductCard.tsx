@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
@@ -14,12 +15,14 @@ import {
   getProductImage,
 } from "@/utils";
 import { CMButton } from "../ui";
+import { ProductModal } from "../modal/ProductModal";
 
 interface ProductCardProps {
   product: Product;
   variantLabel?: string;
   onPressAdd?: () => void;
   layout?: "grid" | "carousel";
+  attributes?: any[];
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -27,9 +30,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   variantLabel,
   onPressAdd,
   layout = "grid",
+  attributes = [],
 }) => {
   const { addItem } = useCart();
   const { globalSetting } = useSettings();
+  const [modalVisible, setModalVisible] = useState(false);
   const price = product.prices?.price ?? 0;
   const currency = globalSetting?.default_currency ?? "$";
   const originalPrice = product.prices?.originalPrice ?? price;
@@ -43,26 +48,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onPressAdd?.();
   };
 
+  const handleCardPress = () => {
+    setModalVisible(true);
+  };
+
   const image = getProductImage(product);
 
   const cardWidth = layout === "carousel" ? 170 : undefined;
   const imageContainerHeight = layout === "carousel" ? 140 : 180;
 
   return (
-    <View
-      style={{
-        width: cardWidth,
-        flex: cardWidth ? undefined : 1,
-        shadowColor: "rgba(22, 163, 74, 0.18)",
-        shadowOffset: { width: 0, height: 18 },
-        shadowOpacity: 0.16,
-        shadowRadius: 28,
-        elevation: 12,
-      }}
-      className="overflow-hidden rounded-[32px] border border-white/70 bg-white/95"
-    >
-      <Link href={`/product/${product.slug}`} asChild>
-        <Pressable className="active:opacity-95">
+    <>
+      <View
+        style={{
+          width: cardWidth,
+          flex: cardWidth ? undefined : 1,
+          shadowColor: "rgba(22, 163, 74, 0.18)",
+          shadowOffset: { width: 0, height: 18 },
+          shadowOpacity: 0.16,
+          shadowRadius: 28,
+          elevation: 12,
+        }}
+        className="overflow-hidden rounded-[32px] border border-white/70 bg-white/95"
+      >
+        <Pressable onPress={handleCardPress} className="active:opacity-95">
           <LinearGradient
             colors={["rgba(255,255,255,0.98)", "rgba(240,253,244,0.95)"]}
             start={{ x: 0, y: 0 }}
@@ -143,17 +152,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </View>
           </View>
         </Pressable>
-      </Link>
 
-      <CMButton
-        title="Add to cart"
-        onPress={handleAdd}
-        variant="cyan"
-        rounded="rounded-sm"
-        width="80%"
-        size="xs"
-        alignSelf="center"
+        <CMButton
+          title="Quick add"
+          onPress={handleAdd}
+          variant="cyan"
+          rounded="rounded-sm"
+          width="80%"
+          size="xs"
+          alignSelf="center"
+        />
+      </View>
+
+      <ProductModal
+        product={product}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        attributes={attributes}
       />
-    </View>
+    </>
   );
 };

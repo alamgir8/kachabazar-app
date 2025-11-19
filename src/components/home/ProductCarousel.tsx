@@ -14,6 +14,7 @@ interface ProductCarouselProps {
   emptyLabel?: string;
   onSeeAll?: () => void;
   badgeLabel?: string | null;
+  attributes?: any[];
 }
 
 export const ProductCarousel: React.FC<ProductCarouselProps> = ({
@@ -23,6 +24,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
   emptyLabel,
   onSeeAll,
   badgeLabel = "Featured",
+  attributes = [],
 }) => (
   <View>
     <SectionHeader
@@ -123,7 +125,12 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
         }}
       >
         {products.map((product) => (
-          <ProductCard key={product._id} product={product} layout="carousel" />
+          <ProductCard
+            key={product._id}
+            product={product}
+            layout="carousel"
+            attributes={attributes}
+          />
         ))}
       </ScrollView>
     )}

@@ -1,3 +1,55 @@
+# Mobile App Design Update – November 2025
+
+## Overview
+The mobile storefront now mirrors the production-ready aesthetics and flows found in the web experience (`store/`). Key pillars of this iteration:
+
+- **Consistent Layout** – `AppLayout` normalises width, spacing, and gradients across screens.
+- **Rich Product Discovery** – Cards now launch an immersive modal that exposes variants, gallery, tags, and quick actions.
+- **Optimised Shopping Journey** – Checkout, search, menu drawer, and slug screens gained visual polish, sticky CTAs, coupons, and React Query integrations.
+
+## Highlights
+
+### 1. Universal Layout System
+- `components/layout/AppLayout.tsx` introduced max-width locking (1080px), gradient backdrops, and safe-area aware padding.
+- `Screen` consumers (product slug, search, checkout, etc.) now inherit identical spacing + background treatments.
+
+### 2. Product Details Everywhere
+- `ProductCard` opens a brand-new `ProductModal` with:
+  - Variant selection chips synced with backend combinations.
+  - Stock badges, discount chips, image zoom, tags, and dual CTAs (quick add + full detail deep link).
+  - Accessibility (haptics, announcements) + analytics hooks.
+- Carousels, search, offers, and home screen fetch attribute metadata to power the modal.
+
+### 3. Product Slug Experience
+- Sticky bottom summary bar for one-tap add-to-cart, live price, and responsive quantity control.
+- Full-width hero carousel, chips, tags, and review cards follow the card style from the web variant.
+- Image zoom modal and review gallery align with desktop behaviour.
+
+### 4. Checkout & Coupons
+- New `CouponSection` replicates the web coupon card: status chips, timers, minimum spend, and a quick apply flow using `@tanstack/react-query`.
+- Order summary now reflects live discounts and surfaces applied coupon metadata on the payload.
+
+### 5. Search Revamp
+- Filters, sort chips, and attribute-aware cards carry the same hero typography from the store.
+- Debounced queries + category chips feel identical to desktop “catalogue” browsing.
+
+### 6. Menu Drawer Refresh
+- Gradient hero, segmented cards, and CTA blocks echo the Pages drawer on web.
+- Added support spotlight card (call to order) just like `components/navbar/ProfileDropDown` on the web app.
+
+## Files of Interest
+- `components/layout/AppLayout.tsx`
+- `components/cards/ProductCard.tsx`
+- `components/modal/ProductModal.tsx`
+- `components/checkout/CouponSection.tsx`
+- `app/checkout/index.tsx`
+- `app/search.tsx`
+- `app/offers/index.tsx`
+- `components/home/ProductCarousel.tsx`
+- `components/layout/MenuDrawer.tsx`
+- `app/product/[slug].tsx`
+
+These updates collectively deliver a cohesive, production-ready shopping template tuned for both iOS and Android – leveraging the same UX language as the desktop storefront while remaining fully native.
 # Design Update Summary - Mobile App
 
 ## Overview

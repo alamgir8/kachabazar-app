@@ -62,6 +62,7 @@ export const QUERY_KEYS = {
   order: "order",
   shippingAddress: "shipping-address",
   wishlist: "wishlist",
+  coupons: "coupons",
 } as const;
 
 export const DEFAULT_PAGE_SIZE = 20;

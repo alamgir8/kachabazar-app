@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { theme } from "@/theme";
 
 type MenuItemProps = {
@@ -76,6 +77,8 @@ type MenuDrawerProps = {
 export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
+  const { globalSetting } = useSettings();
+  const supportPhone = globalSetting?.contact || "+099949343";
 
   const navigate = (path: string) => {
     onClose();
@@ -233,6 +236,37 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
               />
             ))}
           </DrawerSection>
+
+          <View className="mb-8 overflow-hidden rounded-[32px]">
+            <LinearGradient
+              colors={["#10b981", "#0ea5e9"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ padding: 20 }}
+            >
+              <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
+                Need help?
+              </Text>
+              <Text className="mt-2 text-2xl font-extrabold text-white">
+                Talk with our shopper
+              </Text>
+              <Text className="mt-2 text-sm text-white/90">
+                We are online 24/7 for urgent deliveries & support.
+              </Text>
+              <Pressable
+                onPress={() => {
+                  onClose();
+                  router.push("/contact-us" as any);
+                }}
+                className="mt-4 inline-flex items-center self-start rounded-full bg-white/20 px-4 py-2"
+              >
+                <Feather name="phone-call" size={16} color="#fff" />
+                <Text className="ml-2 text-sm font-semibold text-white">
+                  {supportPhone}
+                </Text>
+              </Pressable>
+            </LinearGradient>
+          </View>
 
           <View style={[styles.authCard, { marginTop: 8 }]}>
             {isAuthenticated ? (

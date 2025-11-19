@@ -196,7 +196,7 @@ export default function ProductScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 160,
+          paddingBottom: 260,
           paddingTop: 16,
         }}
       >
@@ -638,6 +638,51 @@ export default function ProductScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Sticky CTA */}
+      <View className="absolute bottom-0 left-0 right-0 px-5 pb-6">
+        <LinearGradient
+          colors={["rgba(255,255,255,0.95)", "rgba(248,250,252,0.95)"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="rounded-[32px] border border-white/70 px-4 py-4"
+          style={{
+            shadowColor: "rgba(15,118,110,0.12)",
+            shadowOffset: { width: 0, height: -8 },
+            shadowOpacity: 0.1,
+            shadowRadius: 16,
+            elevation: 10,
+          }}
+        >
+          <View className="flex-row items-center gap-4">
+            <View className="flex-1">
+              <Text className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-600">
+                Total
+              </Text>
+              <View className="flex-row items-baseline gap-2">
+                <Text className="text-3xl font-extrabold text-emerald-600">
+                  {formatCurrency(price * quantity, currency)}
+                </Text>
+                {originalPrice > price && (
+                  <Text className="text-sm font-semibold text-slate-400 line-through">
+                    {formatCurrency(originalPrice * quantity, currency)}
+                  </Text>
+                )}
+              </View>
+            </View>
+            <View className="flex-1">
+              <CMButton
+                title="Add to cart"
+                onPress={handleAddToCartClick}
+                variant="cyan"
+                rounded="rounded-full"
+                size="lg"
+                fullWidth
+              />
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
 
       {/* Image Zoom Modal */}
       <Modal

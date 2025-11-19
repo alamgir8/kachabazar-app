@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/layout/Screen";
 import { EnhancedButton } from "@/components/ui";
 import { LoadingState } from "@/components/common/LoadingState";
+import { CouponSection } from "@/components/checkout/CouponSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -22,6 +23,7 @@ import { createOrder } from "@/services/orders";
 import { formatCurrency } from "@/utils";
 import { BackButton } from "@/components/ui/BackButton";
 import { cn } from "@/utils/cn";
+import type { Coupon } from "@/services/coupons";
 
 interface CheckoutFormValues {
   firstName: string;
@@ -79,6 +81,8 @@ export default function CheckoutScreen() {
   const { items, subtotal, clearCart, isEmpty } = useCart();
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
 
   const {
     control,
@@ -140,8 +144,9 @@ export default function CheckoutScreen() {
         cart: items,
         subTotal: subtotal,
         shippingCost: 0,
-        discount: 0,
-        total: subtotal,
+        discount: discountAmount,
+        total: subtotal - discountAmount,
+        coupon: appliedCoupon?.couponCode || undefined,
       };
 
       return createOrder(orderPayload, accessToken);
@@ -431,6 +436,23 @@ export default function CheckoutScreen() {
         </CheckoutSection>
 
         <CheckoutSection
+          eyebrow="Discounts"
+          headline="Apply coupon code"
+          description="Enter a valid coupon code to save on your order."
+        >
+          <CouponSection
+            cartTotal={subtotal}
+            onCouponApplied={(discount, coupon) => {
+              setDiscountAmount(discount);
+              setAppliedCoupon(coupon);
+            }}
+            appliedCoupon={appliedCoupon}
+            currency={currency}
+            token={accessToken || undefined}
+          />
+        </CheckoutSection>
+
+        <CheckoutSection
           eyebrow="Order summary"
           headline="Review and confirm"
           description="Check your totals before placing the order."
@@ -442,17 +464,23 @@ export default function CheckoutScreen() {
                 value={formatCurrency(subtotal, currency)}
               />
               <SummaryRow label="Delivery" value="Free" />
-              <SummaryRow
-                label="Discount"
-                value={formatCurrency(0, currency)}
-              />
+              {discountAmount > 0 && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-[13px] font-semibold text-emerald-600">
+                    Discount
+                  </Text>
+                  <Text className="text-[15px] font-bold text-emerald-600">
+                    -{formatCurrency(discountAmount, currency)}
+                  </Text>
+                </View>
+              )}
             </View>
             <View className="mt-4 flex-row items-center justify-between rounded-[28px] bg-emerald-50/60 px-4 py-4 shadow-sm">
               <Text className="text-[12px] font-semibold uppercase tracking-[0.2em] text-primary-600">
                 Total due today
               </Text>
               <Text className="font-display text-[30px] font-extrabold text-slate-900">
-                {formatCurrency(subtotal, currency)}
+                {formatCurrency(Math.max(0, subtotal - discountAmount), currency)}
               </Text>
             </View>
             <EnhancedButton
