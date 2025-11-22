@@ -162,7 +162,7 @@ export const CategoryDrawer: React.FC<CategoryDrawerProps> = ({
         >
           {/* Header */}
           <LinearGradient
-            colors={[theme.colors.primary[600], theme.colors.primary[500]]}
+            colors={["#10b981", "#0ea5e9"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -193,7 +193,7 @@ export const CategoryDrawer: React.FC<CategoryDrawerProps> = ({
             {selectedCategory && (
               <Pressable
                 onPress={() => handleSelectCategory(undefined)}
-                className="inline-flex flex-row items-center self-start rounded-full bg-white/20 px-4 py-2"
+                className="inline-flex flex-row items-center self-start rounded-full bg-white/15 px-4 py-2 active:bg-white/25"
               >
                 <Feather name="x" size={14} color="#fff" />
                 <Text className="ml-2 text-sm font-semibold text-white">

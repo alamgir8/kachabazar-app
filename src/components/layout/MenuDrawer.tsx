@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { theme } from "@/theme";
+import Button from "@components/ui/Button";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -147,10 +148,10 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
     <View style={{ flex: 1, backgroundColor: "#f8fafb" }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 56, paddingHorizontal: 20 }}
+        contentContainerStyle={{ paddingBottom: 56, paddingHorizontal: 10 }}
       >
         <LinearGradient
-          colors={[theme.colors.primary[600], theme.colors.primary[500]]}
+          colors={["#10b981", "#0ea5e9"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -161,15 +162,25 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
             paddingBottom: 20,
           }}
         >
-          <Pressable
-            onPress={onClose}
-            className="mb-5 h-9 w-9 items-center justify-center rounded-lg bg-white/15 active:bg-white/25"
-          >
-            <Feather name="x" size={20} color="#fff" />
-          </Pressable>
+          <View className="mb-5 flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
+                MENU
+              </Text>
+              <Text className="mt-2 text-2xl font-extrabold text-white">
+                My Account
+              </Text>
+            </View>
+            <Pressable
+              onPress={onClose}
+              className="h-9 w-9 items-center justify-center rounded-lg bg-white/15 active:bg-white/25"
+            >
+              <Feather name="x" size={20} color="#fff" />
+            </Pressable>
+          </View>
 
           {isAuthenticated ? (
-            <View className="flex-row items-center">
+            <View className="flex-row items-center rounded-2xl bg-white/15 p-3">
               {user?.image ? (
                 <Image
                   source={{ uri: user.image }}
@@ -193,7 +204,7 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
               </View>
             </View>
           ) : (
-            <View>
+            <View className="rounded-2xl bg-white/15 p-4">
               <Text className="mb-1 text-lg font-bold text-white">
                 Welcome to KachaBazar
               </Text>
@@ -258,7 +269,7 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
                   onClose();
                   router.push("/contact-us" as any);
                 }}
-                className="mt-4 inline-flex items-center self-start rounded-full bg-white/20 px-4 py-2"
+                className="mt-4 w-full flex-row items-center justify-center rounded-full bg-white/15 px-4 py-2.5 active:bg-white/25"
               >
                 <Feather name="phone-call" size={16} color="#fff" />
                 <Text className="ml-2 text-sm font-semibold text-white">
@@ -283,36 +294,19 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
                 </Text>
               </Pressable>
             ) : (
-              <View className="gap-2.5">
-                <Pressable
-                  onPress={() => navigate("/auth/login")}
-                  className="flex-row items-center justify-center rounded-full bg-primary-600 py-3.5 active:bg-primary-700"
-                  style={{
-                    shadowColor: theme.colors.primary[700],
-                    shadowOffset: { width: 0, height: 3 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
-                    elevation: 4,
-                  }}
-                >
-                  <Feather name="log-in" size={18} color="#fff" />
-                  <Text className="ml-2 text-[15px] font-semibold text-white">
-                    Sign In
-                  </Text>
-                </Pressable>
-                <Pressable
+              <View className="gap-6">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  title="Sign Up"
                   onPress={() => navigate("/auth/register")}
-                  className="flex-row items-center justify-center rounded-full border border-primary-600 bg-white py-3.5 active:bg-primary-50"
-                >
-                  <Feather
-                    name="user-plus"
-                    size={18}
-                    color={theme.colors.primary[600]}
-                  />
-                  <Text className="ml-2 text-[15px] font-semibold text-primary-600">
-                    Sign Up
-                  </Text>
-                </Pressable>
+                />
+                <Button
+                  variant="cyan"
+                  className="w-full"
+                  title="Sign In"
+                  onPress={() => navigate("/auth/login")}
+                />
               </View>
             )}
           </View>
