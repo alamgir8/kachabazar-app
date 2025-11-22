@@ -29,7 +29,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
     <Pressable
       onPress={handlePress}
       className={cn(
-        "h-11 w-11 items-center justify-center rounded-full bg-white/85 shadow-lg active:bg-white/95",
+        "h-11 w-11 mb-2 items-center justify-center rounded-full bg-white/85 shadow-lg active:bg-white/95",
         className
       )}
       hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}

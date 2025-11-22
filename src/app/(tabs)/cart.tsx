@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 
 import { Screen } from "@/components/layout/Screen";
 import { CartItemRow } from "@/components/cart/CartItemRow";
@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import Button from "@/components/ui/Button";
+import { BackButton } from "@/components/ui";
 
 export default function CartScreen() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function CartScreen() {
       contentContainerClassName="flex-1 justify-between pb-4"
       innerClassName="flex-1"
     >
+      <BackButton />
       {isEmpty ? (
         <View className="gap-6">
           <View className="gap-2">
@@ -61,7 +63,7 @@ export default function CartScreen() {
       ) : (
         <>
           <View className="flex-1 gap-6">
-            <View className="gap-2">
+            <View className="gap-2 px-1">
               <Text className="text-[23px] font-semibold uppercase tracking-[0.2em] text-primary-500">
                 Shopping Cart
               </Text>
@@ -92,7 +94,7 @@ export default function CartScreen() {
             />
           </View>
 
-          <View className="border-t border-emerald-300 bg-white/96 px-4 py-1 shadow-[0_-20px_45px_rgba(15,118,110,0.08)]">
+          <View className="border-t border-emerald-300 bg-white/96 px-1 py-1 shadow-[0_-20px_45px_rgba(15,118,110,0.08)]">
             <CartSummary />
             <View className="mt-4 flex-row gap-3">
               <Button

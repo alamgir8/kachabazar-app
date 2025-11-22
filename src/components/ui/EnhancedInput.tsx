@@ -220,7 +220,7 @@ export const TextArea = React.forwardRef<TextInput, TextAreaProps>(
       }
 
       return cn(
-        "rounded-2xl border-2 border-slate-300 bg-white p-4",
+        "rounded-2xl border border-slate-300 bg-white p-4",
         isFocused && "border-emerald-500",
         error && "border-red-500",
         disabled && "border-slate-200 bg-slate-50 opacity-60"

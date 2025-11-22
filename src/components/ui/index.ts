@@ -11,7 +11,6 @@ export {
 } from "./Skeleton";
 export { BottomSheet, ModalDialog } from "./Modal";
 export { EnhancedInput, TextArea } from "./EnhancedInput";
-export { Input } from "./Input";
 export { SearchBar } from "./SearchBar";
 export { QuantityStepper } from "./QuantityStepper";
 export { BackButton } from "./BackButton";

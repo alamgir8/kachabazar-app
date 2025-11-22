@@ -17,7 +17,7 @@ export const CartSummary: React.FC<CartSummaryProps> = ({}) => {
 
   return (
     <View className="overflow-hidden rounded-[36px] bg-white/96 shadow-[0_24px_65px_rgba(15,118,110,0.14)]">
-      <View className="px-6 py-4">
+      <View className="px-1 py-4">
         <View className="mt-5 flex-row items-center justify-between">
           <View>
             <Text className="mt-1 font-display text-[20px] tracking-[0.2em] font-extrabold text-emerald-700">

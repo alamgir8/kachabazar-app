@@ -19,9 +19,9 @@ export const AppHeader: React.FC = () => {
     <>
       <View
         className="pb-2"
-        style={{
-          paddingTop: Math.max(insets.top - theme.spacing.md, theme.spacing.sm),
-        }}
+        // style={{
+        //   paddingTop: Math.max(insets.top - theme.spacing.md, theme.spacing.sm),
+        // }}
       >
         <View
           className="flex-row items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2"

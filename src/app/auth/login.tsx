@@ -77,7 +77,7 @@ export default function LoginScreen() {
             to continue.
           </Text> */}
 
-          <View className="rounded-[36px] border border-white/70 bg-white/96 px-4 py-6 shadow-[0_18px_48px_rgba(15,118,110,0.15)]">
+          <View className="bg-white/96 px-4 py-6 shadow-[0_18px_48px_rgba(15,118,110,0.15)]">
             <Controller
               control={control}
               name="email"
