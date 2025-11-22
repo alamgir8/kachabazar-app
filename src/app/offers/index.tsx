@@ -14,7 +14,7 @@ export default function OffersScreen() {
   const discounted = data?.discountedProducts ?? [];
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <FlatList
         data={discounted}
         keyExtractor={(item) => item._id}
@@ -27,18 +27,12 @@ export default function OffersScreen() {
           />
         }
         ListHeaderComponent={
-          <View className="bg-gradient-to-b from-primary-600 to-primary-500 px-5 pb-8 pt-16">
-            <BackButton tint="#ffffff" />
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-white/90">
-              Exclusive offers
-            </Text>
-            <Text className="mt-2 font-display text-3xl font-bold text-white">
-              Save more on essentials
-            </Text>
-            <Text className="mt-4 text-sm text-white/90">
-              Fresh deals curated daily. Tap any product to learn more or add to
-              cart instantly.
-            </Text>
+          <View className="mb-4">
+            <BackButton
+              subTitle="Offers"
+              subDescription="Save more on essential"
+            />
+
             {isError ? (
               <Text className="mt-3 text-sm text-red-200">
                 Unable to load offers right now.

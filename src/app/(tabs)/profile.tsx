@@ -57,6 +57,8 @@ export default function ProfileScreen() {
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
 
+  console.log("shippingAddress", shippingAddress);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace("/auth/login");
@@ -76,42 +78,89 @@ export default function ProfileScreen() {
       >
         <View className="pt-8">
           <LinearGradient
-            colors={[theme.colors.primary[100], "#ffffff"]}
+            colors={["#10b981", "#0ea5e9"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
               marginTop: 16,
               borderRadius: 32,
               padding: 20,
-              flexDirection: "row",
-              alignItems: "center",
-              shadowColor: theme.colors.primary[800],
+              shadowColor: "rgba(16, 185, 129, 0.3)",
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.12,
               shadowRadius: 24,
               elevation: 10,
             }}
           >
-            {user?.image ? (
-              <Image
-                source={{ uri: user.image }}
-                className="h-16 w-16 rounded-3xl"
-              />
-            ) : (
-              <View className="h-16 w-16 items-center justify-center rounded-3xl bg-white/70">
-                <Text className="text-xl font-bold text-primary-600">
-                  {user?.name?.[0] ?? "K"}
+            {/* Profile Info */}
+            <View className="flex-row items-center">
+              {user?.image ? (
+                <Image
+                  source={{ uri: user.image }}
+                  className="h-16 w-16 rounded-3xl border-2 border-white/30"
+                />
+              ) : (
+                <View className="h-16 w-16 items-center justify-center rounded-3xl border-2 border-white/30 bg-white/20">
+                  <Text className="text-2xl font-bold text-white">
+                    {user?.name?.[0] ?? "K"}
+                  </Text>
+                </View>
+              )}
+              <View className="ml-4 flex-1">
+                <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+                  Member
                 </Text>
+                <Text className="mt-1 text-lg font-bold text-white">
+                  {user?.name}
+                </Text>
+                <Text className="text-sm text-white/90">{user?.email}</Text>
               </View>
-            )}
-            <View className="ml-4 flex-1">
-              <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-600">
-                Member
-              </Text>
-              <Text className="mt-1 text-lg font-semibold text-slate-900">
-                {user?.name}
-              </Text>
-              <Text className="text-sm text-slate-500">{user?.email}</Text>
+            </View>
+
+            {/* Delivery Address */}
+            <View className="mt-5 rounded-2xl bg-white/15 p-4">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1">
+                  <Text className="text-xs font-semibold uppercase tracking-wider text-white/80">
+                    Default Delivery Address
+                  </Text>
+                  {shippingAddress ? (
+                    <View className="mt-2 space-y-1">
+                      {shippingAddress.name ? (
+                        <Text className="text-sm font-medium text-white">
+                          {shippingAddress.name}
+                        </Text>
+                      ) : null}
+                      {shippingAddress.contact ? (
+                        <Text className="text-sm text-white/90">
+                          {shippingAddress.contact}
+                        </Text>
+                      ) : null}
+                      {shippingAddress.address ? (
+                        <Text className="text-sm text-white/90">
+                          {shippingAddress.address}
+                        </Text>
+                      ) : null}
+                      <Text className="text-sm text-white/90">
+                        {[shippingAddress.city, shippingAddress.country]
+                          .filter(Boolean)
+                          .join(", ")}{" "}
+                        {shippingAddress.zipCode}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text className="mt-2 text-sm text-white/80">
+                      Add an address during checkout to enjoy one tap ordering.
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <Button
+                title="Update profile"
+                variant="outline"
+                className="mt-4"
+                onPress={() => router.push("/profile/edit")}
+              />
             </View>
           </LinearGradient>
 
@@ -159,56 +208,6 @@ export default function ProfileScreen() {
               title="View order history"
               className="mt-5"
               onPress={() => router.push("/orders")}
-            />
-          </View>
-
-          <View
-            className="mt-6 rounded-3xl bg-white/85 p-6"
-            style={{
-              shadowColor: "rgba(12, 70, 65, 0.25)",
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.08,
-              shadowRadius: 18,
-              elevation: 7,
-            }}
-          >
-            <Text className="text-base font-semibold text-slate-900">
-              Default delivery address
-            </Text>
-            {shippingAddress ? (
-              <View className="mt-3 space-y-1">
-                {shippingAddress.name ? (
-                  <Text className="text-sm text-slate-600">
-                    {shippingAddress.name}
-                  </Text>
-                ) : null}
-                {shippingAddress.contact ? (
-                  <Text className="text-sm text-slate-600">
-                    {shippingAddress.contact}
-                  </Text>
-                ) : null}
-                {shippingAddress.address ? (
-                  <Text className="text-sm text-slate-600">
-                    {shippingAddress.address}
-                  </Text>
-                ) : null}
-                <Text className="text-sm text-slate-600">
-                  {[shippingAddress.city, shippingAddress.country]
-                    .filter(Boolean)
-                    .join(", ")}{" "}
-                  {shippingAddress.zipCode}
-                </Text>
-              </View>
-            ) : (
-              <Text className="mt-3 text-sm text-slate-500">
-                Add an address during checkout to enjoy one tap ordering.
-              </Text>
-            )}
-            <Button
-              title="Update profile"
-              variant="outline"
-              className="mt-4"
-              onPress={() => router.push("/profile/edit")}
             />
           </View>
 

@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 
 import { useCart } from "@/contexts/CartContext";
 import { theme } from "@/theme";
+import { useAuth } from "@/contexts/AuthContext";
 
 const TabBarIcon = ({
   color,
@@ -17,6 +18,7 @@ const TabBarIcon = ({
 
 export default function TabsLayout() {
   const { totalItems } = useCart();
+  const { isAuthenticated } = useAuth();
 
   return (
     <Tabs
@@ -88,9 +90,9 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name={isAuthenticated ? "profile" : "profile"}
         options={{
-          title: "Profile",
+          title: isAuthenticated ? "Profile" : "Login",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="user" color={color} size={23} />
           ),
