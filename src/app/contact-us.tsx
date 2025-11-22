@@ -10,36 +10,58 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Controller, useForm } from "react-hook-form";
 
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
 import Button from "@/components/ui/Button";
-import { BackButton } from "@/components/ui";
+import { BackButton, EnhancedInput, TextArea } from "@/components/ui";
+
+interface ContactFormValues {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
 
 export default function ContactUsScreen() {
   const router = useRouter();
   const { storeCustomization, isLoading } = useSettings();
   const contactUs = (storeCustomization as any)?.contact_us;
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
   });
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.email || !formData.message) {
-      Alert.alert("Error", "Please fill in all required fields");
-      return;
+  const onSubmit = async (values: ContactFormValues) => {
+    setError(null);
+    setSuccess(false);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setSuccess(true);
+      reset();
+      Alert.alert(
+        "Success",
+        "Your message has been sent successfully. We will contact you shortly."
+      );
+    } catch (err) {
+      setError("Unable to send message. Please try again.");
     }
-    Alert.alert(
-      "Success",
-      "Your message has been sent successfully. We will contact you shortly."
-    );
-    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   if (isLoading) {
@@ -123,76 +145,105 @@ export default function ContactUsScreen() {
             </Text>
 
             <View className="gap-4">
-              <View>
-                <Text className="mb-2 text-sm font-semibold text-slate-700">
-                  Name *
-                </Text>
-                <TextInput
-                  value={formData.name}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, name: text })
-                  }
-                  placeholder="Your full name"
-                  className="rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-900"
-                  placeholderTextColor="#94a3b8"
-                />
-              </View>
+              <Controller
+                control={control}
+                name="name"
+                rules={{ required: "Name is required" }}
+                render={({ field: { value, onChange } }) => (
+                  <EnhancedInput
+                    label="Name"
+                    placeholder="Your full name"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.name?.message}
+                    leftIcon="user"
+                    containerClassName="mb-2"
+                  />
+                )}
+              />
 
-              <View>
-                <Text className="mb-2 text-sm font-semibold text-slate-700">
-                  Email *
-                </Text>
-                <TextInput
-                  value={formData.email}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, email: text })
-                  }
-                  placeholder="your.email@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-900"
-                  placeholderTextColor="#94a3b8"
-                />
-              </View>
+              <Controller
+                control={control}
+                name="email"
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <EnhancedInput
+                    label="Email"
+                    placeholder="your.email@example.com"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.email?.message}
+                    leftIcon="mail"
+                    containerClassName="mb-2"
+                  />
+                )}
+              />
 
-              <View>
-                <Text className="mb-2 text-sm font-semibold text-slate-700">
-                  Subject
-                </Text>
-                <TextInput
-                  value={formData.subject}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, subject: text })
-                  }
-                  placeholder="What is this about?"
-                  className="rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-900"
-                  placeholderTextColor="#94a3b8"
-                />
-              </View>
+              <Controller
+                control={control}
+                name="subject"
+                render={({ field: { value, onChange } }) => (
+                  <EnhancedInput
+                    label="Subject (Optional)"
+                    placeholder="What is this about?"
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.subject?.message}
+                    leftIcon="file-text"
+                    containerClassName="mb-2"
+                  />
+                )}
+              />
 
-              <View>
-                <Text className="mb-2 text-sm font-semibold text-slate-700">
-                  Message *
-                </Text>
-                <TextInput
-                  value={formData.message}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, message: text })
-                  }
-                  placeholder="Tell us more about your inquiry..."
-                  multiline
-                  numberOfLines={6}
-                  textAlignVertical="top"
-                  className="rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-900"
-                  placeholderTextColor="#94a3b8"
-                  style={{ minHeight: 120 }}
-                />
-              </View>
+              <Controller
+                control={control}
+                name="message"
+                rules={{ required: "Message is required" }}
+                render={({ field: { value, onChange } }) => (
+                  <TextArea
+                    label="Message"
+                    placeholder="Tell us more about your inquiry..."
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.message?.message}
+                    numberOfLines={6}
+                    containerClassName="mb-2"
+                  />
+                )}
+              />
+
+              {error ? (
+                <View className="mb-4 flex-row items-center rounded-2xl border border-red-100 bg-red-50/80 px-3 py-3">
+                  <Feather name="alert-triangle" size={18} color="#ef4444" />
+                  <Text className="ml-2 flex-1 text-sm text-red-600">
+                    {error}
+                  </Text>
+                </View>
+              ) : null}
+
+              {success ? (
+                <View className="mb-4 flex-row items-center rounded-2xl border border-green-100 bg-green-50/80 px-3 py-3">
+                  <Feather name="check-circle" size={18} color="#10b981" />
+                  <Text className="ml-2 flex-1 text-sm text-green-600">
+                    Message sent successfully!
+                  </Text>
+                </View>
+              ) : null}
 
               <Button
                 variant="teal"
-                title="Send Message"
-                onPress={handleSubmit}
+                title={isSubmitting ? "Sending..." : "Send Message"}
+                onPress={handleSubmit(onSubmit)}
+                disabled={isSubmitting}
+                loading={isSubmitting}
                 className="mt-4"
               />
             </View>
