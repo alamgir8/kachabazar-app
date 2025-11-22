@@ -180,7 +180,7 @@ export default function ProfileScreen() {
             <View className="mt-4 flex-row justify-between">
               <View className="items-center">
                 <Text className="text-2xl font-bold text-slate-900">
-                  {stats?.orders.length ?? 0}
+                  {stats?.orders?.length ?? 0}
                 </Text>
                 <Text className="text-xs text-slate-500">Orders</Text>
               </View>

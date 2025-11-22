@@ -328,7 +328,7 @@ export default function EditProfileScreen() {
               title="Back to profile"
               variant="outline"
               className="mt-6"
-              onPress={() => router.back()}
+              onPress={() => router?.back()}
             />
           </View>
         </View>
