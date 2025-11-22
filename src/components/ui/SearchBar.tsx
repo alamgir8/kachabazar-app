@@ -64,7 +64,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const hasValue = value.length > 0;
 
   return (
-    <View className="flex-row items-center px-4 py-3 rounded-lg border border-slate-200 bg-white">
+    <View className="flex-row items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2">
       <Feather name="search" size={20} color="#64748b" />
       <TextInput
         className={cn(

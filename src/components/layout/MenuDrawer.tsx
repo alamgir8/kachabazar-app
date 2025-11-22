@@ -173,11 +173,11 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
               {user?.image ? (
                 <Image
                   source={{ uri: user.image }}
-                  className="h-12 w-12 rounded-xl border-2 border-white/30"
+                  className="h-12 w-12 rounded-xl border border-white/30"
                   resizeMode="cover"
                 />
               ) : (
-                <View className="h-12 w-12 items-center justify-center rounded-xl border-2 border-white/30 bg-white/15">
+                <View className="h-12 w-12 items-center justify-center rounded-xl border border-white/30 bg-white/15">
                   <Text className="text-lg font-bold text-white">
                     {user?.name?.[0] ?? "K"}
                   </Text>
@@ -302,7 +302,7 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
                 </Pressable>
                 <Pressable
                   onPress={() => navigate("/auth/register")}
-                  className="flex-row items-center justify-center rounded-full border-2 border-primary-600 bg-white py-3.5 active:bg-primary-50"
+                  className="flex-row items-center justify-center rounded-full border border-primary-600 bg-white py-3.5 active:bg-primary-50"
                 >
                   <Feather
                     name="user-plus"
@@ -320,7 +320,7 @@ export const MenuDrawer = ({ onClose }: MenuDrawerProps) => {
           <View className="mt-8 items-center">
             <Text className="text-[11px] text-slate-400">Version 1.0.0</Text>
             <Text className="mt-1.5 text-center text-[11px] text-slate-400">
-              © 2024 KachaBazar. All rights reserved.
+              © {new Date().getFullYear()} KachaBazar. All rights reserved.
             </Text>
           </View>
         </View>

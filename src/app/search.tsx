@@ -5,8 +5,10 @@ import {
   RefreshControl,
   Text,
   View,
+  Pressable,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
@@ -15,6 +17,7 @@ import { FilterChip } from "@/components/ui/FilterChip";
 import { BackButton } from "@/components/ui/BackButton";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
+import { CategoryDrawer } from "@/components/drawers/CategoryDrawer";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { useAttributes } from "@/hooks/queries/useAttributes";
@@ -44,7 +47,11 @@ export default function SearchScreen() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     params.category
   );
+  const [selectedCategoryName, setSelectedCategoryName] = useState<
+    string | undefined
+  >(params.title);
   const [sort, setSort] = useState<SortOption>(params.sort ?? "relevance");
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const debouncedSearch = useDebounce(search, 350);
 
@@ -93,30 +100,20 @@ export default function SearchScreen() {
     router.setParams({ q: query || undefined });
   };
 
-  const handleCategoryPress = (category?: Category) => {
-    if (!category) {
-      setSelectedCategory(undefined);
-      router.setParams({ category: undefined, title: undefined });
-      return;
-    }
-
-    setSelectedCategory(category._id);
+  const handleCategorySelect = (categoryId?: string, categoryName?: string) => {
+    setSelectedCategory(categoryId);
+    setSelectedCategoryName(categoryName);
     router.setParams({
-      category: category._id,
-      title: getLocalizedValue(category.name as Record<string, string>),
+      category: categoryId || undefined,
+      title: categoryName || undefined,
     });
   };
 
   const headerTitle =
-    params.title ??
-    (selectedCategory
-      ? getLocalizedValue(
-          categoriesQuery.data?.find((item) => item._id === selectedCategory)
-            ?.name as Record<string, string>
-        )
-      : debouncedSearch
-        ? `Results for "${debouncedSearch}"`
-        : "Discover everything");
+    selectedCategoryName ??
+    (debouncedSearch
+      ? `Results for "${debouncedSearch}"`
+      : "Discover everything");
 
   if (productsQuery.isLoading && !productsQuery.isFetching) {
     return <LoadingState message="Searching our catalogue..." />;
@@ -171,23 +168,32 @@ export default function SearchScreen() {
               containerClassName="mt-5"
             />
 
-            {/* Category Filters */}
-            <View className="mt-5 flex-row flex-wrap gap-2">
-              <FilterChip
-                label="All"
-                active={!selectedCategory}
-                onPress={() => handleCategoryPress(undefined)}
-              />
-              {categoriesQuery.data?.slice(0, 6).map((category) => (
-                <FilterChip
-                  key={category._id}
-                  label={getLocalizedValue(
-                    category.name as Record<string, string>
-                  )}
-                  active={selectedCategory === category._id}
-                  onPress={() => handleCategoryPress(category)}
-                />
-              ))}
+            {/* Category Filter Button */}
+            <View className="mt-5 flex-row items-center gap-3">
+              <Pressable
+                onPress={() => setDrawerVisible(true)}
+                className="flex-1 flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3"
+              >
+                <View className="flex-1 flex-row items-center gap-3">
+                  <Feather name="filter" size={20} color="#059669" />
+                  <Text
+                    className="flex-1 text-base font-semibold text-emerald-700"
+                    numberOfLines={1}
+                  >
+                    {selectedCategoryName || "All Categories"}
+                  </Text>
+                </View>
+                <Feather name="chevron-down" size={20} color="#059669" />
+              </Pressable>
+
+              {selectedCategory && (
+                <Pressable
+                  onPress={() => handleCategorySelect(undefined, undefined)}
+                  className="h-12 w-12 items-center justify-center rounded-2xl bg-red-50"
+                >
+                  <Feather name="x" size={20} color="#dc2626" />
+                </Pressable>
+              )}
             </View>
 
             {/* Sort Filters */}
@@ -221,6 +227,15 @@ export default function SearchScreen() {
             )}
           </View>
         }
+      />
+
+      {/* Category Drawer */}
+      <CategoryDrawer
+        visible={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        categories={categoriesQuery?.data ?? []}
+        selectedCategory={selectedCategory}
+        onSelectCategory={handleCategorySelect}
       />
     </Screen>
   );
