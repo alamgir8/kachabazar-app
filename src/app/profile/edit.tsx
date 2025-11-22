@@ -72,17 +72,10 @@ export default function EditProfileScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen innerClassName="px-0" scrollable>
-        <View className="px-6 pt-32">
-          <BackButton />
+      <Screen edges={["bottom"]} scrollable>
+        <View className="px-1">
+          <BackButton subTitle="Profile" subDescription="Update your details" />
           <View className="h-5" />
-
-          <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-            Profile
-          </Text>
-          <Text className="mt-2 font-display text-3xl text-slate-900">
-            Update your details
-          </Text>
 
           <View className="mt-8 rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,118,110,0.1)]">
             <Controller
