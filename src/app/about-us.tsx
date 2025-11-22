@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, Image, Pressable } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -6,9 +6,9 @@ import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
+import { BackButton } from "@/components/ui";
 
 export default function AboutUsScreen() {
-  const router = useRouter();
   const { storeCustomization, isLoading } = useSettings();
   const aboutUs = (storeCustomization as any)?.about_us;
 
@@ -17,35 +17,19 @@ export default function AboutUsScreen() {
   }
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Header */}
-        <View className="relative h-48 bg-gradient-to-b from-primary-600 to-accent-600">
-          <Image
-            source={{
-              uri: aboutUs?.header_bg || "https://via.placeholder.com/800x300",
-            }}
-            className="absolute inset-0 h-full w-full opacity-20"
-            resizeMode="cover"
-          />
-          <View className="absolute inset-0 flex-1 items-center justify-center px-5">
-            <Pressable
-              onPress={() => router.back()}
-              className="absolute left-4 top-12 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-            >
-              <Feather name="arrow-left" size={24} color="#fff" />
-            </Pressable>
-            <Text className="font-display text-3xl font-bold text-white">
-              {getLocalizedValue(aboutUs?.title) || "About Us"}
-            </Text>
-          </View>
-        </View>
+        {/* Back Button */}
+        <BackButton
+          subTitle={"Last updated: " + new Date().toLocaleDateString()}
+          subDescription={getLocalizedValue(aboutUs?.title) || "About Us"}
+        />
 
         {/* Content */}
-        <View className="px-5 py-8">
+        <View className="px-1 py-8">
           {/* Top Section */}
           <View className="mb-8">
             <Text className="mb-4 font-display text-2xl font-bold text-slate-900">
@@ -59,7 +43,7 @@ export default function AboutUsScreen() {
 
           {/* Info Cards */}
           <View className="mb-8 gap-4">
-            <View className="rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 shadow-sm">
+            <View className="rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 p-6 shadow-sm">
               <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-indigo-200">
                 <Feather name="award" size={24} color="#4f46e5" />
               </View>
@@ -75,7 +59,7 @@ export default function AboutUsScreen() {
               </Text>
             </View>
 
-            <View className="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 shadow-sm">
+            <View className="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 p-6 shadow-sm">
               <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-emerald-200">
                 <Feather name="package" size={24} color="#10b981" />
               </View>
@@ -93,7 +77,7 @@ export default function AboutUsScreen() {
           </View>
 
           {/* Mission Section */}
-          <View className="mb-8 rounded-2xl bg-white p-6 shadow-lg">
+          <View className="mb-8 rounded-2xl bg-white py-6 px-4 shadow-lg">
             <View className="mb-4 flex-row items-center">
               <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary-100">
                 <Feather name="target" size={20} color="#1c7646" />
@@ -109,7 +93,7 @@ export default function AboutUsScreen() {
           </View>
 
           {/* Bottom Section */}
-          <View className="rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+          <View className="rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 py-6 px-1">
             <Text className="mb-3 font-display text-xl font-bold text-slate-900">
               {getLocalizedValue(aboutUs?.bottom_title) || "Why Choose Us?"}
             </Text>

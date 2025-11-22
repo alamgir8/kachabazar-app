@@ -16,6 +16,7 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
 import Button from "@/components/ui/Button";
+import { BackButton } from "@/components/ui";
 
 export default function ContactUsScreen() {
   const router = useRouter();
@@ -46,39 +47,22 @@ export default function ContactUsScreen() {
   }
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Header */}
-        <View className="relative h-48 bg-gradient-to-b from-primary-600 to-accent-600">
-          <Image
-            source={{
-              uri:
-                contactUs?.header_bg || "https://via.placeholder.com/800x300",
-            }}
-            className="absolute inset-0 h-full w-full opacity-20"
-            resizeMode="cover"
-          />
-          <View className="absolute inset-0 flex-1 items-center justify-center px-5">
-            <Pressable
-              onPress={() => router.back()}
-              className="absolute left-4 top-12 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-            >
-              <Feather name="arrow-left" size={24} color="#fff" />
-            </Pressable>
-            <Text className="font-display text-3xl font-bold text-white">
-              {getLocalizedValue(contactUs?.title) || "Contact Us"}
-            </Text>
-          </View>
-        </View>
+        {/* Back Button */}
+        <BackButton
+          subTitle={"Last updated: " + new Date().toLocaleDateString()}
+          subDescription={getLocalizedValue(contactUs?.title) || "Contact Us"}
+        />
 
         {/* Contact Cards */}
-        <View className="px-5 py-8">
+        <View className="px-1 py-8">
           <View className="mb-6 gap-4">
             {/* Email Card */}
-            <View className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <View className="rounded-2xl border border-slate-200 bg-white py-6 px-4 shadow-sm">
               <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-primary-100">
                 <Feather name="mail" size={24} color="#1c7646" />
               </View>
@@ -96,7 +80,7 @@ export default function ContactUsScreen() {
             </View>
 
             {/* Phone Card */}
-            <View className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <View className="rounded-2xl border border-slate-200 bg-white py-6 px-4 shadow-sm">
               <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                 <Feather name="phone" size={24} color="#3b82f6" />
               </View>
@@ -114,7 +98,7 @@ export default function ContactUsScreen() {
             </View>
 
             {/* Address Card */}
-            <View className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <View className="rounded-2xl border border-slate-200 bg-white py-6 px-4 shadow-sm">
               <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-orange-100">
                 <Feather name="map-pin" size={24} color="#f97316" />
               </View>
@@ -133,7 +117,7 @@ export default function ContactUsScreen() {
           </View>
 
           {/* Contact Form */}
-          <View className="rounded-2xl bg-white p-6 shadow-lg">
+          <View className="rounded-2xl bg-white py-6 px-4 shadow-lg">
             <Text className="mb-6 font-display text-2xl font-bold text-slate-900">
               Send us a Message
             </Text>
