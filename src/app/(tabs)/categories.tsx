@@ -76,11 +76,7 @@ export default function CategoriesScreen() {
   }
 
   return (
-    <Screen
-      scrollable
-      edges={["bottom"]}
-      contentContainerClassName="gap-6 pb-28"
-    >
+    <Screen edges={["bottom"]}>
       <FlatList
         data={categoriesQuery.data?.[0]?.children ?? []}
         keyExtractor={(item) => item._id}

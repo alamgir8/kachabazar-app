@@ -153,17 +153,6 @@ export default function CartScreen() {
               ItemSeparatorComponent={() => <View className="h-4" />}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 32 }}
-              // ListFooterComponent={
-              //   <View className="mt-4 rounded-[32px] border border-dashed border-emerald-200 bg-emerald-50/40 px-5 py-5">
-              //     <Text className="text-[12px] font-semibold uppercase tracking-wide text-primary-600">
-              //       Tip
-              //     </Text>
-              //     <Text className="mt-1 text-sm text-slate-600">
-              //       Swipe left on any item to remove it instantly—no need to
-              //       reach for the bin icon.
-              //     </Text>
-              //   </View>
-              // }
             />
           </View>
 

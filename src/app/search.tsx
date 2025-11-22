@@ -131,7 +131,7 @@ export default function SearchScreen() {
   }
 
   return (
-    <Screen scrollable edges={["bottom"]}>
+    <Screen edges={["bottom"]}>
       <FlatList
         data={products}
         keyExtractor={(item) => item._id}

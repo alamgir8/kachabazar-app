@@ -2,9 +2,9 @@ import { Image, Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { useCart } from "@/contexts/CartContext";
 import { CartItem } from "@/types";
 import { formatCurrency } from "@/utils";
+import { useCart } from "@/contexts/CartContext";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -43,7 +43,7 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
               resizeMode="cover"
             />
           ) : (
-            <View className="h-20 w-20 items-center justify-center rounded-2xl bg-primary-50">
+            <View className="h-12 w-12 items-center justify-center rounded-2xl bg-primary-50">
               <Feather name="shopping-bag" size={28} color="#22c55e" />
             </View>
           )}
@@ -76,10 +76,7 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
 
           <View className="mt-4 flex-row items-center justify-between">
             <View>
-              <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Line total
-              </Text>
-              <Text className="text-2xl font-extrabold text-primary-600">
+              <Text className="text-xl font-extrabold text-primary-600">
                 {formatCurrency(lineTotal, currency)}
               </Text>
             </View>
@@ -87,7 +84,7 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
             <QuantityStepper
               value={item.quantity}
               height="h-10"
-              width="w-14"
+              width="w-10"
               onDecrement={() => decrement(item.id)}
               onIncrement={() => increment(item.id)}
             />
