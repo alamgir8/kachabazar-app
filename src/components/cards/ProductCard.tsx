@@ -14,7 +14,7 @@ import {
   getLocalizedValue,
   getProductImage,
 } from "@/utils";
-import { CMButton } from "../ui";
+import { Button, CMButton } from "../ui";
 import { ProductModal } from "../modal/ProductModal";
 
 interface ProductCardProps {
@@ -153,7 +153,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </View>
         </Pressable>
 
-        <CMButton
+        <Button
           title="Quick add"
           onPress={handleAdd}
           variant="cyan"

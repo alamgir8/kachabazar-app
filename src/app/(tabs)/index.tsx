@@ -15,7 +15,7 @@ import { useCategories } from "@/hooks/queries/useCategories";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useSettings } from "@/contexts/SettingsContext";
-import CMButton from "@/components/ui/CMButton";
+import Button from "@/components/ui/Button";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -123,14 +123,10 @@ export default function HomeScreen() {
       </View>
 
       <View className="mt-20">
-        <CMButton
+        <Button
           title="Browse all products"
           onPress={() => router.push("/search")}
           variant="teal"
-          rounded="rounded-sm"
-          width="50%"
-          height="10px"
-          alignSelf="center"
         />
       </View>
     </Screen>

@@ -7,11 +7,11 @@ import {
   Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Feather } from "@expo/vector-icons";
 
-import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
 import { CMButton } from "@/components/ui/CMButton";
+import { useSettings } from "@/contexts/SettingsContext";
+import Button from "../ui/Button";
 
 interface HeroProps {
   onExplorePress?: () => void;
@@ -124,12 +124,10 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
             </Text>
 
             <View className="mt-4">
-              <CMButton
+              <Button
                 title={cta}
-                size={isSmallDevice ? "sm" : "md"}
-                onPress={onExplorePress}
-                width="60%"
                 variant="teal"
+                onPress={() => onExplorePress?.()}
               />
             </View>
           </View>
