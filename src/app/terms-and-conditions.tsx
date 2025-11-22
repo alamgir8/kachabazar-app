@@ -1,14 +1,13 @@
 import { ScrollView, Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
+import { BackButton } from "@/components/ui";
 
 export default function TermsAndConditionsScreen() {
-  const router = useRouter();
   const { storeCustomization, isLoading } = useSettings();
   const termsData = (storeCustomization as any)?.terms_and_conditions;
 
@@ -17,30 +16,22 @@ export default function TermsAndConditionsScreen() {
   }
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {/* Header */}
-        <View className="bg-gradient-to-b from-primary-600 to-accent-600 px-5 pb-8 pt-16">
-          <Pressable
-            onPress={() => router.back()}
-            className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-          >
-            <Feather name="arrow-left" size={24} color="#fff" />
-          </Pressable>
-          <Text className="mb-2 font-display text-3xl font-bold text-white">
-            {getLocalizedValue(termsData?.title) || "Terms & Conditions"}
-          </Text>
-          <Text className="text-base text-white/90">
-            Last updated: {new Date().toLocaleDateString()}
-          </Text>
-        </View>
+        {/* Back Button */}
+        <BackButton
+          subTitle={"Last updated: " + new Date().toLocaleDateString()}
+          subDescription={
+            getLocalizedValue(termsData?.title) || "Terms & Conditions"
+          }
+        />
 
         {/* Content */}
-        <View className="px-5 py-8">
-          <View className="mb-6 rounded-2xl bg-amber-50 p-4">
+        <View className="px-1 py-8">
+          <View className="mb-6 rounded-2xl bg-amber-50 border-2 border-amber-200 p-4">
             <View className="flex-row items-start">
               <Feather name="info" size={20} color="#f59e0b" />
               <Text className="ml-3 flex-1 text-sm text-amber-900">

@@ -57,7 +57,7 @@ export default function ProfileScreen() {
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
 
-  console.log("shippingAddress", shippingAddress);
+  // console.log("shippingAddress", shippingAddress);
 
   useEffect(() => {
     if (!isAuthenticated) {

@@ -6,6 +6,7 @@ import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
+import { BackButton } from "@/components/ui";
 
 export default function PrivacyPolicyScreen() {
   const router = useRouter();
@@ -17,30 +18,22 @@ export default function PrivacyPolicyScreen() {
   }
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Header */}
-        <View className="bg-gradient-to-b from-primary-600 to-accent-600 px-5 pb-8 pt-16">
-          <Pressable
-            onPress={() => router.back()}
-            className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-          >
-            <Feather name="arrow-left" size={24} color="#fff" />
-          </Pressable>
-          <Text className="mb-2 font-display text-3xl font-bold text-white">
-            {getLocalizedValue(privacyData?.title) || "Privacy Policy"}
-          </Text>
-          <Text className="text-base text-white/90">
-            Last updated: {new Date().toLocaleDateString()}
-          </Text>
-        </View>
+        {/* Back Button */}
+        <BackButton
+          subTitle={"Last updated: " + new Date().toLocaleDateString()}
+          subDescription={
+            getLocalizedValue(privacyData?.title) || "Privacy Policy"
+          }
+        />
 
         {/* Content */}
-        <View className="px-5 py-8">
-          <View className="mb-6 rounded-2xl bg-blue-50 p-4">
+        <View className="px-1 py-8">
+          <View className="mb-6 rounded-2xl border-2 border-blue-200 bg-blue-50 p-4">
             <View className="flex-row items-start">
               <Feather name="shield" size={20} color="#3b82f6" />
               <Text className="ml-3 flex-1 text-sm text-blue-900">
