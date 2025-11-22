@@ -20,7 +20,7 @@ export const CartSummary: React.FC<CartSummaryProps> = ({}) => {
       <View className="px-1 py-4">
         <View className="mt-5 flex-row items-center justify-between">
           <View>
-            <Text className="mt-1 font-display text-[20px] tracking-[0.2em] font-extrabold text-emerald-700">
+            <Text className="mt-1 text-[18px] font-bold uppercase tracking-[0.2em] text-primary-500">
               Total
             </Text>
           </View>

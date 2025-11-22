@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { theme } from "@/theme";
 import { cn } from "@/utils/cn";
@@ -9,12 +9,16 @@ interface BackButtonProps {
   tint?: string;
   onPress?: () => void;
   className?: string;
+  subTitle?: string;
+  subDescription?: string;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   tint = theme.colors.primary[700],
   onPress,
   className,
+  subTitle,
+  subDescription,
 }) => {
   const router = useRouter();
 
@@ -22,19 +26,35 @@ export const BackButton: React.FC<BackButtonProps> = ({
     if (onPress) return onPress();
     if (router.canGoBack()) {
       router.back();
+    } else {
+      router.replace("/(tabs)");
     }
   };
 
   return (
-    <Pressable
-      onPress={handlePress}
-      className={cn(
-        "h-11 w-11 mb-2 items-center justify-center rounded-full bg-white/85 shadow-lg active:bg-white/95",
-        className
-      )}
-      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-    >
-      <Feather name="arrow-left" size={20} color={tint} />
-    </Pressable>
+    <View>
+      <Pressable
+        onPress={handlePress}
+        className={cn(
+          "h-11 w-11 mb-2 items-center justify-center rounded-full bg-white/85 shadow-lg active:bg-white/95",
+          className
+        )}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      >
+        <Feather name="arrow-left" size={20} color={tint} />
+      </Pressable>
+      <View className="px-1">
+        {subTitle ? (
+          <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
+            {subTitle}
+          </Text>
+        ) : null}
+        {subDescription ? (
+          <Text className="mt-2 font-display text-3xl text-slate-900">
+            {subDescription}
+          </Text>
+        ) : null}
+      </View>
+    </View>
   );
 };

@@ -4,26 +4,20 @@ import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import Button from "@/components/ui/Button";
+import { BackButton } from "@/components/ui";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
 
   return (
     <Screen scrollable edges={["bottom"]}>
-      <View className="pt-16">
-        <Pressable
-          onPress={() => router.back()}
-          className="mb-4 h-10 w-10 items-center justify-center rounded-xl bg-slate-100 active:bg-slate-200"
-        >
-          <Feather name="arrow-left" size={20} color="#334155" />
-        </Pressable>
+      <View className="">
+        {/* Back Button */}
+        <BackButton
+          subTitle="Password Reset"
+          subDescription="Reset your password"
+        />
 
-        <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-          Password Reset
-        </Text>
-        <Text className="mt-2 font-display text-3xl text-slate-900">
-          Reset your password
-        </Text>
         <Text className="mt-3 text-sm text-slate-500">
           Use the web experience or contact support to complete password reset.
           We will bring the full flow to the app soon.

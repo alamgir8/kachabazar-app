@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedInput } from "@/components/ui";
+import { BackButton, EnhancedInput } from "@/components/ui";
 import { requestEmailVerification } from "@/services/auth";
 import Button from "@/components/ui/Button";
 
@@ -57,25 +57,12 @@ export default function RegisterScreen() {
       className="flex-1"
     >
       <Screen scrollable edges={["bottom"]}>
-        <View className="pt-16">
+        <View className="">
           {/* Back Button */}
-          <Pressable
-            onPress={() => router.back()}
-            className="mb-4 h-10 w-10 items-center justify-center rounded-full bg-slate-100"
-          >
-            <Feather name="arrow-left" size={20} color="#334155" />
-          </Pressable>
-
-          <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-            Join KachaBazar
-          </Text>
-          <Text className="mt-2 font-display text-3xl text-slate-900">
-            Create a new account
-          </Text>
-          <Text className="mt-4 text-sm text-slate-500">
-            Verify your email to activate the account. We’ll send a secure link
-            to continue.
-          </Text>
+          <BackButton
+            subTitle="Join KachaBazar"
+            subDescription="Create a new account"
+          />
 
           <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">
             <Controller

@@ -30,6 +30,7 @@ export default function CartScreen() {
       contentContainerClassName="flex-1 justify-between pb-4"
       innerClassName="flex-1"
     >
+      {/* Back Button */}
       <BackButton />
       {isEmpty ? (
         <View className="gap-6">

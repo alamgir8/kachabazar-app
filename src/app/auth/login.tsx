@@ -12,7 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedInput } from "@/components/ui";
+import { BackButton, EnhancedInput } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 
@@ -59,25 +59,19 @@ export default function LoginScreen() {
       className="flex-1"
     >
       <Screen scrollable edges={["bottom"]}>
-        <View className="pt-16">
-          <Pressable
-            onPress={() => router?.push("/")}
-            className="h-10 w-10 items-center justify-center rounded-full bg-white/80"
-          >
-            <Feather name="arrow-left" size={20} color="#334155" />
-          </Pressable>
-          <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-            Join KachaBazar
-          </Text>
-          <Text className="mt-2 font-display text-3xl text-slate-900">
-            Login to your account
-          </Text>
+        <View className="">
+          {/* Back Button */}
+          <BackButton
+            subTitle="Join KachaBazar"
+            subDescription="Login to your account"
+          />
+
           {/* <Text className="mt-4 text-sm text-slate-500">
             Verify your email to activate the account. We’ll send a secure link
             to continue.
           </Text> */}
 
-          <View className="bg-white/96 px-4 py-6 shadow-[0_18px_48px_rgba(15,118,110,0.15)]">
+          <View className="bg-white/96 px-1 py-6 shadow-[0_18px_48px_rgba(15,118,110,0.15)]">
             <Controller
               control={control}
               name="email"
@@ -132,6 +126,7 @@ export default function LoginScreen() {
               title="Create an account"
               variant="outline"
               onPress={() => router.push("/auth/register")}
+              className="my-6"
             />
             <Button
               title="Forgot password?"
