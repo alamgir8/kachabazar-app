@@ -57,7 +57,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
       >
         {/* Linear Gradient Background */}
         <LinearGradient
-          colors={["#dcfce7", "#bbf7d0", "#339467"]}
+          colors={["#10b981", "#0ea5e9"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -105,7 +105,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
             </View>
 
             <Text
-              className="text-2xl font-bold leading-tight text-slate-900"
+              className="text-2xl font-bold leading-tight text-slate-100"
               style={{
                 fontSize: isSmallDevice ? 20 : 24,
                 lineHeight: isSmallDevice ? 26 : 30,
@@ -116,7 +116,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
             </Text>
 
             <Text
-              className="mt-2 text-sm leading-relaxed text-slate-600"
+              className="mt-2 text-sm leading-relaxed text-slate-100"
               style={{ fontSize: isSmallDevice ? 12 : 14 }}
               numberOfLines={2}
             >
