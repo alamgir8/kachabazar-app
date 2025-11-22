@@ -19,7 +19,6 @@ import { useProductAction } from "@/hooks/useProductAction";
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
-import { CMButton } from "@/components/ui/CMButton";
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import {
   formatCurrency,
@@ -29,6 +28,7 @@ import {
 } from "@/utils";
 import { HapticFeedback } from "@/utils/accessibility";
 import { analytics } from "@/utils/analytics";
+import Button from "../ui/Button";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const MODAL_WIDTH = SCREEN_WIDTH - 32;
@@ -83,12 +83,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     const result = handleAddToCart(quantity);
     if (result.success) {
       HapticFeedback.success();
-      analytics.trackAddToCart(
-        product._id,
-        productName,
-        price,
-        quantity
-      );
+      analytics.trackAddToCart(product._id, productName, price, quantity);
       Alert.alert("Success", "Added to cart!", [
         { text: "Continue Shopping", onPress: onClose },
         {
@@ -119,11 +114,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     >
       <View className="flex-1 bg-black/50">
         <BlurView intensity={20} className="flex-1">
-          <Pressable
-            className="flex-1 justify-end"
-            onPress={onClose}
-            activeOpacity={1}
-          >
+          <Pressable className="flex-1 justify-end" onPress={onClose}>
             <Pressable
               onPress={(e) => e.stopPropagation()}
               className="bg-white rounded-t-[40px] max-h-[90%]"
@@ -190,16 +181,17 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 <View className="px-5 pt-4">
                   {/* Category & Rating */}
                   <View className="mb-3 flex-row items-center justify-between">
-                    {product.category && typeof product.category === "object" && (
-                      <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
-                        <Feather name="tag" size={12} color="#10b981" />
-                        <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
-                          {getLocalizedValue(
-                            product.category.name as Record<string, string>
-                          )}
-                        </Text>
-                      </View>
-                    )}
+                    {product.category &&
+                      typeof product.category === "object" && (
+                        <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
+                          <Feather name="tag" size={12} color="#10b981" />
+                          <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
+                            {getLocalizedValue(
+                              product.category.name as Record<string, string>
+                            )}
+                          </Text>
+                        </View>
+                      )}
 
                     {product.average_rating && product.average_rating > 0 && (
                       <View className="flex-row items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
@@ -290,34 +282,28 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   {/* Quantity & Actions */}
                   <View className="mb-4 gap-4">
                     <View className="flex-row items-center gap-3">
-                      <View className="rounded-[28px] border border-slate-200 bg-white px-4">
+                      <View className="px-4">
                         <QuantityStepper
                           value={quantity}
-                          onIncrement={() => setQuantity((prev) => prev + 1)}
                           onDecrement={() =>
                             setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
                           }
+                          onIncrement={() => setQuantity((prev) => prev + 1)}
                         />
                       </View>
 
-                      <CMButton
+                      <Button
                         title="Add to cart"
                         onPress={handleAddToCartClick}
                         variant="cyan"
-                        rounded="rounded-sm"
-                        size="md"
-                        width="60%"
                         disabled={stock <= 0}
                       />
                     </View>
 
-                    <CMButton
+                    <Button
                       title="View full details"
                       onPress={handleViewDetails}
                       variant="outline"
-                      rounded="rounded-sm"
-                      size="md"
-                      fullWidth
                     />
                   </View>
 
@@ -328,17 +314,19 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                         Tags
                       </Text>
                       <View className="flex-row flex-wrap gap-2">
-                        {product.tag.slice(0, 5).map((tag: string, idx: number) => (
-                          <View
-                            key={idx}
-                            className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
-                          >
-                            <Feather name="tag" size={12} color="#3b82f6" />
-                            <Text className="ml-1.5 text-xs font-semibold text-blue-700">
-                              {tag}
-                            </Text>
-                          </View>
-                        ))}
+                        {product.tag
+                          .slice(0, 5)
+                          .map((tag: string, idx: number) => (
+                            <View
+                              key={idx}
+                              className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
+                            >
+                              <Feather name="tag" size={12} color="#3b82f6" />
+                              <Text className="ml-1.5 text-xs font-semibold text-blue-700">
+                                {tag}
+                              </Text>
+                            </View>
+                          ))}
                       </View>
                     </View>
                   )}
@@ -351,4 +339,3 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     </Modal>
   );
 };
-

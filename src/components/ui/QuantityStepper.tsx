@@ -9,6 +9,8 @@ interface QuantityStepperProps {
   onDecrement: () => void;
   className?: string;
   min?: number;
+  height?: string;
+  width?: string;
 }
 
 export const QuantityStepper: React.FC<QuantityStepperProps> = ({
@@ -17,6 +19,8 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
   onDecrement,
   className,
   min = 1,
+  height = "h-12",
+  width = "w-16",
 }) => (
   <View
     className={cn(
@@ -27,7 +31,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
     <Pressable
       accessibilityRole="button"
       className={cn(
-        "h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white active:bg-slate-100",
+        `${height} ${width} items-center justify-center rounded-full border border-slate-200 bg-white active:bg-slate-100`,
         value <= min && "opacity-50"
       )}
       onPress={onDecrement}
@@ -35,8 +39,8 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
     >
       <Feather
         name="minus"
-        size={16}
-        color={value <= min ? "#cbd5e1" : "#0f172a"}
+        size={20}
+        color={value <= min ? "#a8aeb6" : "#0f172a"}
       />
     </Pressable>
     <View className="mx-3 h-10 min-w-[48px] items-center justify-center">
@@ -44,10 +48,10 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
     </View>
     <Pressable
       accessibilityRole="button"
-      className="h-10 w-10 items-center justify-center rounded-full bg-primary-500 active:bg-primary-600 shadow-[0_6px_12px_rgba(16,185,129,0.4)]"
+      className={`${height} ${width} items-center justify-center rounded-full bg-emerald-500 active:bg-emerald-600 shadow-[0_6px_12px_rgba(16,185,129,0.4)]`}
       onPress={onIncrement}
     >
-      <Feather name="plus" size={16} color="#ffffff" />
+      <Feather name="plus" size={20} color="#ffffff" />
     </Pressable>
   </View>
 );

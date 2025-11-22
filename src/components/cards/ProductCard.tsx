@@ -14,8 +14,8 @@ import {
   getLocalizedValue,
   getProductImage,
 } from "@/utils";
-import { Button, CMButton } from "../ui";
 import { ProductModal } from "../modal/ProductModal";
+import Button from "@components/ui/Button";
 
 interface ProductCardProps {
   product: Product;
@@ -69,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           shadowRadius: 28,
           elevation: 12,
         }}
-        className="overflow-hidden rounded-[32px] border border-white/70 bg-white/95"
+        className="overflow-hidden rounded-[32px] border border-teal-50 bg-white/95"
       >
         <Pressable onPress={handleCardPress} className="active:opacity-95">
           <LinearGradient
@@ -122,7 +122,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             ) : null}
           </LinearGradient>
 
-          <View className="px-4 pb-4 pt-3">
+          <View className="px-4 pb-4 pt-3 border-t border-teal-50">
             <Text
               numberOfLines={2}
               className="text-[15px] font-semibold leading-tight text-slate-900"
@@ -139,12 +139,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             ) : null}
 
             <View className="mt-3 flex-row items-end justify-between">
-              <View>
-                <Text className="text-[20px] font-extrabold text-emerald-600">
+              <View className="flex-1 justify-between">
+                <Text className="text-[16px] font-extrabold text-emerald-600">
                   {formatCurrency(price, currency)}
                 </Text>
                 {originalPrice > price ? (
-                  <Text className="mt-0.5 text-[12px] font-semibold text-slate-400 line-through">
+                  <Text className="text-[12px] font-semibold text-slate-400 line-through">
                     {formatCurrency(originalPrice, currency)}
                   </Text>
                 ) : null}
@@ -157,10 +157,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           title="Quick add"
           onPress={handleAdd}
           variant="cyan"
-          rounded="rounded-sm"
-          width="80%"
-          size="xs"
-          alignSelf="center"
+          height={32}
+          className="mx-4 my-2 rounded-full"
         />
       </View>
 

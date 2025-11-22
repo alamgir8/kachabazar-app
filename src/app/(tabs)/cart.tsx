@@ -4,7 +4,6 @@ import { FlatList, Text, View } from "react-native";
 import { Screen } from "@/components/layout/Screen";
 import { CartItemRow } from "@/components/cart/CartItemRow";
 import { CartSummary } from "@/components/cart/CartSummary";
-import { EnhancedButton } from "@/components/ui";
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
@@ -51,11 +50,9 @@ export default function CartScreen() {
               Explore seasonal picks, curate your weekly essentials, and come
               back to checkout.
             </Text>
-            <EnhancedButton
+            <Button
               title="Start shopping"
               className="mt-6 w-full rounded-full"
-              size="lg"
-              glass
               variant="primary"
               onPress={() => router.push("/search")}
             />
@@ -102,15 +99,12 @@ export default function CartScreen() {
                 title="Clear Cart"
                 variant="outline"
                 onPress={clearCart}
-                borderRadius={999}
                 disabled={items.length === 0}
               />
               <Button
                 title="Proceed"
                 variant="teal"
                 onPress={handleCheckout}
-                borderRadius={999}
-                loading={true}
                 disabled={items.length === 0}
               />
             </View>

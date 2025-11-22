@@ -86,6 +86,8 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
 
             <QuantityStepper
               value={item.quantity}
+              height="h-10"
+              width="w-14"
               onDecrement={() => decrement(item.id)}
               onIncrement={() => increment(item.id)}
             />

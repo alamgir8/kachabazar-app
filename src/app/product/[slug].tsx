@@ -15,9 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { CMButton, EnhancedButton } from "@/components/ui";
 import { BackButton } from "@/components/ui/BackButton";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { LoadingState } from "@/components/common/LoadingState";
@@ -25,7 +23,6 @@ import { ErrorState } from "@/components/common/ErrorState";
 import { useProduct, useProducts } from "@/hooks/queries/useProducts";
 import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useSettings } from "@/contexts/SettingsContext";
-import { useCart } from "@/contexts/CartContext";
 import { useProductAction } from "@/hooks/useProductAction";
 import {
   calculateDiscountPercentage,
@@ -34,6 +31,7 @@ import {
   getProductImage,
 } from "@/utils";
 import { theme } from "@/theme";
+import Button from "@/components/ui/Button";
 
 const windowWidth = Dimensions.get("window").width;
 const carouselWidth = Math.max(windowWidth - 48, 320);
@@ -425,23 +423,21 @@ export default function ProductScreen() {
               )}
 
               <View className="flex-row items-center gap-3">
-                <View className="rounded-[28px] border border-white/70 bg-white/95 px-4">
+                <View className="px-4">
                   <QuantityStepper
                     value={quantity}
-                    onIncrement={() => setQuantity((prev) => prev + 1)}
                     onDecrement={() =>
                       setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
                     }
+                    onIncrement={() => setQuantity((prev) => prev + 1)}
                   />
                 </View>
 
-                <CMButton
+                <Button
                   title="Add to cart"
                   onPress={handleAddToCartClick}
                   variant="cyan"
-                  rounded="rounded-sm"
-                  size="md"
-                  width="50%"
+                  disabled={stock <= 0}
                 />
               </View>
             </View>
@@ -671,13 +667,10 @@ export default function ProductScreen() {
               </View>
             </View>
             <View className="flex-1">
-              <CMButton
+              <Button
                 title="Add to cart"
                 onPress={handleAddToCartClick}
                 variant="cyan"
-                rounded="rounded-full"
-                size="lg"
-                fullWidth
               />
             </View>
           </View>
