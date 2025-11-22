@@ -1,4 +1,11 @@
-import { Pressable, Text, View, StyleSheet, TextStyle } from "react-native";
+import {
+  Pressable,
+  Text,
+  View,
+  StyleSheet,
+  TextStyle,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const Button = ({
@@ -11,6 +18,8 @@ const Button = ({
   borderRadius = 999,
   className = "flex-1",
   style: customStyle,
+  disabled = false,
+  loading = false,
 }: {
   title: string;
   variant:
@@ -32,6 +41,8 @@ const Button = ({
   textSize?: number;
   fontWeight?: TextStyle["fontWeight"];
   style?: any;
+  disabled?: boolean;
+  loading?: boolean;
 }) => {
   const variantStyles = {
     primary: {
@@ -104,16 +115,36 @@ const Button = ({
 
   const style = variantStyles[variant];
   const isOutline = variant === "outline";
+  const isDisabled = disabled || loading;
+
+  // Disabled gradient colors (gray tones)
+  const disabledGradient = isOutline
+    ? (["rgba(148,163,184,0.18)", "rgba(148,163,184,0.12)"] as const)
+    : (["#cbd5e1", "#94a3b8", "#64748b"] as const);
+
+  const disabledInterior = isOutline
+    ? (["#f8fafc", "rgba(248,250,252,0.92)"] as const)
+    : undefined;
+
+  // Use variant color for loading, disabled color for disabled
+  const activeGradient = disabled ? disabledGradient : style.gradient;
+  const activeInterior = disabled ? disabledInterior : style.interior;
+  const activeTextColor = disabled
+    ? isOutline
+      ? "#94a3b8"
+      : "#ffffff"
+    : style.textColor;
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={isDisabled ? undefined : onPress}
       className={className}
       style={customStyle}
       android_ripple={{ color: "rgba(255,255,255,0.2)", borderless: false }}
+      disabled={isDisabled}
     >
       <LinearGradient
-        colors={style.gradient}
+        colors={activeGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -122,11 +153,13 @@ const Button = ({
           padding: isOutline ? 1.5 : 2,
           justifyContent: "center",
           alignItems: "center",
-          shadowColor: isOutline ? "transparent" : "rgba(34,197,94,0.35)",
-          shadowOffset: { width: 0, height: isOutline ? 0 : 8 },
-          shadowOpacity: isOutline ? 0 : 0.3,
-          shadowRadius: isOutline ? 0 : 16,
-          elevation: isOutline ? 0 : 5,
+          shadowColor:
+            isDisabled || isOutline ? "transparent" : "rgba(34,197,94,0.35)",
+          shadowOffset: { width: 0, height: isDisabled || isOutline ? 0 : 8 },
+          shadowOpacity: isDisabled || isOutline ? 0 : 0.3,
+          shadowRadius: isDisabled || isOutline ? 0 : 16,
+          elevation: isDisabled || isOutline ? 0 : 5,
+          opacity: disabled ? 0.7 : 1,
         }}
       >
         <View
@@ -139,9 +172,9 @@ const Button = ({
             alignItems: "center",
           }}
         >
-          {style.interior && (
+          {activeInterior && (
             <LinearGradient
-              colors={style.interior}
+              colors={activeInterior}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
@@ -149,29 +182,50 @@ const Button = ({
               }}
             />
           )}
-          <View
-            pointerEvents="none"
-            style={{
-              position: "absolute",
-              top: -10,
-              right: -20,
-              width: 120,
-              height: 120,
-              borderRadius: 60,
-              backgroundColor: style.bubble,
-            }}
-          />
-          <Text
-            style={{
-              color: style.textColor,
-              fontSize: textSize,
-              fontWeight: fontWeight,
-              textAlign: "center",
-              zIndex: 10,
-            }}
-          >
-            {title}
-          </Text>
+          {!disabled && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: "absolute",
+                top: -10,
+                right: -20,
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                backgroundColor: style.bubble,
+              }}
+            />
+          )}
+          {loading ? (
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+            >
+              <ActivityIndicator size="small" color={activeTextColor} />
+              <Text
+                style={{
+                  color: activeTextColor,
+                  fontSize: textSize,
+                  fontWeight: fontWeight,
+                  textAlign: "center",
+                  zIndex: 10,
+                }}
+              >
+                Loading...
+              </Text>
+            </View>
+          ) : (
+            <Text
+              style={{
+                color: activeTextColor,
+                fontSize: textSize,
+                fontWeight: fontWeight,
+                textAlign: "center",
+                zIndex: 10,
+              }}
+            >
+              {title}
+            </Text>
+          )}
         </View>
       </LinearGradient>
     </Pressable>

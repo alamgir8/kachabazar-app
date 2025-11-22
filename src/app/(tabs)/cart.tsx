@@ -103,12 +103,15 @@ export default function CartScreen() {
                 variant="outline"
                 onPress={clearCart}
                 borderRadius={999}
+                disabled={items.length === 0}
               />
               <Button
                 title="Proceed"
                 variant="teal"
                 onPress={handleCheckout}
                 borderRadius={999}
+                loading={true}
+                disabled={items.length === 0}
               />
             </View>
           </View>
