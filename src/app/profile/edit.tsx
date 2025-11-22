@@ -6,8 +6,14 @@ import {
   Text,
   TextInput,
   View,
+  Image,
+  Pressable,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
+import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,6 +27,7 @@ interface ProfileFormValues {
   address?: string;
   city?: string;
   country?: string;
+  image?: string;
 }
 
 export default function EditProfileScreen() {
@@ -28,6 +35,8 @@ export default function EditProfileScreen() {
   const { user, updateProfile } = useAuth();
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const {
     control,
@@ -53,8 +62,116 @@ export default function EditProfileScreen() {
       setValue("address", user.address ?? "");
       setValue("city", user.city ?? "");
       setValue("country", user.country ?? "");
+      setValue("image", user.image ?? "");
+      setImageUri(user.image ?? null);
     }
   }, [user, setValue]);
+
+  const requestPermissions = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Required",
+        "Sorry, we need camera roll permissions to upload images."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const pickImage = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const selectedImage = result.assets[0];
+
+        // Validate image size (max 5MB)
+        if (
+          selectedImage.fileSize &&
+          selectedImage.fileSize > 5 * 1024 * 1024
+        ) {
+          Alert.alert("Error", "Image size should be less than 5MB");
+          return;
+        }
+
+        // Validate image dimensions (optional)
+        if (selectedImage.width && selectedImage.height) {
+          if (selectedImage.width < 100 || selectedImage.height < 100) {
+            Alert.alert(
+              "Error",
+              "Image dimensions should be at least 100x100 pixels"
+            );
+            return;
+          }
+        }
+
+        setImageUri(selectedImage.uri);
+        setValue("image", selectedImage.uri);
+        setError(null);
+      }
+    } catch (err) {
+      Alert.alert("Error", "Failed to pick image. Please try again.");
+    }
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Required",
+        "Sorry, we need camera permissions to take photos."
+      );
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const photo = result.assets[0];
+        setImageUri(photo.uri);
+        setValue("image", photo.uri);
+        setError(null);
+      }
+    } catch (err) {
+      Alert.alert("Error", "Failed to take photo. Please try again.");
+    }
+  };
+
+  const showImageOptions = () => {
+    Alert.alert(
+      "Upload Profile Picture",
+      "Choose an option",
+      [
+        {
+          text: "Take Photo",
+          onPress: takePhoto,
+        },
+        {
+          text: "Choose from Library",
+          onPress: pickImage,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const onSubmit = async (values: ProfileFormValues) => {
     setStatus(null);
@@ -78,6 +195,48 @@ export default function EditProfileScreen() {
           <View className="h-5" />
 
           <View className="mt-8 rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,118,110,0.1)]">
+            {/* Profile Image Upload */}
+            <View className="mb-6 items-center">
+              <Pressable onPress={showImageOptions} className="relative">
+                <View
+                  className="h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-primary-100"
+                  style={{
+                    shadowColor: "#10b981",
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 16,
+                    elevation: 8,
+                  }}
+                >
+                  {imageUri ? (
+                    <Image
+                      source={{ uri: imageUri }}
+                      className="h-full w-full"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View className="h-full w-full items-center justify-center bg-primary-50">
+                      <Feather name="user" size={48} color="#10b981" />
+                    </View>
+                  )}
+                  {isUploadingImage && (
+                    <View className="absolute inset-0 items-center justify-center bg-black/50">
+                      <ActivityIndicator size="large" color="#fff" />
+                    </View>
+                  )}
+                </View>
+                <View className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-primary-500">
+                  <Feather name="camera" size={18} color="#fff" />
+                </View>
+              </Pressable>
+              <Text className="mt-3 text-sm font-medium text-slate-600">
+                Tap to change profile picture
+              </Text>
+              <Text className="mt-1 text-xs text-slate-400">
+                JPG, PNG or GIF (max 5MB)
+              </Text>
+            </View>
+
             <Controller
               control={control}
               name="name"
@@ -141,23 +300,34 @@ export default function EditProfileScreen() {
             />
 
             {status ? (
-              <Text className="text-sm text-primary-600">{status}</Text>
+              <View className="mb-4 flex-row items-center rounded-2xl border border-green-100 bg-green-50/80 px-3 py-3">
+                <Feather name="check-circle" size={18} color="#10b981" />
+                <Text className="ml-2 flex-1 text-sm text-green-600">
+                  {status}
+                </Text>
+              </View>
             ) : null}
             {error ? (
-              <Text className="text-sm text-rose-500">{error}</Text>
+              <View className="mb-4 flex-row items-center rounded-2xl border border-red-100 bg-red-50/80 px-3 py-3">
+                <Feather name="alert-triangle" size={18} color="#ef4444" />
+                <Text className="ml-2 flex-1 text-sm text-red-600">
+                  {error}
+                </Text>
+              </View>
             ) : null}
 
             <Button
-              variant="primary"
+              variant="teal"
               title={isSubmitting ? "Saving..." : "Save changes"}
               className="mt-6"
               onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploadingImage}
+              loading={isSubmitting}
             />
             <Button
               title="Back to profile"
               variant="outline"
-              className="mt-3"
+              className="mt-6"
               onPress={() => router.back()}
             />
           </View>
