@@ -11,8 +11,9 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton, EnhancedInput } from "@/components/ui";
+import { EnhancedInput } from "@/components/ui";
 import { requestEmailVerification } from "@/services/auth";
+import Button from "@/components/ui/Button";
 
 interface RegisterFormValues {
   name: string;
@@ -146,21 +147,20 @@ export default function RegisterScreen() {
               </View>
             ) : null}
 
-            <EnhancedButton
+            <Button
               title={
                 isSubmitting
                   ? "Sending verification..."
                   : "Send verification email"
               }
-              onPress={handleSubmit(onSubmit)}
+              onPress={() => handleSubmit(onSubmit)()}
               disabled={isSubmitting}
               loading={isSubmitting}
-              size="lg"
+              variant="teal"
             />
-            <EnhancedButton
+            <Button
               title="Back to login"
               variant="outline"
-              size="lg"
               className="mt-6"
               onPress={() => router.push("/auth/login")}
             />

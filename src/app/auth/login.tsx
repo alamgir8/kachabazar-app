@@ -10,11 +10,11 @@ import {
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton, EnhancedInput } from "@/components/ui";
+import { EnhancedInput } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
+import Button from "@/components/ui/Button";
 
 interface LoginFormValues {
   email: string;
@@ -121,26 +121,21 @@ export default function LoginScreen() {
                 </Text>
               </View>
             ) : null}
-            <EnhancedButton
+            <Button
               title={isSubmitting ? "Signing in..." : "Sign in"}
-              onPress={handleSubmit(onSubmit)}
+              onPress={() => handleSubmit(onSubmit)()}
               disabled={isSubmitting}
               loading={isSubmitting}
-              size="lg"
-              className="rounded-full"
+              variant="teal"
             />
-            <EnhancedButton
+            <Button
               title="Create an account"
               variant="outline"
-              size="lg"
-              className="mt-6 rounded-full"
               onPress={() => router.push("/auth/register")}
             />
-            <EnhancedButton
+            <Button
               title="Forgot password?"
-              variant="ghost"
-              size="lg"
-              className="mt-2 rounded-full"
+              variant="outline"
               onPress={() => router.push("/auth/reset")}
             />
           </View>

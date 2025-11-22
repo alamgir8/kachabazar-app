@@ -2,10 +2,10 @@ import { ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
+import Button from "@/components/ui/Button";
 
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,7 +31,8 @@ export default function OrderDetailScreen() {
           <Text className="mt-2 text-sm text-slate-500">
             The order may have been archived or you might not have access.
           </Text>
-          <EnhancedButton
+          <Button
+            variant="outline"
             title="Try again"
             className="mt-4"
             onPress={() => refetch()}

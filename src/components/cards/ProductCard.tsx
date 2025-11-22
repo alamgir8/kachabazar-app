@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { theme } from "@/theme";
 import { Product } from "@/types";
 import {
-  calculateDiscountPercentage,
   formatCurrency,
   getLocalizedValue,
   getProductImage,
+  calculateDiscountPercentage,
 } from "@/utils";
 import { ProductModal } from "../modal/ProductModal";
 import Button from "@components/ui/Button";
@@ -139,8 +137,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             ) : null}
 
             <View className="mt-3 flex-row items-end justify-between">
-              <View className="flex-1 justify-between">
-                <Text className="text-[16px] font-extrabold text-emerald-600">
+              <View className="flex-row items-center gap-2">
+                <Text className="text-[20px] font-extrabold text-emerald-600">
                   {formatCurrency(price, currency)}
                 </Text>
                 {originalPrice > price ? (

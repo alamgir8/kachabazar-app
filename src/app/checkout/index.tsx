@@ -13,7 +13,6 @@ import {
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { LoadingState } from "@/components/common/LoadingState";
 import { CouponSection } from "@/components/checkout/CouponSection";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,6 +23,7 @@ import { formatCurrency } from "@/utils";
 import { BackButton } from "@/components/ui/BackButton";
 import { cn } from "@/utils/cn";
 import type { Coupon } from "@/services/coupons";
+import Button from "@/components/ui/Button";
 
 interface CheckoutFormValues {
   firstName: string;
@@ -42,12 +42,14 @@ const shippingOptions = [
   {
     value: "Standard",
     title: "Standard delivery",
-    description: "Arrives within 30-45 minutes with temperature-controlled bags.",
+    description:
+      "Arrives within 30-45 minutes with temperature-controlled bags.",
   },
   {
     value: "Express",
     title: "Express priority",
-    description: "Limited availability — prioritised picking and doorstep drop-off.",
+    description:
+      "Limited availability — prioritised picking and doorstep drop-off.",
   },
 ];
 
@@ -172,13 +174,10 @@ export default function CheckoutScreen() {
           <Text className="mt-2 text-sm text-slate-500">
             Please sign in to finalize your order and keep your history synced.
           </Text>
-          <EnhancedButton
+          <Button
             title="Login"
             className="mt-6"
-            glass={true}
             variant="primary"
-            size="lg"
-            fullWidth
             onPress={() => router.push("/auth/login")}
           />
         </View>
@@ -196,13 +195,10 @@ export default function CheckoutScreen() {
           <Text className="mt-2 text-sm text-slate-500">
             Add a few delicious items before you checkout.
           </Text>
-          <EnhancedButton
+          <Button
             title="Browse products"
             className="mt-6"
-            glass={true}
             variant="primary"
-            size="lg"
-            fullWidth
             onPress={() => router.push("/search")}
           />
         </View>
@@ -480,17 +476,16 @@ export default function CheckoutScreen() {
                 Total due today
               </Text>
               <Text className="font-display text-[30px] font-extrabold text-slate-900">
-                {formatCurrency(Math.max(0, subtotal - discountAmount), currency)}
+                {formatCurrency(
+                  Math.max(0, subtotal - discountAmount),
+                  currency
+                )}
               </Text>
             </View>
-            <EnhancedButton
+            <Button
               title={mutation.isPending ? "Placing order..." : "Confirm order"}
               className="mt-6 rounded-full"
-              contentClassName="gap-2"
-              glass
               variant="primary"
-              size="lg"
-              fullWidth
               onPress={handleSubmit(onSubmit)}
               loading={mutation.isPending}
             />
@@ -550,9 +545,7 @@ const TextInputField: React.FC<
     <TextInput
       className={cn(
         "rounded-[26px] border px-4 py-3.5 text-[15px] text-slate-900 shadow-[0_12px_24px_rgba(15,118,110,0.08)]",
-        error
-          ? "border-rose-400 bg-rose-50/40"
-          : "border-white/70 bg-white/96",
+        error ? "border-rose-400 bg-rose-50/40" : "border-white/70 bg-white/96",
         className
       )}
       placeholderTextColor="#94a3b8"
@@ -590,7 +583,7 @@ const PaymentOption: React.FC<{
         : "border-white/70 bg-white/95",
       disabled ? "opacity-50" : "active:bg-primary-50/60"
     )}
-    >
+  >
     <View className="flex-1 pr-3">
       <Text className="text-[15px] font-bold text-slate-900">{title}</Text>
       <Text className="mt-1 text-[13px] leading-relaxed text-slate-600">

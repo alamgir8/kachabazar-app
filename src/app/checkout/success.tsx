@@ -2,10 +2,10 @@ import { ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
+import Button from "@/components/ui/Button";
 
 export default function OrderSuccessScreen() {
   const params = useLocalSearchParams<{ orderId?: string }>();
@@ -17,7 +17,11 @@ export default function OrderSuccessScreen() {
   return (
     <Screen innerClassName="px-0">
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 80, paddingBottom: 120 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 80,
+          paddingBottom: 120,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <View className="items-center rounded-3xl bg-white p-10 shadow-[0_20px_45px_rgba(15,118,110,0.12)]">
@@ -45,14 +49,15 @@ export default function OrderSuccessScreen() {
             </View>
           ) : null}
 
-          <EnhancedButton
+          <Button
+            variant="primary"
             title="Track order"
             className="mt-8 w-full"
             onPress={() => router.replace("/orders")}
           />
-          <EnhancedButton
+          <Button
             title="Continue shopping"
-            variant="ghost"
+            variant="outline"
             className="mt-3 w-full"
             onPress={() => router.replace("/(tabs)")}
           />
@@ -64,7 +69,7 @@ export default function OrderSuccessScreen() {
 
 const SummaryRow: React.FC<{ label: string; value: string }> = ({
   label,
-  value
+  value,
 }) => (
   <View className="flex-row items-center justify-between">
     <Text className="text-sm text-slate-500">{label}</Text>

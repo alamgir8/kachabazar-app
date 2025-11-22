@@ -2,12 +2,12 @@ import { FlatList, RefreshControl, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import { BackButton } from "@/components/ui/BackButton";
+import Button from "@/components/ui/Button";
 
 export default function OrdersScreen() {
   const router = useRouter();
@@ -27,7 +27,8 @@ export default function OrdersScreen() {
             Sign in to view order history and reorder favourites in a single
             tap.
           </Text>
-          <EnhancedButton
+          <Button
+            variant="primary"
             title="Login"
             className="mt-6"
             onPress={() => router.push("/auth/login")}
@@ -55,7 +56,7 @@ export default function OrdersScreen() {
           <Text className="text-sm text-slate-500">
             Please check your connection and try again.
           </Text>
-          <EnhancedButton title="Retry" onPress={() => refetch()} />
+          <Button variant="outline" title="Retry" onPress={() => refetch()} />
         </View>
       </Screen>
     );
@@ -114,9 +115,9 @@ export default function OrdersScreen() {
                 Items: {item.cart.length}
               </Text>
             </View>
-            <EnhancedButton
+            <Button
               title="View details"
-              variant="ghost"
+              variant="outline"
               className="mt-4"
               onPress={() =>
                 router.push({
@@ -135,7 +136,8 @@ export default function OrdersScreen() {
             <Text className="mt-2 text-sm text-slate-500">
               Explore the store and add your favourite groceries to the cart.
             </Text>
-            <EnhancedButton
+            <Button
+              variant="primary"
               title="Start shopping"
               className="mt-6"
               onPress={() => router.push("/search")}

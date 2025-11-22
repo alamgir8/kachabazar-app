@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
+import Button from "@/components/ui/Button";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
@@ -37,10 +37,9 @@ export default function ResetPasswordScreen() {
               through our web portal.
             </Text>
           </View>
-          <EnhancedButton
+          <Button
             title="Back to login"
             variant="primary"
-            size="lg"
             onPress={() => router.push("/auth/login")}
           />
         </View>

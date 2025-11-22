@@ -10,9 +10,9 @@ import {
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { BackButton } from "@/components/ui/BackButton";
+import Button from "@/components/ui/Button";
 
 interface ProfileFormValues {
   name: string;
@@ -154,15 +154,16 @@ export default function EditProfileScreen() {
               <Text className="text-sm text-rose-500">{error}</Text>
             ) : null}
 
-            <EnhancedButton
+            <Button
+              variant="primary"
               title={isSubmitting ? "Saving..." : "Save changes"}
               className="mt-6"
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             />
-            <EnhancedButton
+            <Button
               title="Back to profile"
-              variant="ghost"
+              variant="outline"
               className="mt-3"
               onPress={() => router.back()}
             />

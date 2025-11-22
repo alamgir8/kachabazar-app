@@ -1,16 +1,16 @@
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import { theme } from "@/theme";
-import { useEffect } from "react";
+import Button from "@/components/ui/Button";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -153,7 +153,9 @@ export default function ProfileScreen() {
                 Recent total: {formatCurrency(stats.orders[0].total, currency)}
               </Text>
             ) : null}
-            <EnhancedButton
+            <Button
+              variant="cyan"
+              height={40}
               title="View order history"
               className="mt-5"
               onPress={() => router.push("/orders")}
@@ -202,9 +204,9 @@ export default function ProfileScreen() {
                 Add an address during checkout to enjoy one tap ordering.
               </Text>
             )}
-            <EnhancedButton
+            <Button
               title="Update profile"
-              variant="ghost"
+              variant="outline"
               className="mt-4"
               onPress={() => router.push("/profile/edit")}
             />
@@ -257,7 +259,12 @@ export default function ProfileScreen() {
             />
           </View>
 
-          <EnhancedButton title="Log out" className="mt-6" onPress={logout} />
+          <Button
+            variant="rose"
+            title="Log out"
+            className="mt-6"
+            onPress={logout}
+          />
         </View>
       </ScrollView>
     </Screen>

@@ -12,10 +12,10 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { EnhancedButton } from "@/components/ui";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
+import Button from "@/components/ui/Button";
 
 export default function ContactUsScreen() {
   const router = useRouter();
@@ -205,7 +205,8 @@ export default function ContactUsScreen() {
                 />
               </View>
 
-              <EnhancedButton
+              <Button
+                variant="teal"
                 title="Send Message"
                 onPress={handleSubmit}
                 className="mt-4"
