@@ -20,31 +20,34 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
 }) => (
   <View
     className={cn(
-      "flex-row items-center rounded-xl border-2 border-slate-200 bg-white overflow-hidden",
+      "flex-row items-center rounded-full border border-slate-200 bg-white/90 shadow-sm",
       className
     )}
   >
     <Pressable
       accessibilityRole="button"
-      className="bg-slate-100 items-center justify-center w-10 h-10 active:bg-slate-200"
+      className={cn(
+        "h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white active:bg-slate-100",
+        value <= min && "opacity-50"
+      )}
       onPress={onDecrement}
       disabled={value <= min}
     >
       <Feather
         name="minus"
-        size={18}
+        size={16}
         color={value <= min ? "#cbd5e1" : "#0f172a"}
       />
     </Pressable>
-    <View className="w-12 h-10 bg-white items-center justify-center">
+    <View className="mx-3 h-10 min-w-[48px] items-center justify-center">
       <Text className="text-base font-bold text-slate-900">{value}</Text>
     </View>
     <Pressable
       accessibilityRole="button"
-      className="bg-primary-500 items-center justify-center w-10 h-12 active:bg-primary-600"
+      className="h-10 w-10 items-center justify-center rounded-full bg-primary-500 active:bg-primary-600 shadow-[0_6px_12px_rgba(16,185,129,0.4)]"
       onPress={onIncrement}
     >
-      <Feather name="plus" size={18} color="#ffffff" />
+      <Feather name="plus" size={16} color="#ffffff" />
     </Pressable>
   </View>
 );

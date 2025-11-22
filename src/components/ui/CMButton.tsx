@@ -2,7 +2,7 @@ import React from "react";
 import {
   ActivityIndicator,
   Text,
-  TouchableOpacity,
+  Pressable,
   View,
   ViewStyle,
   TextStyle,
@@ -162,14 +162,14 @@ const variantConfig: Record<
     spinner: "#FFFFFF",
   },
   outline: {
-    bg: "bg-white",
+    bg: "bg-white/95",
     text: "text-primary-600",
-    border: "border-2 border-primary-500",
+    border: "border-2 border-primary-200",
     gradient: undefined,
     hue: [
-      "rgba(255,255,255,0.45)",
-      "rgba(255,255,255,0.12)",
-      "rgba(255,255,255,0.06)",
+      "rgba(34,197,94,0.12)",
+      "rgba(34,197,94,0.05)",
+      "rgba(34,197,94,0.03)",
     ],
     spinner: "#16a34a",
   },
@@ -376,7 +376,7 @@ const CMButton: React.FC<CMButtonProps> = ({
         ? "rounded-full"
         : rounded === false
           ? "rounded-none"
-          : "rounded-xl";
+          : "rounded-full";
 
   const containerClasses = cn(
     "items-center justify-center border overflow-hidden",
@@ -552,7 +552,6 @@ const CMButton: React.FC<CMButtonProps> = ({
       ...getAlignmentStyle(),
       borderRadius,
       overflow: "hidden" as const,
-      opacity: interactiveOpacity,
     };
 
     const shadowStyle = Platform.select({
@@ -569,17 +568,24 @@ const CMButton: React.FC<CMButtonProps> = ({
     });
 
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         disabled={isDisabled}
+        android_ripple={{
+          color: "rgba(255,255,255,0.2)",
+          borderless: false,
+        }}
         className={cn(
           !width && !fullWidth && w,
           mx,
           !width && !fullWidth && !w && roundedClass,
           shadow || "shadow-lg shadow-black/10"
         )}
-        style={[glassStyle, shadowStyle] as any}
-        activeOpacity={0.88}
+        style={({ pressed }) => [
+          glassStyle,
+          shadowStyle,
+          { opacity: pressed ? 0.9 : interactiveOpacity },
+        ]}
       >
         {/* Atmospheric glass layers */}
         <View
@@ -706,7 +712,7 @@ const CMButton: React.FC<CMButtonProps> = ({
         >
           {renderContent(Platform.OS === "android")}
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
@@ -725,22 +731,22 @@ const CMButton: React.FC<CMButtonProps> = ({
     });
 
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         disabled={isDisabled}
+        android_ripple={{ color: "rgba(255,255,255,0.2)", borderless: false }}
         className={cn(!width && !fullWidth && w, mx)}
-        style={[
+        style={({ pressed }) => [
           {
             borderRadius,
             overflow: "hidden",
-            opacity: interactiveOpacity,
             ...getWidthStyle(),
             ...getHeightStyle(),
             ...getAlignmentStyle(),
           },
           shadowStyle,
+          { opacity: pressed ? 0.9 : interactiveOpacity },
         ]}
-        activeOpacity={0.88}
       >
         <LinearGradient
           colors={gradientColors}
@@ -757,7 +763,7 @@ const CMButton: React.FC<CMButtonProps> = ({
         >
           {renderContent(Platform.OS === "android")}
         </LinearGradient>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
@@ -799,22 +805,22 @@ const CMButton: React.FC<CMButtonProps> = ({
     });
 
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         disabled={isDisabled}
+        android_ripple={{ color: "rgba(255,255,255,0.2)", borderless: false }}
         className={cn(!width && !fullWidth && w, mx)}
-        style={[
+        style={({ pressed }) => [
           {
             borderRadius,
             overflow: "hidden",
-            opacity: interactiveOpacity,
             ...getWidthStyle(),
             ...getHeightStyle(),
             ...getAlignmentStyle(),
           },
           shadowStyle,
+          { opacity: pressed ? 0.9 : interactiveOpacity },
         ]}
-        activeOpacity={0.88}
       >
         <LinearGradient
           colors={gradientColors}
@@ -831,29 +837,29 @@ const CMButton: React.FC<CMButtonProps> = ({
         >
           {renderContent(Platform.OS === "android")}
         </LinearGradient>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 
   // ----- OUTLINE & GHOST BUTTONS (NO GRADIENT) -----
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={isDisabled}
+      android_ripple={{ color: "rgba(34,197,94,0.12)", borderless: false }}
       className={containerClasses}
-      style={[
+      style={({ pressed }) => [
         {
           borderRadius,
-          opacity: interactiveOpacity,
           ...getWidthStyle(),
           ...getHeightStyle(),
           ...getAlignmentStyle(),
         },
+        { opacity: pressed ? 0.85 : interactiveOpacity },
       ]}
-      activeOpacity={0.9}
     >
       {renderContent()}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

@@ -8,11 +8,13 @@ import { formatCurrency } from "@/utils";
 interface CartSummaryProps {
   onCheckout: () => void;
   isCheckoutDisabled?: boolean;
+  showButton?: boolean;
 }
 
 export const CartSummary: React.FC<CartSummaryProps> = ({
   onCheckout,
   isCheckoutDisabled,
+  showButton = true,
 }) => {
   const { subtotal } = useCart();
   const { globalSetting } = useSettings();
@@ -65,16 +67,18 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
           </View>
         </View>
 
-        <CMButton
-          title="Proceed to Checkout"
-          onPress={onCheckout}
-          disabled={isCheckoutDisabled}
-          className="mt-6 rounded-full"
-          glass
-          variant="primary"
-          size="lg"
-          fullWidth
-        />
+        {showButton ? (
+          <CMButton
+            title="Proceed to Checkout"
+            onPress={onCheckout}
+            disabled={isCheckoutDisabled}
+            className="mt-6 rounded-full"
+            glass
+            variant="primary"
+            size="lg"
+            fullWidth
+          />
+        ) : null}
       </View>
     </View>
   );
