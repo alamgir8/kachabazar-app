@@ -96,15 +96,15 @@ export default function CategoriesScreen() {
           paddingBottom: 140,
         }}
         ListHeaderComponent={
-          <View className="mb-4 px-3">
-            <BackButton />
+          <View className="mb-4">
+            {/* Back Button */}
+            <BackButton
+              subTitle="Categories"
+              subDescription="Pick your categories"
+            />
+
             <View className="h-3" />
-            <Text className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500">
-              Categories
-            </Text>
-            <Text className="mt-2 font-display text-3xl text-slate-900">
-              Pick a department
-            </Text>
+
             <SearchBar
               placeholder="Search categories"
               onSubmitSearch={onSearch}
