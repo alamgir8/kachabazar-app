@@ -7,7 +7,6 @@ import {
   View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
@@ -135,14 +134,14 @@ export default function SearchScreen() {
   }
 
   return (
-    <Screen innerClassName="px-0">
+    <Screen scrollable edges={["bottom"]}>
       <FlatList
         data={products}
         keyExtractor={(item) => item._id}
         numColumns={2}
         columnWrapperStyle={{
           gap: 12,
-          paddingHorizontal: 16,
+          paddingHorizontal: 8,
           justifyContent: "space-between",
         }}
         refreshControl={
@@ -151,23 +150,18 @@ export default function SearchScreen() {
             onRefresh={() => productsQuery.refetch()}
           />
         }
+        contentContainerStyle={{
+          paddingBottom: 140,
+        }}
         ListHeaderComponent={
-          <LinearGradient
-            colors={["#ecfdf5", "#ffffff"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ paddingTop: 48, paddingBottom: 24, paddingHorizontal: 16 }}
-          >
-            <BackButton />
-            <Text className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-primary-500">
-              Explore
-            </Text>
-            <Text className="mt-2 text-3xl font-extrabold leading-tight text-slate-900">
-              {headerTitle || "Discover everything"}
-            </Text>
-            <Text className="mt-2 text-sm text-slate-500">
-              Browse by category, filter by price, or jump straight to trending picks.
-            </Text>
+          <View className="mb-4">
+            {/* Back Button */}
+            <BackButton
+              subTitle="Explore"
+              subDescription={headerTitle || "Discover everything"}
+            />
+
+            <View className="h-3" />
             <SearchBar
               value={search}
               onChangeText={setSearch}
@@ -206,12 +200,12 @@ export default function SearchScreen() {
                 />
               ))}
             </View>
-          </LinearGradient>
+          </View>
         }
         renderItem={({ item }) => (
           <ProductCard
             product={item}
-            attributes={attributesQuery.data || []}
+            attributes={attributesQuery?.data || []}
           />
         )}
         ListEmptyComponent={
@@ -226,9 +220,6 @@ export default function SearchScreen() {
             )}
           </View>
         }
-        contentContainerStyle={{
-          paddingBottom: 160,
-        }}
       />
     </Screen>
   );

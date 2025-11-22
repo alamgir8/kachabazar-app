@@ -38,6 +38,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const originalPrice = product.prices?.originalPrice ?? price;
   const discount = calculateDiscountPercentage(originalPrice, price);
 
+  // console.log(product?.image);
+
   const handleAdd = () => {
     addItem({
       product,
