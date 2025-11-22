@@ -142,6 +142,7 @@ export default function SearchScreen() {
         columnWrapperStyle={{
           gap: 12,
           paddingHorizontal: 8,
+          paddingVertical: 6,
           justifyContent: "space-between",
         }}
         refreshControl={
