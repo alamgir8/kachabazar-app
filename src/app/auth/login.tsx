@@ -121,6 +121,7 @@ export default function LoginScreen() {
               disabled={isSubmitting}
               loading={isSubmitting}
               variant="teal"
+              className="mt-6"
             />
             <Button
               title="Create an account"

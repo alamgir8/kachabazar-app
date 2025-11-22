@@ -31,16 +31,10 @@ export default function CartScreen() {
       innerClassName="flex-1"
     >
       {/* Back Button */}
-      <BackButton />
+      <BackButton subTitle="Your Basket" subDescription="Shopping Cart" />
       {isEmpty ? (
         <View className="gap-6">
           <View className="gap-2">
-            <Text className="text-[13px] font-semibold uppercase tracking-[0.3em] text-primary-500">
-              Your basket
-            </Text>
-            <Text className="text-[28px] font-extrabold text-slate-900">
-              Shopping Cart
-            </Text>
             <Text className="text-[13px] text-slate-500">
               Review your selections and adjust quantities before checkout.
             </Text>
@@ -65,11 +59,7 @@ export default function CartScreen() {
         <>
           <View className="flex-1 gap-6">
             <View className="gap-2 px-1">
-              <Text className="text-[23px] font-semibold uppercase tracking-[0.2em] text-primary-500">
-                Shopping Cart
-              </Text>
-
-              <Text className="text-[13px] text-slate-500">
+              <Text className="mt-3 text-sm text-slate-500">
                 Review your selections and adjust quantities before checkout.
               </Text>
             </View>

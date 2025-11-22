@@ -144,6 +144,7 @@ export default function RegisterScreen() {
               disabled={isSubmitting}
               loading={isSubmitting}
               variant="teal"
+              className="mt-6"
             />
             <Button
               title="Back to login"
