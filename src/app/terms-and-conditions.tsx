@@ -19,7 +19,7 @@ export default function TermsAndConditionsScreen() {
     <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
         {/* Back Button */}
         <BackButton

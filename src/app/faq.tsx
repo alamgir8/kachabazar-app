@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
+import { BackButton } from "@/components/ui";
 
 const FAQItem = ({
   question,
@@ -20,7 +21,7 @@ const FAQItem = ({
     <View className="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <Pressable
         onPress={() => setIsOpen(!isOpen)}
-        className="flex-row items-center justify-between p-5"
+        className="flex-row items-center justify-between p-4"
       >
         <Text className="flex-1 pr-4 text-base font-semibold text-slate-900">
           {question}
@@ -100,38 +101,28 @@ export default function FAQScreen() {
   }
 
   return (
-    <Screen className="pt-0" innerClassName="px-0" edges={["top", "bottom"]}>
+    <Screen edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Header */}
-        <View className="bg-gradient-to-b from-primary-600 to-accent-600 px-5 pb-8 pt-16">
-          <Pressable
-            onPress={() => router.back()}
-            className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-white/20"
-          >
-            <Feather name="arrow-left" size={24} color="#fff" />
-          </Pressable>
-          <Text className="mb-2 font-display text-3xl font-bold text-white">
-            Frequently Asked Questions
-          </Text>
-          <Text className="text-base text-white/90">
-            Find answers to common questions about our service
-          </Text>
-        </View>
+        {/* Back Button */}
+        <BackButton
+          subTitle="Frequently Asked Questions"
+          subDescription="FAQs"
+        />
 
         {/* FAQ List */}
-        <View className="px-5 py-6">
+        <View className="px-1 py-6">
           {faqs.map((faq, index) => (
             <FAQItem key={index} question={faq.question} answer={faq.answer} />
           ))}
         </View>
 
         {/* Still Have Questions */}
-        <View className="mx-5 mb-6 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 p-6">
+        <View className="px-1 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 py-6">
           <View className="mb-3 h-12 w-12 items-center justify-center rounded-full bg-primary-200">
-            <Feather name="message-circle" size={24} color="#1c7646" />
+            <Feather name="message-circle" size={24} color="#0ab65a" />
           </View>
           <Text className="mb-2 text-xl font-bold text-slate-900">
             Still have questions?

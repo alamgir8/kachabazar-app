@@ -76,7 +76,7 @@ export default function ProfileScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="pt-8">
+        <View className="">
           <LinearGradient
             colors={["#10b981", "#0ea5e9"]}
             start={{ x: 0, y: 0 }}
@@ -165,7 +165,7 @@ export default function ProfileScreen() {
           </LinearGradient>
 
           <View
-            className="mt-6 rounded-3xl bg-white/85 p-6"
+            className="mt-6 rounded-3xl bg-white/85 py-6 px-4"
             style={{
               shadowColor: "rgba(12, 70, 65, 0.25)",
               shadowOffset: { width: 0, height: 10 },
@@ -212,7 +212,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* Menu Items */}
-          <View className="mt-6 rounded-3xl bg-white px-6 py-2 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
+          <View className="mt-6 rounded-3xl bg-white px-1 py-2 shadow-[0_15px_45px_rgba(15,118,110,0.1)]">
             <MenuItem
               icon="shopping-bag"
               title="My Orders"
