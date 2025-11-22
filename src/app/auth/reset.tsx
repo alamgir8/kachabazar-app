@@ -34,7 +34,7 @@ export default function ResetPasswordScreen() {
           <Button
             title="Back to login"
             variant="primary"
-            onPress={() => router.push("/auth/login")}
+            onPress={() => router?.back()}
           />
         </View>
       </View>

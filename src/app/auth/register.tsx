@@ -149,7 +149,7 @@ export default function RegisterScreen() {
               title="Back to login"
               variant="outline"
               className="mt-6"
-              onPress={() => router.push("/auth/login")}
+              onPress={() => router?.back()}
             />
           </View>
         </View>
