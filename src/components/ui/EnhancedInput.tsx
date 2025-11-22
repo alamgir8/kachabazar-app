@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  Text,
-  Pressable,
-  TextInputProps,
-  Platform,
-} from "react-native";
+import { View, TextInput, Text, Pressable, TextInputProps } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { cn } from "@/utils/cn";
 import { Feather } from "@expo/vector-icons";
 
@@ -22,6 +14,10 @@ export interface EnhancedInputProps extends TextInputProps {
   inputClassName?: string;
   disabled?: boolean;
   required?: boolean;
+  variant?: "outlined" | "filled" | "underlined";
+  size?: "sm" | "md" | "lg";
+  onClear?: () => void;
+  showClearButton?: boolean;
 }
 
 export const EnhancedInput = React.forwardRef<TextInput, EnhancedInputProps>(
@@ -37,6 +33,11 @@ export const EnhancedInput = React.forwardRef<TextInput, EnhancedInputProps>(
       disabled,
       required,
       secureTextEntry,
+      variant = "outlined",
+      size = "md",
+      onClear,
+      showClearButton = false,
+      value,
       ...props
     },
     ref
@@ -45,104 +46,127 @@ export const EnhancedInput = React.forwardRef<TextInput, EnhancedInputProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     const isPassword = secureTextEntry;
+    const showClear = showClearButton && value && !isPassword;
+
+    // Size configurations
+    const sizeConfig = {
+      sm: { height: 40, fontSize: 14, iconSize: 18, px: 3 },
+      md: { height: 48, fontSize: 16, iconSize: 20, px: 4 },
+      lg: { height: 56, fontSize: 18, iconSize: 22, px: 5 },
+    };
+
+    const config = sizeConfig[size];
+
+    // Variant styles
+    const getVariantStyles = () => {
+      const baseStyles = "flex-row items-center";
+
+      if (variant === "filled") {
+        return cn(
+          baseStyles,
+          "bg-slate-100 rounded-2xl",
+          isFocused && "bg-slate-200",
+          error && "bg-red-50",
+          disabled && "bg-slate-50 opacity-60"
+        );
+      }
+
+      if (variant === "underlined") {
+        return cn(
+          baseStyles,
+          "border-b border-slate-300",
+          isFocused && "border-emerald-500",
+          error && "border-red-500",
+          disabled && "border-slate-200 opacity-60"
+        );
+      }
+
+      // outlined (default)
+      return cn(
+        baseStyles,
+        "border border-slate-300 rounded-2xl bg-white",
+        isFocused && "border-emerald-500",
+        error && "border-red-500",
+        disabled && "border-slate-200 bg-slate-50 opacity-60"
+      );
+    };
 
     return (
       <View className={cn("w-full", containerClassName)}>
         {label && (
-          <Text className="text-sm font-semibold text-neutral-700 mb-2">
+          <Text className="mb-2 text-sm font-semibold text-slate-700">
             {label}
-            {required && <Text className="text-error"> *</Text>}
+            {required && <Text className="text-red-500"> *</Text>}
           </Text>
         )}
 
         <View
-          style={[
-            {
-              borderRadius: 24,
-              shadowColor: "rgba(15,118,110,0.2)",
-            },
-            Platform.select({
-              ios: {
-                shadowOpacity: 0.25,
-                shadowOffset: { width: 0, height: 10 },
-                shadowRadius: 18,
-              },
-              android: {
-                elevation: 6,
-              },
-            }),
-          ]}
+          className={getVariantStyles()}
+          style={{ height: config.height, paddingHorizontal: config.px * 4 }}
         >
-          <LinearGradient
-            colors={
-              error
-                ? ["rgba(248,113,113,0.65)", "rgba(248,113,113,0.08)"]
-                : isFocused
-                  ? ["rgba(34,197,94,0.6)", "rgba(14,165,233,0.15)"]
-                  : ["rgba(226,232,240,0.9)", "rgba(248,250,252,0.5)"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ borderRadius: 24, padding: 1.2 }}
-          >
-            <View
-              className={cn(
-                "flex-row items-center rounded-[22px] bg-white px-4 py-3",
-                disabled && "bg-slate-50 opacity-70"
-              )}
-            >
-              {leftIcon && (
-                <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-slate-50">
-                  {typeof leftIcon === "string" ? (
-                    <Feather
-                      name={leftIcon as keyof typeof Feather.glyphMap}
-                      size={20}
-                      color="#6b7280"
-                    />
-                  ) : (
-                    leftIcon
-                  )}
-                </View>
-              )}
-
-              <TextInput
-                ref={ref}
-                className={cn(
-                  "flex-1 text-base text-neutral-900",
-                  disabled && "text-neutral-500",
-                  inputClassName
-                )}
-                placeholderTextColor="#a3a3a3"
-                editable={!disabled}
-                secureTextEntry={isPassword && !showPassword}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                {...props}
-              />
-
-              {isPassword ? (
-                <Pressable
-                  onPress={() => setShowPassword(!showPassword)}
-                  className="ml-3 h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 active:bg-slate-100"
-                >
-                  {showPassword ? (
-                    <EyeOff size={20} color="#475569" />
-                  ) : (
-                    <Eye size={20} color="#475569" />
-                  )}
-                </Pressable>
+          {leftIcon && (
+            <View className="mr-3 h-9 w-9 items-center justify-center rounded-xl bg-slate-100">
+              {typeof leftIcon === "string" ? (
+                <Feather
+                  name={leftIcon as keyof typeof Feather.glyphMap}
+                  size={config.iconSize}
+                  color="#64748b"
+                />
               ) : (
-                rightIcon && <View className="ml-3">{rightIcon}</View>
+                leftIcon
               )}
             </View>
-          </LinearGradient>
+          )}
+
+          <TextInput
+            ref={ref}
+            className={cn(
+              "flex-1 text-slate-900",
+              disabled && "text-slate-500",
+              inputClassName
+            )}
+            style={{ fontSize: config.fontSize }}
+            placeholderTextColor="#94a3b8"
+            editable={!disabled}
+            secureTextEntry={isPassword && !showPassword}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            value={value}
+            {...props}
+          />
+
+          {showClear && (
+            <Pressable
+              onPress={onClear}
+              className="ml-2 h-8 w-8 items-center justify-center rounded-full bg-slate-100 active:bg-slate-200"
+            >
+              <Feather name="x" size={16} color="#64748b" />
+            </Pressable>
+          )}
+
+          {isPassword && (
+            <Pressable
+              onPress={() => setShowPassword(!showPassword)}
+              className="ml-2 h-9 w-9 items-center justify-center rounded-xl bg-slate-100 active:bg-slate-200"
+            >
+              {showPassword ? (
+                <EyeOff size={config.iconSize} color="#64748b" />
+              ) : (
+                <Eye size={config.iconSize} color="#64748b" />
+              )}
+            </Pressable>
+          )}
+
+          {!isPassword && !showClear && rightIcon && (
+            <View className="ml-2">{rightIcon}</View>
+          )}
         </View>
 
         {(error || helperText) && (
           <Text
             className={cn(
-              "text-xs mt-1.5 ml-1",
-              error ? "text-error" : "text-neutral-500"
+              "ml-1 mt-1.5 text-xs",
+              error ? "text-red-500" : "text-slate-500"
             )}
           >
             {error || helperText}
@@ -160,73 +184,83 @@ interface TextAreaProps extends TextInputProps {
   error?: string;
   helperText?: string;
   containerClassName?: string;
+  inputClassName?: string;
   rows?: number;
+  required?: boolean;
+  disabled?: boolean;
+  variant?: "outlined" | "filled";
 }
 
 export const TextArea = React.forwardRef<TextInput, TextAreaProps>(
   (
-    { label, error, helperText, containerClassName, rows = 4, ...props },
+    {
+      label,
+      error,
+      helperText,
+      containerClassName,
+      inputClassName,
+      rows = 4,
+      required,
+      disabled,
+      variant = "outlined",
+      ...props
+    },
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
 
+    const getVariantStyles = () => {
+      if (variant === "filled") {
+        return cn(
+          "rounded-2xl bg-slate-100 p-4",
+          isFocused && "bg-slate-200",
+          error && "bg-red-50",
+          disabled && "bg-slate-50 opacity-60"
+        );
+      }
+
+      return cn(
+        "rounded-2xl border-2 border-slate-300 bg-white p-4",
+        isFocused && "border-emerald-500",
+        error && "border-red-500",
+        disabled && "border-slate-200 bg-slate-50 opacity-60"
+      );
+    };
+
     return (
       <View className={cn("w-full", containerClassName)}>
         {label && (
-          <Text className="text-sm font-semibold text-neutral-700 mb-2">
+          <Text className="mb-2 text-sm font-semibold text-slate-700">
             {label}
+            {required && <Text className="text-red-500"> *</Text>}
           </Text>
         )}
 
-        <View
-          style={[
-            {
-              borderRadius: 24,
-              shadowColor: "rgba(15,118,110,0.18)",
-            },
-            Platform.select({
-              ios: {
-                shadowOpacity: 0.22,
-                shadowOffset: { width: 0, height: 10 },
-                shadowRadius: 18,
-              },
-              android: { elevation: 5 },
-            }),
-          ]}
-        >
-          <LinearGradient
-            colors={
-              error
-                ? ["rgba(248,113,113,0.6)", "rgba(248,113,113,0.08)"]
-                : isFocused
-                  ? ["rgba(34,197,94,0.45)", "rgba(14,165,233,0.18)"]
-                  : ["rgba(226,232,240,0.9)", "rgba(248,250,252,0.5)"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ borderRadius: 24, padding: 1.2 }}
-          >
-            <View className="rounded-[22px] bg-white p-4">
-              <TextInput
-                ref={ref}
-                className="text-base text-neutral-900"
-                placeholderTextColor="#a3a3a3"
-                multiline
-                numberOfLines={rows}
-                textAlignVertical="top"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                {...props}
-              />
-            </View>
-          </LinearGradient>
+        <View className={getVariantStyles()}>
+          <TextInput
+            ref={ref}
+            className={cn(
+              "text-base text-slate-900",
+              disabled && "text-slate-500",
+              inputClassName
+            )}
+            placeholderTextColor="#94a3b8"
+            multiline
+            numberOfLines={rows}
+            textAlignVertical="top"
+            editable={!disabled}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            style={{ minHeight: rows * 24 }}
+            {...props}
+          />
         </View>
 
         {(error || helperText) && (
           <Text
             className={cn(
-              "text-xs mt-1.5 ml-1",
-              error ? "text-error" : "text-neutral-500"
+              "ml-1 mt-1.5 text-xs",
+              error ? "text-red-500" : "text-slate-500"
             )}
           >
             {error || helperText}
