@@ -186,20 +186,18 @@ export default function ProductScreen() {
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
-    <Screen
-      scrollable
-      edges={["bottom"]}
-      contentContainerClassName="gap-6 pb-28"
-    >
+    <Screen scrollable edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 260,
           paddingTop: 16,
+          // paddingHorizontal: 8,
+          // paddingVertical: 6,
         }}
       >
         {/* Header with Back Button */}
-        <View className="absolute top-6 left-6 right-6 z-10 flex-row items-center justify-between">
+        <View className="absolute top-6 left-1 right-1 z-10 flex-row items-center justify-between">
           <BackButton />
           <View className="flex-row gap-2">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
@@ -230,12 +228,12 @@ export default function ProductScreen() {
               <View
                 key={`${img}-${index}`}
                 style={{ width: carouselWidth }}
-                className="items-center justify-center bg-gradient-to-b from-slate-50 to-white py-16"
+                className="items-center justify-center bg-gradient-to-b from-slate-50 to-white py-10"
               >
                 {img ? (
                   <Image
                     source={{ uri: img }}
-                    className="h-80 w-80"
+                    className="h-48 w-48"
                     resizeMode="contain"
                   />
                 ) : (
