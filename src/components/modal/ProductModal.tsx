@@ -105,6 +105,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     router.push(`/product/${product.slug}`);
   };
 
+  console.log("product.tag", product.tag);
+
   return (
     <Modal
       visible={visible}
@@ -181,13 +183,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 <View className="px-5 pt-4">
                   {/* Category & Rating */}
                   <View className="mb-3 flex-row items-center justify-between">
-                    {product.category &&
+                    {product?.category &&
                       typeof product.category === "object" && (
                         <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
                           <Feather name="tag" size={12} color="#10b981" />
                           <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
                             {getLocalizedValue(
-                              product.category.name as Record<string, string>
+                              product?.category?.name as Record<string, string>
                             )}
                           </Text>
                         </View>
@@ -315,17 +317,19 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                         Tags
                       </Text>
                       <View className="flex-row flex-wrap gap-2">
-                        {product?.tag.map((tag: string, idx: number) => (
-                          <View
-                            key={idx}
-                            className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
-                          >
-                            <Feather name="tag" size={12} color="#3b82f6" />
-                            <Text className="ml-1.5 text-xs font-semibold text-blue-700">
-                              {tag}
-                            </Text>
-                          </View>
-                        ))}
+                        {JSON.parse(product?.tag)?.map(
+                          (tag: string, idx: number) => (
+                            <View
+                              key={idx}
+                              className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
+                            >
+                              <Feather name="tag" size={12} color="#3b82f6" />
+                              <Text className="ml-1.5 text-xs font-semibold text-blue-700">
+                                {tag}
+                              </Text>
+                            </View>
+                          )
+                        )}
                       </View>
                     </View>
                   )}

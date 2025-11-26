@@ -42,7 +42,7 @@ export interface Product {
   image: string[];
   stock?: number;
   sales?: number;
-  tag?: string[];
+  tag?: any;
   prices: Price;
   variants?: VariantOption[];
   isCombination: boolean;
