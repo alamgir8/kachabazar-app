@@ -5,8 +5,8 @@ import {
   View,
   ActivityIndicator,
   Alert,
-  Linking,
   Pressable,
+  Linking,
 } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,6 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/utils";
 import Button from "@/components/ui/Button";
 import { BackButton } from "@/components/ui";
+import { exportOrderInvoicePdf } from "@/services/order-invoice-pdf";
 
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,6 +27,7 @@ export default function OrderDetailScreen() {
   const { data: order, isLoading, isError, refetch } = useOrder(id);
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
+
   const [downloading, setDownloading] = useState(false);
   const [emailing, setEmailing] = useState(false);
 
@@ -39,31 +41,31 @@ export default function OrderDetailScreen() {
   );
 
   const handleDownloadInvoice = async () => {
-    if (!order?.invoice) return;
+    if (!order) {
+      Alert.alert("Error", "Order not found to export invoice.");
+      return;
+    }
 
     try {
       setDownloading(true);
 
-      // Generate invoice URL - adjust this to your actual API endpoint
-      const invoiceUrl = `${globalSetting?.api_url || "https://api.yoursite.com"}/order/invoice/${order._id}`;
+      await exportOrderInvoicePdf({
+        order,
+        currency,
+        shopName:
+          typeof globalSetting?.site_name === "string"
+            ? globalSetting.site_name
+            : "Invoice",
+        shopAddress: globalSetting?.address,
+      });
 
-      const canOpen = await Linking.canOpenURL(invoiceUrl);
-
-      if (canOpen) {
-        await Linking.openURL(invoiceUrl);
-        Alert.alert(
-          "Download Started",
-          "Your invoice will open in your browser. You can download or print it from there."
-        );
-      } else {
-        Alert.alert(
-          "Error",
-          "Unable to open invoice URL. Please try again later."
-        );
-      }
+      // Sharing dialog already gives UX feedback, no extra alert needed
     } catch (error) {
-      console.error("Download error:", error);
-      Alert.alert("Error", "Could not open invoice. Please try again later.");
+      console.error("Invoice export error:", error);
+      Alert.alert(
+        "Error",
+        "Could not generate the invoice PDF. Please try again."
+      );
     } finally {
       setDownloading(false);
     }
@@ -80,7 +82,12 @@ export default function OrderDetailScreen() {
 
       const subject = encodeURIComponent(`Invoice #${order.invoice}`);
       const body = encodeURIComponent(
-        `Hello,\n\nPlease find attached your invoice for order #${order.invoice}.\n\nTotal: ${formatCurrency(order.total, currency)}\n\nThank you for your order!`
+        `Hello,\n\nPlease find attached your invoice for order #${
+          order.invoice
+        }.\n\nTotal: ${formatCurrency(
+          order.total,
+          currency
+        )}\n\nThank you for your order!`
       );
 
       const mailtoUrl = `mailto:${order.user_info.email}?subject=${subject}&body=${body}`;
@@ -251,7 +258,7 @@ export default function OrderDetailScreen() {
                     <Feather name="download" size={18} color="#fff" />
                   )}
                   <Text className="text-sm font-bold text-white">
-                    {downloading ? "Downloading..." : "Download"}
+                    {downloading ? "Generating..." : "Download"}
                   </Text>
                 </Pressable>
 
@@ -316,12 +323,7 @@ export default function OrderDetailScreen() {
                 </Text>
               </View>
               <View className="flex-row gap-2">
-                <Feather
-                  name="map-pin"
-                  size={16}
-                  color="#64748b"
-                  className="mt-0.5"
-                />
+                <Feather name="map-pin" size={16} color="#64748b" />
                 <View className="flex-1">
                   <Text className="text-sm text-slate-600">
                     {order.user_info?.address}

@@ -179,11 +179,11 @@ export default function OrdersScreen() {
 
           const statusBg =
             item.status === "delivered"
-              ? "bg-emerald-50"
+              ? "bg-emerald-100"
               : item.status === "pending"
-                ? "bg-amber-50"
+                ? "bg-amber-100"
                 : item.status === "processing"
-                  ? "bg-blue-50"
+                  ? "bg-blue-100"
                   : "bg-slate-100";
 
           const statusText =
