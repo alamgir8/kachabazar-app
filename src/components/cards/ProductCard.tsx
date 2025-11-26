@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, Pressable, Text, View, StyleSheet } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -13,7 +13,6 @@ import {
   calculateDiscountPercentage,
 } from "@/utils";
 import { ProductModal } from "../modal/ProductModal";
-import Button from "@components/ui/Button";
 
 interface ProductCardProps {
   product: Product;
@@ -33,40 +32,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { addItem, items, increment, decrement } = useCart();
   const { globalSetting } = useSettings();
   const [modalVisible, setModalVisible] = useState(false);
+
   const price = product.prices?.price ?? 0;
   const currency = globalSetting?.default_currency ?? "$";
   const originalPrice = product.prices?.originalPrice ?? price;
   const discount = calculateDiscountPercentage(originalPrice, price);
 
-  // Memoize cart item lookup for performance
   const cartItem = useMemo(
     () => items.find((item: CartItem) => item.product._id === product._id),
     [items, product._id]
   );
   const cartQuantity = cartItem?.quantity ?? 0;
 
-  // Calculate average rating from product
   const totalReviews = product.total_reviews ?? 0;
   const averageRating = product.average_rating ?? 0;
 
   const handleAdd = useCallback(() => {
-    addItem({
-      product,
-      variantLabel,
-    });
+    addItem({ product, variantLabel });
     onPressAdd?.();
   }, [addItem, product, variantLabel, onPressAdd]);
 
   const handleIncrement = useCallback(() => {
-    if (cartItem) {
-      increment(cartItem.id);
-    }
+    if (cartItem) increment(cartItem.id);
   }, [cartItem, increment]);
 
   const handleDecrement = useCallback(() => {
-    if (cartItem) {
-      decrement(cartItem.id);
-    }
+    if (cartItem) decrement(cartItem.id);
   }, [cartItem, decrement]);
 
   const handleCardPress = useCallback(() => {
@@ -76,48 +67,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const image = getProductImage(product);
 
   const cardWidth = layout === "carousel" ? 240 : undefined;
-  const imageContainerHeight = layout === "carousel" ? 140 : 180;
+  const imageContainerHeight = layout === "carousel" ? 180 : 180;
+
   const hasDiscount = discount > 0;
+  const stock = product.stock ?? 0;
+  const isOutOfStock = stock <= 0;
 
   return (
     <>
+      {/* CARD WRAPPER */}
       <View
-        style={[
-          {
-            width: cardWidth,
-            flex: cardWidth ? undefined : 1,
-          },
-          hasDiscount ? styles.discountCardShadow : styles.regularCardShadow,
-        ]}
-        className={`flex overflow-hidden rounded-3xl ${
-          hasDiscount ? "border-2 border-orange-300" : "border border-slate-200"
-        } bg-white`}
+        style={{
+          width: cardWidth,
+          flex: cardWidth ? undefined : 1,
+        }}
+        className={[
+          "flex overflow-hidden rounded-3xl bg-white",
+          hasDiscount
+            ? "border-2 border-accent-300 shadow-product-discount"
+            : "border border-slate-200 shadow-product-regular",
+        ].join(" ")}
       >
         <Pressable
           onPress={handleCardPress}
-          className="active:opacity-95 flex-1"
+          className="flex-1 active:opacity-95"
         >
-          {/* Image Container with different gradient based on discount */}
+          {/* IMAGE CONTAINER */}
           <View
-            className="relative w-full"
-            style={{
-              height: imageContainerHeight,
-              backgroundColor: hasDiscount ? "#fff7ed" : "#f8fafc",
-            }}
+            className={`relative w-full ${
+              hasDiscount ? "bg-accent-50" : "bg-slate-50"
+            }`}
+            style={{ height: imageContainerHeight }}
           >
-            {/* Decorative gradient overlay for discount items */}
+            {/* DISCOUNT OVERLAY */}
             {hasDiscount && (
               <LinearGradient
-                colors={[
-                  "rgba(251, 146, 60, 0.08)",
-                  "rgba(249, 115, 22, 0.12)",
-                ]}
+                colors={["rgba(251,146,60,0.08)", "rgba(249,115,22,0.12)"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
+                className="absolute inset-0"
               />
             )}
 
+            {/* PRODUCT IMAGE */}
             <View className="h-full w-full items-center justify-center p-4">
               {image ? (
                 <Image
@@ -132,69 +124,68 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               )}
             </View>
 
-            {/* Discount Badge - Top Right Corner */}
+            {/* STOCK BADGE (TOP LEFT) */}
+            <View className="absolute left-0 top-0">
+              <View
+                className={[
+                  "rounded-br-2xl px-3 py-1.5 shadow-badge-soft",
+                  isOutOfStock ? "bg-rose-500" : "bg-emerald-500",
+                ].join(" ")}
+              >
+                <Text className="text-xs font-black text-white">
+                  {isOutOfStock ? "Out of stock" : `${stock} in stock`}
+                </Text>
+              </View>
+            </View>
+
+            {/* DISCOUNT BADGE (TOP RIGHT) */}
             {hasDiscount && (
               <View className="absolute right-0 top-0">
-                <View
-                  className="rounded-bl-2xl bg-red-500 px-3 py-1.5"
-                  style={{
-                    shadowColor: "#dc2626",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 8,
-                    elevation: 6,
-                  }}
-                >
+                <View className="rounded-bl-2xl bg-red-500 px-3 py-1.5 shadow-badge-soft">
                   <Text className="text-xs font-black text-white">
-                    {discount} % Off
+                    {discount}% Off
                   </Text>
                 </View>
               </View>
             )}
 
-            {/* Stock Badge */}
-            {(product.stock ?? 0) < 10 && (product.stock ?? 0) > 0 && (
-              <View className="absolute left-2 top-2 rounded-lg bg-emerald-500 px-2.5 py-1">
+            {/* LOW STOCK BADGE */}
+            {stock < 10 && stock > 0 && (
+              <View className="absolute left-2 top-2 rounded-lg bg-emerald-500 px-2.5 py-1 shadow-badge-soft">
                 <Text className="text-[10px] font-bold text-white">
-                  {product.stock} left
+                  {stock} left
                 </Text>
               </View>
             )}
 
-            {/* Cart Quantity Controls - Right side vertically centered */}
+            {/* CART QUANTITY CONTROLS */}
             {cartQuantity > 0 && (
               <View
-                className="absolute right-0 top-1/2 rounded-md"
-                style={{
-                  transform: [{ translateY: -28 }],
-                  shadowColor: "#10b981",
-                  shadowOffset: { width: -2, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 6,
-                }}
+                className="absolute right-0 top-1/2 rounded-md shadow-lg"
+                style={{ transform: [{ translateY: -28 }] }}
               >
                 <LinearGradient
                   colors={["#10b981", "#059669"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 0, y: 1 }}
-                  className="items-center rounded-l-full py-1.5 px-2"
-                  style={{ gap: 8 }}
+                  className="items-center rounded-l-full px-2 py-1.5 gap-2"
                 >
                   <Pressable
                     onPress={handleDecrement}
                     className="h-8 w-8 items-center justify-center rounded-full bg-white/30 active:bg-white/50"
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    hitSlop={10}
                   >
                     <Feather name="minus" size={16} color="#fff" />
                   </Pressable>
+
                   <Text className="text-base font-black text-white">
                     {cartQuantity}
                   </Text>
+
                   <Pressable
                     onPress={handleIncrement}
                     className="h-8 w-8 items-center justify-center rounded-full bg-white/30 active:bg-white/50"
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    hitSlop={10}
                   >
                     <Feather name="plus" size={16} color="#fff" />
                   </Pressable>
@@ -203,10 +194,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </View>
 
-          {/* Content Section */}
+          {/* TEXT CONTENT SECTION */}
           <View
-            className={`flex-1 px-3 pb-3 pt-2.5 ${hasDiscount ? "bg-orange-50/30" : "bg-white"}`}
+            className={[
+              "flex-1 px-3 pb-3 pt-2.5",
+              hasDiscount ? "bg-accent-50/30" : "bg-white",
+            ].join(" ")}
           >
+            {/* TITLE */}
             <Text
               numberOfLines={2}
               className="text-[14px] font-bold leading-snug text-slate-900"
@@ -214,28 +209,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {getLocalizedValue(product.title)}
             </Text>
 
-            {/* Rating - with filled stars */}
+            {/* RATING */}
             {totalReviews > 0 && (
               <View className="mt-1.5 flex-row items-center gap-1">
                 <View className="flex-row items-center gap-0.5">
                   {[1, 2, 3, 4, 5].map((star) => {
                     const isFilled = star <= Math.round(averageRating);
-                    return (
-                      <View key={star}>
-                        {isFilled ? (
-                          <Text style={{ fontSize: 14, color: "#fbbf24" }}>
-                            <FontAwesome
-                              name="star"
-                              size={14}
-                              color="#fcb501"
-                            />
-                          </Text>
-                        ) : (
-                          <Text>
-                            <Feather name="star" size={14} color="#b9ccf1" />
-                          </Text>
-                        )}
-                      </View>
+
+                    return isFilled ? (
+                      <FontAwesome
+                        key={star}
+                        name="star"
+                        size={14}
+                        color="#fcb501"
+                      />
+                    ) : (
+                      <Feather
+                        key={star}
+                        name="star"
+                        size={14}
+                        color="#b9ccf1"
+                      />
                     );
                   })}
                 </View>
@@ -245,6 +239,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </View>
             )}
 
+            {/* VARIANT LABEL */}
             {variantLabel && (
               <View className="mt-2 self-start rounded-full bg-slate-100 px-2.5 py-1">
                 <Text className="text-[10px] font-semibold text-slate-600">
@@ -253,10 +248,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </View>
             )}
 
-            {/* Price Section */}
+            {/* PRICE */}
             <View className="mt-auto pt-2">
               {hasDiscount ? (
-                <View className="gap-0.5 flex-row items-center justify-between">
+                <View className="flex-row items-center justify-between">
                   <Text className="text-[18px] font-black text-red-600">
                     {formatCurrency(price, currency)}
                   </Text>
@@ -265,7 +260,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   </Text>
                 </View>
               ) : (
-                <Text className="text-[18px] font-black text-emerald-600">
+                <Text className="text-[18px] font-black text-primary-600">
                   {formatCurrency(price, currency)}
                 </Text>
               )}
@@ -273,29 +268,38 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </View>
         </Pressable>
 
-        {/* Add Button - Always at bottom */}
+        {/* ADD TO CART BUTTON */}
         <View
-          className={`px-3 pb-3 ${hasDiscount ? "bg-orange-50/30" : "bg-white"}`}
+          className={[
+            "px-3 pb-3",
+            hasDiscount ? "bg-accent-50/30" : "bg-white",
+          ].join(" ")}
         >
           <Pressable
             onPress={handleAdd}
-            className={`flex-row items-center justify-center rounded-full py-2.5 ${hasDiscount ? "bg-rose-500" : "bg-emerald-500"}`}
-            style={{
-              shadowColor: hasDiscount ? "#ef4444" : "#10b981",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-              elevation: 4,
-            }}
+            disabled={isOutOfStock}
+            className={[
+              "flex-row items-center justify-center rounded-full py-2.5 shadow-md",
+              isOutOfStock
+                ? "bg-slate-300"
+                : hasDiscount
+                  ? "bg-rose-500"
+                  : "bg-primary-500",
+            ].join(" ")}
           >
-            <Feather name="plus" size={16} color="#fff" />
+            <Feather
+              name={isOutOfStock ? "x-circle" : "plus"}
+              size={16}
+              color="#fff"
+            />
             <Text className="ml-1.5 text-sm font-bold text-white">
-              Add to Cart
+              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </Text>
           </Pressable>
         </View>
       </View>
 
+      {/* PRODUCT MODAL */}
       <ProductModal
         product={product}
         visible={modalVisible}
@@ -305,20 +309,3 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  regularCardShadow: {
-    shadowColor: "#64748b",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  discountCardShadow: {
-    shadowColor: "#f97316",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 5,
-  },
-});

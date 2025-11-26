@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./App.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
     "./src/app/**/*.{js,jsx,ts,tsx}",
     "./src/components/**/*.{js,jsx,ts,tsx}",
     "./src/layout/**/*.{js,jsx,ts,tsx}",
@@ -116,6 +118,12 @@ module.exports = {
         xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         card: "0 10px 30px rgba(15, 118, 110, 0.08)",
+
+        // Extra niceties for this product card
+        "product-regular": "0 4px 12px rgba(100, 116, 139, 0.18)", // slate-ish
+        "product-discount": "0 6px 18px rgba(249, 115, 22, 0.25)", // accent-ish
+        "badge-soft": "0 4px 8px rgba(15, 23, 42, 0.18)",
+
         inner: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)",
       },
       animation: {
