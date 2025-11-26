@@ -4,7 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -52,10 +52,7 @@ const hydrateCart = async (): Promise<CartItem[]> => {
 
 const persistCart = async (items: CartItem[]) => {
   try {
-    await AsyncStorage.setItem(
-      SECURE_STORAGE_KEYS.cart,
-      JSON.stringify(items)
-    );
+    await AsyncStorage.setItem(SECURE_STORAGE_KEYS.cart, JSON.stringify(items));
   } catch (error) {
     console.warn("Failed to persist cart", error);
   }
@@ -65,7 +62,7 @@ const buildItemId = (product: Product, variantLabel?: string) =>
   variantLabel ? `${product._id}:${variantLabel}` : product._id;
 
 export const CartProvider: React.FC<React.PropsWithChildren> = ({
-  children
+  children,
 }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
@@ -82,19 +79,23 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
   );
 
   const subtotal = useMemo(
-    () => Number(items.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)),
+    () =>
+      Number(items.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)),
     [items]
   );
 
   const isEmpty = items.length === 0;
 
-  const applyAndPersist = useCallback((updater: (prev: CartItem[]) => CartItem[]) => {
-    setItems(prev => {
-      const next = updater(prev);
-      persistCart(next);
-      return next;
-    });
-  }, []);
+  const applyAndPersist = useCallback(
+    (updater: (prev: CartItem[]) => CartItem[]) => {
+      setItems((prev) => {
+        const next = updater(prev);
+        persistCart(next);
+        return next;
+      });
+    },
+    []
+  );
 
   const addItem = useCallback(
     ({ product, quantity = 1, variantLabel, priceOverride }: AddToCartArgs) => {
@@ -102,10 +103,12 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
       const price = priceOverride ?? product.prices?.price ?? 0;
       const originalPrice = product.prices?.originalPrice ?? price;
       const discount =
-        originalPrice > price ? originalPrice - price : product.prices?.discount;
+        originalPrice > price
+          ? originalPrice - price
+          : product.prices?.discount;
 
-      applyAndPersist(prev => {
-        const existingIndex = prev.findIndex(item => item.id === id);
+      applyAndPersist((prev) => {
+        const existingIndex = prev.findIndex((item) => item.id === id);
 
         if (existingIndex !== -1) {
           const next = [...prev];
@@ -115,7 +118,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
           next[existingIndex] = {
             ...existing,
             quantity: updatedQuantity,
-            subtotal: computeItemSubtotal(existing.price, updatedQuantity)
+            subtotal: computeItemSubtotal(existing.price, updatedQuantity),
           };
 
           return next;
@@ -133,7 +136,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
           discount,
           variant: variantLabel,
           product,
-          subtotal: computeItemSubtotal(price, quantity)
+          subtotal: computeItemSubtotal(price, quantity),
         };
 
         return [...prev, newItem];
@@ -144,13 +147,13 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
 
   const increment = useCallback(
     (itemId: string) => {
-      applyAndPersist(prev =>
-        prev.map(item =>
+      applyAndPersist((prev) =>
+        prev.map((item) =>
           item.id === itemId
             ? {
                 ...item,
                 quantity: item.quantity + 1,
-                subtotal: computeItemSubtotal(item.price, item.quantity + 1)
+                subtotal: computeItemSubtotal(item.price, item.quantity + 1),
               }
             : item
         )
@@ -161,29 +164,26 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
 
   const decrement = useCallback(
     (itemId: string) => {
-      applyAndPersist(prev =>
-        prev
-          .map(item =>
-            item.id === itemId
-              ? {
-                  ...item,
-                  quantity: Math.max(1, item.quantity - 1),
-                  subtotal: computeItemSubtotal(
-                    item.price,
-                    Math.max(1, item.quantity - 1)
-                  )
-                }
-              : item
-          )
-          .filter(item => item.quantity > 0)
-      );
+      applyAndPersist((prev) => {
+        const updated = prev.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+                subtotal: computeItemSubtotal(item.price, item.quantity - 1),
+              }
+            : item
+        );
+        // Remove items with quantity 0 or less
+        return updated.filter((item) => item.quantity > 0);
+      });
     },
     [applyAndPersist]
   );
 
   const removeItem = useCallback(
     (itemId: string) => {
-      applyAndPersist(prev => prev.filter(item => item.id !== itemId));
+      applyAndPersist((prev) => prev.filter((item) => item.id !== itemId));
     },
     [applyAndPersist]
   );
@@ -209,7 +209,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
       decrement,
       removeItem,
       clearCart,
-      replaceCart
+      replaceCart,
     }),
     [
       items,
@@ -221,7 +221,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
       decrement,
       removeItem,
       clearCart,
-      replaceCart
+      replaceCart,
     ]
   );
 

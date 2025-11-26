@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Pressable, Text, View, StyleSheet } from "react-native";
@@ -38,9 +38,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const originalPrice = product.prices?.originalPrice ?? price;
   const discount = calculateDiscountPercentage(originalPrice, price);
 
-  // Get cart item quantity
-  const cartItem = items.find(
-    (item: CartItem) => item.product._id === product._id
+  // Memoize cart item lookup for performance
+  const cartItem = useMemo(
+    () => items.find((item: CartItem) => item.product._id === product._id),
+    [items, product._id]
   );
   const cartQuantity = cartItem?.quantity ?? 0;
 
@@ -48,29 +49,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const totalReviews = product.total_reviews ?? 0;
   const averageRating = product.average_rating ?? 0;
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     addItem({
       product,
       variantLabel,
     });
     onPressAdd?.();
-  };
+  }, [addItem, product, variantLabel, onPressAdd]);
 
-  const handleIncrement = () => {
+  const handleIncrement = useCallback(() => {
     if (cartItem) {
       increment(cartItem.id);
     }
-  };
+  }, [cartItem, increment]);
 
-  const handleDecrement = () => {
+  const handleDecrement = useCallback(() => {
     if (cartItem) {
       decrement(cartItem.id);
     }
-  };
+  }, [cartItem, decrement]);
 
-  const handleCardPress = () => {
+  const handleCardPress = useCallback(() => {
     setModalVisible(true);
-  };
+  }, []);
 
   const image = getProductImage(product);
 
@@ -163,7 +164,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {/* Cart Quantity Controls - Right side vertically centered */}
             {cartQuantity > 0 && (
               <View
-                className="absolute right-0 top-1/2"
+                className="absolute right-0 top-1/2 rounded-md"
                 style={{
                   transform: [{ translateY: -28 }],
                   shadowColor: "#10b981",
