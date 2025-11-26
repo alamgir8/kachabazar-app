@@ -84,7 +84,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         className={[
           "flex overflow-hidden rounded-3xl bg-white",
           hasDiscount
-            ? "border-2 border-accent-300 shadow-product-discount"
+            ? "border-2 border-accent-200 shadow-product-discount"
             : "border border-slate-200 shadow-product-regular",
         ].join(" ")}
       >
@@ -133,7 +133,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 ].join(" ")}
               >
                 <Text className="text-xs font-black text-white">
-                  {isOutOfStock ? "Out of stock" : `${stock} in stock`}
+                  {isOutOfStock
+                    ? "Out of stock"
+                    : stock < 5
+                      ? `${stock} left`
+                      : `${stock} in stock`}
                 </Text>
               </View>
             </View>
@@ -150,13 +154,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             )}
 
             {/* LOW STOCK BADGE */}
-            {stock < 10 && stock > 0 && (
+            {/* {stock < 10 && stock > 0 && (
               <View className="absolute left-2 top-2 rounded-lg bg-emerald-500 px-2.5 py-1 shadow-badge-soft">
                 <Text className="text-[10px] font-bold text-white">
                   {stock} left
                 </Text>
               </View>
-            )}
+            )} */}
 
             {/* CART QUANTITY CONTROLS */}
             {cartQuantity > 0 && (
