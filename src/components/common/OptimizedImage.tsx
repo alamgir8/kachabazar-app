@@ -8,10 +8,11 @@ import {
   ImageStyle,
   ViewStyle,
 } from "react-native";
-import { Image as ExpoImage } from "expo-image";
+import { Image as ExpoImage, ImageProps as ExpoImageProps } from "expo-image";
 import { logger } from "@/utils/logger";
 
-interface OptimizedImageProps extends Omit<ImageProps, "source"> {
+interface OptimizedImageProps
+  extends Omit<ExpoImageProps, "source" | "onError"> {
   source: string | { uri: string } | number;
   placeholder?: string;
   blurhash?: string;
@@ -60,11 +61,12 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   }, [onLoad]);
 
   const handleError = useCallback(
-    (e: Error) => {
+    (e: { error: string }) => {
       setLoading(false);
       setError(true);
-      logger.warn("Image loading failed", { source, error: e.message }, "Image");
-      onError?.(e);
+      logger.warn("Image loading failed", { source, error: e.error }, "Image");
+      const error = new Error(e.error);
+      onError?.(error);
     },
     [source, onError]
   );
@@ -198,9 +200,7 @@ const styles = StyleSheet.create({
 export const preloadImages = async (urls: string[]): Promise<void> => {
   try {
     await Promise.all(
-      urls.map((url) =>
-        ExpoImage.prefetch(url, { cachePolicy: "memory-disk" })
-      )
+      urls.map((url) => ExpoImage.prefetch(url, { cachePolicy: "memory-disk" }))
     );
     logger.info(`Preloaded ${urls.length} images`, undefined, "Image");
   } catch (error) {
@@ -220,5 +220,3 @@ export const clearImageCache = async (): Promise<void> => {
     logger.error("Failed to clear image cache", error, "Image");
   }
 };
-
-

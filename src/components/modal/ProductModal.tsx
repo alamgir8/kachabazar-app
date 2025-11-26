@@ -105,7 +105,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     router.push(`/product/${product.slug}`);
   };
 
-  console.log("product.tag", product.tag);
+  // console.log("product.tag", product.tag);
 
   return (
     <Modal
@@ -140,7 +140,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 <View className="relative h-80 w-full items-center justify-center bg-gradient-to-b from-slate-50 to-white">
                   <OptimizedImage
                     source={productImage}
-                    style={{ width: MODAL_WIDTH - 64, height: 280 }}
+                    style={{ width: MODAL_WIDTH - 264, height: 280 }}
                     cachePolicy="memory-disk"
                     priority="high"
                   />
