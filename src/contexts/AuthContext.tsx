@@ -4,7 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -15,7 +15,7 @@ import {
   getShippingAddress,
   login as loginRequest,
   refreshSession,
-  updateCustomer
+  updateCustomer,
 } from "@/services/auth";
 import { Customer, ShippingAddress } from "@/types";
 
@@ -56,21 +56,21 @@ const loadStoredSession = async () => {
     SECURE_STORAGE_KEYS.accessToken,
     SECURE_STORAGE_KEYS.refreshToken,
     SECURE_STORAGE_KEYS.user,
-    SECURE_STORAGE_KEYS.cart // ensures key exists even if unused
+    SECURE_STORAGE_KEYS.cart, // ensures key exists even if unused
   ]);
 
   return {
     accessToken: token[1],
     refreshToken: refresh[1],
     user: userJson[1] ? (JSON.parse(userJson[1]) as Customer) : null,
-    cart: cartJson[1]
+    cart: cartJson[1],
   };
 };
 
 const persistSession = async ({
   accessToken,
   refreshToken,
-  user
+  user,
 }: {
   accessToken: string | null;
   refreshToken: string | null;
@@ -97,12 +97,12 @@ const clearSession = async () => {
   await AsyncStorage.multiRemove([
     SECURE_STORAGE_KEYS.accessToken,
     SECURE_STORAGE_KEYS.refreshToken,
-    SECURE_STORAGE_KEYS.user
+    SECURE_STORAGE_KEYS.user,
   ]);
 };
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
-  children
+  children,
 }) => {
   const [user, setUser] = useState<Customer | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -125,6 +125,23 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         }
         if (stored.user) {
           setUser(stored.user);
+          // Load shipping address after user is restored
+          if (stored.accessToken && stored.user._id) {
+            try {
+              const addressResponse = await getShippingAddress(
+                stored.user._id,
+                stored.accessToken
+              );
+              if (isMounted) {
+                setShippingAddress(addressResponse?.shippingAddress ?? null);
+              }
+            } catch (error) {
+              console.log(
+                "Unable to fetch shipping address on hydration",
+                error
+              );
+            }
+          }
         }
       } catch (error) {
         console.warn("Failed to hydrate auth session", error);
@@ -149,7 +166,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       email: response.email,
       phone: response.phone,
       image: response.image,
-      address: response.address
+      address: response.address,
     };
 
     setUser(authenticatedUser);
@@ -159,7 +176,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     await persistSession({
       accessToken: response.token,
       refreshToken: response.refreshToken,
-      user: authenticatedUser
+      user: authenticatedUser,
     });
 
     if (response._id) {
@@ -192,7 +209,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       await persistSession({
         accessToken: nextAccess ?? accessToken,
         refreshToken: newTokens.refreshToken ?? refreshToken,
-        user
+        user,
       });
     } catch (error) {
       console.warn("Failed to refresh session", error);
@@ -205,12 +222,12 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     try {
       const [profile, address] = await Promise.all([
         fetchCustomer(user._id, accessToken),
-        getShippingAddress(user._id, accessToken)
+        getShippingAddress(user._id, accessToken),
       ]);
 
       const nextUser: Customer = {
         ...profile,
-        shippingAddress: address.shippingAddress
+        shippingAddress: address.shippingAddress,
       };
 
       setUser(nextUser);
@@ -218,7 +235,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       await persistSession({
         accessToken,
         refreshToken,
-        user: nextUser
+        user: nextUser,
       });
     } catch (error) {
       console.warn("Failed to reload profile", error);
@@ -245,7 +262,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         email: response.email,
         phone: response.phone,
         image: response.image,
-        address: response.address
+        address: response.address,
       };
 
       setUser(updatedUser);
@@ -255,7 +272,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       await persistSession({
         accessToken: response.token,
         refreshToken: response.refreshToken,
-        user: updatedUser
+        user: updatedUser,
       });
     },
     [accessToken, user?._id]
@@ -271,8 +288,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         refreshToken,
         user: {
           ...user,
-          shippingAddress: address
-        }
+          shippingAddress: address,
+        },
       });
     },
     [accessToken, refreshToken, user]
@@ -291,7 +308,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       refresh,
       updateProfile,
       upsertShippingAddress,
-      reloadProfile
+      reloadProfile,
     }),
     [
       user,
@@ -304,7 +321,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       refresh,
       updateProfile,
       upsertShippingAddress,
-      reloadProfile
+      reloadProfile,
     ]
   );
 

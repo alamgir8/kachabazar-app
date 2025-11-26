@@ -53,26 +53,27 @@ const MenuItem = ({ icon, title, subtitle, onPress, badge }: MenuItemProps) => (
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, isAuthenticated, logout, shippingAddress } = useAuth();
-  const ordersQuery = useOrders();
+  const {
+    data: ordersData,
+    isLoading: ordersLoading,
+    refetch: refetchOrders,
+  } = useOrders(1);
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
-
-  // console.log("shippingAddress", shippingAddress);
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace("/auth/login");
     }
-  }, []);
+  }, [isAuthenticated, router]);
 
-  const stats = ordersQuery.data;
+  const stats = ordersData;
 
   return (
     <Screen scrollable edges={["bottom"]}>
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 10,
-          paddingTop: 8,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -177,31 +178,42 @@ export default function ProfileScreen() {
             <Text className="text-base font-semibold text-slate-900">
               Quick stats
             </Text>
-            <View className="mt-4 flex-row justify-between">
-              <View className="items-center">
-                <Text className="text-2xl font-bold text-slate-900">
-                  {stats?.orders?.length ?? 0}
+            {ordersLoading ? (
+              <View className="mt-4 items-center py-6">
+                <Text className="text-sm text-slate-500">
+                  Loading orders...
                 </Text>
-                <Text className="text-xs text-slate-500">Orders</Text>
               </View>
-              <View className="items-center">
-                <Text className="text-2xl font-bold text-slate-900">
-                  {stats?.pending ?? 0}
-                </Text>
-                <Text className="text-xs text-slate-500">Pending</Text>
-              </View>
-              <View className="items-center">
-                <Text className="text-2xl font-bold text-slate-900">
-                  {stats?.delivered ?? 0}
-                </Text>
-                <Text className="text-xs text-slate-500">Delivered</Text>
-              </View>
-            </View>
-            {stats?.orders[0] ? (
-              <Text className="mt-4 text-xs text-slate-500">
-                Recent total: {formatCurrency(stats.orders[0].total, currency)}
-              </Text>
-            ) : null}
+            ) : (
+              <>
+                <View className="mt-4 flex-row justify-between">
+                  <View className="items-center">
+                    <Text className="text-2xl font-bold text-slate-900">
+                      {stats?.totalDoc ?? 0}
+                    </Text>
+                    <Text className="text-xs text-slate-500">Orders</Text>
+                  </View>
+                  <View className="items-center">
+                    <Text className="text-2xl font-bold text-slate-900">
+                      {stats?.pending ?? 0}
+                    </Text>
+                    <Text className="text-xs text-slate-500">Pending</Text>
+                  </View>
+                  <View className="items-center">
+                    <Text className="text-2xl font-bold text-slate-900">
+                      {stats?.delivered ?? 0}
+                    </Text>
+                    <Text className="text-xs text-slate-500">Delivered</Text>
+                  </View>
+                </View>
+                {stats?.orders && stats.orders.length > 0 && stats.orders[0] ? (
+                  <Text className="mt-4 text-xs text-slate-500">
+                    Recent total:{" "}
+                    {formatCurrency(stats.orders[0].total, currency)}
+                  </Text>
+                ) : null}
+              </>
+            )}
             <Button
               variant="cyan"
               height={40}
