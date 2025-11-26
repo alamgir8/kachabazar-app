@@ -17,8 +17,8 @@ import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/utils";
-import Button from "@/components/ui/Button";
 import { BackButton } from "@/components/ui";
+import Button from "@/components/ui/Button";
 import { exportOrderInvoicePdf } from "@/services/order-invoice-pdf";
 
 export default function OrderDetailScreen() {
@@ -229,7 +229,7 @@ export default function OrderDetailScreen() {
             </LinearGradient>
 
             {/* Payment & Invoice Actions */}
-            <View className="px-6 py-5">
+            <View className="px-4 py-5">
               <View className="mb-4 flex-row items-center gap-2">
                 <Feather name="credit-card" size={16} color="#64748b" />
                 <Text className="text-sm font-semibold text-slate-600">
@@ -238,54 +238,31 @@ export default function OrderDetailScreen() {
               </View>
 
               {/* Action Buttons */}
-              <View className="flex-row gap-3">
-                <Pressable
+              <View className="flex-row gap-3 justify-between">
+                <Button
+                  variant="primary"
+                  title={downloading ? "Generating..." : "Download"}
                   onPress={handleDownloadInvoice}
                   disabled={downloading}
-                  className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl bg-teal-500 px-4 py-3 active:opacity-80"
-                  style={{
-                    shadowColor: "#0f766e",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-                    elevation: 3,
-                    opacity: downloading ? 0.7 : 1,
-                  }}
-                >
-                  {downloading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Feather name="download" size={18} color="#fff" />
-                  )}
-                  <Text className="text-sm font-bold text-white">
-                    {downloading ? "Generating..." : "Download"}
-                  </Text>
-                </Pressable>
+                  loading={downloading}
+                  className="mt-4 flex-1"
+                />
 
-                <Pressable
+                <Button
+                  variant="outline"
+                  title={emailing ? "Opening..." : "Email"}
                   onPress={handleEmailInvoice}
                   disabled={emailing}
-                  className="flex-1 flex-row items-center justify-center gap-2 rounded-2xl border-2 border-teal-500 bg-white px-4 py-3 active:opacity-80"
-                  style={{
-                    opacity: emailing ? 0.7 : 1,
-                  }}
-                >
-                  {emailing ? (
-                    <ActivityIndicator size="small" color="#0f766e" />
-                  ) : (
-                    <Feather name="mail" size={18} color="#0f766e" />
-                  )}
-                  <Text className="text-sm font-bold text-teal-600">
-                    {emailing ? "Opening..." : "Email"}
-                  </Text>
-                </Pressable>
+                  loading={emailing}
+                  className="mt-4 flex-1"
+                />
               </View>
             </View>
           </View>
 
           {/* Delivery Information */}
           <View
-            className="mb-4 rounded-3xl bg-white p-6 shadow-lg"
+            className="mb-4 rounded-3xl bg-white py-6 px-4 shadow-lg"
             style={{
               shadowColor: "#0f766e",
               shadowOffset: { width: 0, height: 4 },
