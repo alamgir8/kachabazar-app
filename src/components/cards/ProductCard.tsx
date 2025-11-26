@@ -145,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {/* DISCOUNT BADGE (TOP RIGHT) */}
             {hasDiscount && (
               <View className="absolute right-0 top-0">
-                <View className="rounded-bl-2xl bg-red-500 px-3 py-1.5 shadow-badge-soft">
+                <View className="rounded-bl-2xl bg-rose-500 px-3 py-1.5 shadow-badge-soft">
                   <Text className="text-xs font-black text-white">
                     {discount}% Off
                   </Text>
@@ -182,7 +182,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     <Feather name="minus" size={16} color="#fff" />
                   </Pressable>
 
-                  <Text className="text-base font-black text-white">
+                  <Text className="text-base text-center font-black text-white">
                     {cartQuantity}
                   </Text>
 
@@ -256,7 +256,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <View className="mt-auto pt-2">
               {hasDiscount ? (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-[18px] font-black text-red-600">
+                  <Text className="text-[18px] font-black text-rose-600">
                     {formatCurrency(price, currency)}
                   </Text>
                   <Text className="text-[12px] font-semibold text-slate-400 line-through">

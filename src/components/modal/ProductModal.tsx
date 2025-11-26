@@ -5,18 +5,16 @@ import {
   Modal,
   ScrollView,
   Pressable,
-  Image,
   Dimensions,
   Alert,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 
 import { Product } from "@/types";
 import { useProductAction } from "@/hooks/useProductAction";
-import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { OptimizedImage } from "@/components/common/OptimizedImage";
@@ -40,11 +38,6 @@ interface ProductModalProps {
   attributes?: any[];
 }
 
-/**
- * Product Modal Component
- * Displays product details in a beautiful modal with variants/combinations
- * Similar to web version but optimized for mobile
- */
 export const ProductModal: React.FC<ProductModalProps> = ({
   product,
   visible,
@@ -52,7 +45,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   attributes = [],
 }) => {
   const router = useRouter();
-  const { addItem } = useCart();
   const { globalSetting } = useSettings();
   const [quantity, setQuantity] = useState(1);
 
@@ -105,8 +97,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     router.push(`/product/${product.slug}`);
   };
 
-  // console.log("product.tag", product.tag);
-
   return (
     <Modal
       visible={visible}
@@ -119,7 +109,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
           <Pressable className="flex-1 justify-end" onPress={onClose}>
             <Pressable
               onPress={(e) => e.stopPropagation()}
-              className="bg-white rounded-t-[40px] max-h-[90%]"
+              className="max-h-[90%] rounded-t-[40px] bg-white"
               style={{ width: SCREEN_WIDTH }}
             >
               <ScrollView
@@ -127,7 +117,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 contentContainerStyle={{ paddingBottom: 40 }}
               >
                 {/* Close Button */}
-                <View className="absolute top-4 right-4 z-10">
+                <View className="absolute right-4 top-4 z-10">
                   <Pressable
                     onPress={onClose}
                     className="h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg"
@@ -136,43 +126,23 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   </Pressable>
                 </View>
 
-                {/* Product Image */}
-                <View className="relative h-80 w-full items-center justify-center bg-gradient-to-b from-slate-50 to-white">
+                {/* Product Image (smaller) */}
+                <View className="relative h-64 w-full items-center justify-center bg-slate-50">
                   <OptimizedImage
                     source={productImage}
-                    style={{ width: MODAL_WIDTH - 264, height: 280 }}
+                    style={{ width: MODAL_WIDTH - 180, height: 220 }}
                     cachePolicy="memory-disk"
                     priority="high"
                   />
 
-                  {/* Discount Badge */}
-                  {discountPercentage > 0 && (
-                    <View className="absolute top-4 left-4">
-                      <LinearGradient
-                        colors={["#ef4444", "#dc2626"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        className="rounded-full px-4 py-2 shadow-lg"
-                      >
-                        <Text className="text-xs font-bold text-white">
-                          {discountPercentage}% OFF
-                        </Text>
-                      </LinearGradient>
-                    </View>
-                  )}
-
                   {/* Stock Badge */}
-                  <View className="absolute top-4 right-16">
+                  <View className="absolute left-4 top-4">
                     <View
                       className={`rounded-full px-3 py-1.5 ${
-                        stock > 0 ? "bg-emerald-50" : "bg-red-50"
+                        stock > 0 ? "bg-emerald-500" : "bg-rose-500"
                       }`}
                     >
-                      <Text
-                        className={`text-xs font-bold ${
-                          stock > 0 ? "text-emerald-700" : "text-red-700"
-                        }`}
-                      >
+                      <Text className={`text-xs font-bold text-white`}>
                         {stock > 0 ? `${stock} in stock` : "Out of stock"}
                       </Text>
                     </View>
@@ -185,7 +155,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   <View className="mb-3 flex-row items-center justify-between">
                     {product?.category &&
                       typeof product.category === "object" && (
-                        <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
+                        <View className="flex-row items-center gap-2 rounded-full bg-primary-100 px-3 py-1.5">
                           <Feather name="tag" size={12} color="#10b981" />
                           <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
                             {getLocalizedValue(
@@ -196,8 +166,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                       )}
 
                     {product.average_rating && product.average_rating > 0 && (
-                      <View className="flex-row items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
-                        <Feather name="star" size={12} color="#f59e0b" />
+                      <View className="flex-row items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5">
+                        <FontAwesome name="star" size={14} color="#f59e0b" />
                         <Text className="text-xs font-bold text-amber-700">
                           {product.average_rating.toFixed(1)}
                         </Text>
@@ -222,7 +192,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                     )}
                   </View>
 
-                  {/* Description */}
+                  {/* Short Description */}
                   {productDescription && (
                     <Text
                       className="mb-4 text-sm leading-relaxed text-slate-600"
@@ -232,7 +202,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                     </Text>
                   )}
 
-                  {/* Product Variants/Combinations */}
+                  {/* Variants */}
                   {variantTitle && variantTitle.length > 0 && (
                     <View className="mb-4">
                       {variantTitle.map((att: any) => (
@@ -259,8 +229,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                                     }}
                                     className={`rounded-xl border-2 px-4 py-2.5 ${
                                       isSelected
-                                        ? "bg-primary-50 border-primary-500"
-                                        : "bg-white border-slate-200"
+                                        ? "border-primary-500 bg-primary-50"
+                                        : "border-slate-200 bg-white"
                                     }`}
                                   >
                                     <Text
@@ -281,38 +251,55 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                     </View>
                   )}
 
-                  {/* Quantity & Actions */}
-                  <View className="mb-4 gap-4">
-                    <View className="flex-row items-center gap-3">
-                      <View className="">
-                        <QuantityStepper
-                          value={quantity}
-                          onDecrement={() =>
-                            setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
-                          }
-                          onIncrement={() => setQuantity((prev) => prev + 1)}
-                        />
-                      </View>
-
-                      <Button
-                        title="Add to cart"
-                        onPress={handleAddToCartClick}
-                        variant="cyan"
-                        disabled={stock <= 0}
+                  {/* Quantity (left) & Discount (right) */}
+                  <View className="mb-4 flex-row items-center justify-between gap-3">
+                    {/* Quantity */}
+                    <View>
+                      <Text className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Quantity
+                      </Text>
+                      <QuantityStepper
+                        value={quantity}
+                        onDecrement={() =>
+                          setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
+                        }
+                        onIncrement={() => setQuantity((prev) => prev + 1)}
                       />
                     </View>
 
+                    {/* Discount */}
+                    {discountPercentage > 0 && (
+                      <View className="rounded-lg mt-6 px-4 py-0.5 shadow-lg bg-rose-500">
+                        <Text className="text-[11px] font-semibold uppercase tracking-wide text-white">
+                          Limited Offer
+                        </Text>
+                        <Text className="text-base font-extrabold text-white">
+                          {discountPercentage}% OFF
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Actions: same row, aligned */}
+                  <View className="mb-6 flex-row items-center gap-3">
+                    <Button
+                      title={stock > 0 ? "Add to cart" : "Out of stock"}
+                      onPress={handleAddToCartClick}
+                      variant="cyan"
+                      disabled={stock <= 0}
+                      className="flex-1"
+                    />
                     <Button
                       title="View full details"
                       onPress={handleViewDetails}
                       variant="outline"
-                      className="mt-2"
+                      className="flex-1"
                     />
                   </View>
 
                   {/* Tags */}
                   {product.tag && product.tag.length > 0 && (
-                    <View className="pt-4 border-t border-slate-100 mb-10">
+                    <View className="mb-10 border-t border-slate-100 pt-4">
                       <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Tags
                       </Text>
