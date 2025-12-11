@@ -1,55 +1,18 @@
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton, EnhancedInput } from "@/components/ui";
-import { requestEmailVerification } from "@/services/auth";
+import { BackButton } from "@/components/ui";
 import Button from "@/components/ui/Button";
-import {
-  simpleRegisterSchema,
-  type SimpleRegisterInput,
-} from "@/utils/validation";
 
+/**
+ * Registration method selection screen
+ * Allows users to choose between email or phone registration
+ * Both methods use OTP verification for security
+ */
 export default function RegisterScreen() {
   const router = useRouter();
-  const [responseMessage, setResponseMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SimpleRegisterInput>({
-    resolver: zodResolver(simpleRegisterSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (values: SimpleRegisterInput) => {
-    setError(null);
-    setResponseMessage(null);
-    try {
-      const res = await requestEmailVerification(values);
-      setResponseMessage(
-        res.message ?? "Please verify your email to continue."
-      );
-    } catch (err) {
-      setError((err as Error).message ?? "Failed to start registration.");
-    }
-  };
 
   return (
     <KeyboardAvoidingView
@@ -61,107 +24,100 @@ export default function RegisterScreen() {
           {/* Back Button */}
           <BackButton
             subTitle="Join KachaBazar"
-            subDescription="Create a new account"
+            subDescription="Choose how you want to register"
           />
 
-          <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { value, onChange } }) => (
-                <EnhancedInput
-                  label="Full name"
-                  placeholder="Jane Doe"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.name?.message}
-                  leftIcon="user"
-                  containerClassName="mb-5"
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { value, onChange } }) => (
-                <EnhancedInput
-                  label="Email"
-                  placeholder="you@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.email?.message}
-                  leftIcon="mail"
-                  containerClassName="mb-5"
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { value, onChange } }) => (
-                <EnhancedInput
-                  label="Password"
-                  placeholder="••••••••"
-                  secureTextEntry
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.password?.message}
-                  leftIcon="lock"
-                  containerClassName="mb-5"
-                />
-              )}
-            />
-
-            {responseMessage ? (
-              <View className="mb-4 rounded-xl bg-emerald-50 p-3 flex-row items-center border border-emerald-100">
-                <Feather name="check-circle" size={18} color="#10b981" />
-                <Text className="ml-2 text-sm text-emerald-600 flex-1">
-                  {responseMessage}
-                </Text>
+          <View className="mt-8 px-1">
+            {/* Illustration/Icon */}
+            <View className="items-center mb-8">
+              <View className="w-24 h-24 rounded-full bg-emerald-100 items-center justify-center mb-4">
+                <Feather name="user-plus" size={40} color="#10b981" />
               </View>
-            ) : null}
-            {error ? (
-              <View className="mb-4 rounded-xl bg-red-50 p-3 flex-row items-center border border-red-100">
-                <Feather name="alert-triangle" size={18} color="#ef4444" />
-                <Text className="ml-2 text-sm text-red-600 flex-1">
-                  {error}
-                </Text>
+              <Text className="text-lg font-medium text-slate-700 text-center">
+                Create your account
+              </Text>
+              <Text className="text-sm text-slate-500 text-center mt-1">
+                We'll send you a verification code
+              </Text>
+            </View>
+
+            {/* Email Registration Option */}
+            <View className="bg-white rounded-2xl p-5 mb-4 border border-slate-100 shadow-sm">
+              <View className="flex-row items-center mb-3">
+                <View className="w-12 h-12 rounded-full bg-blue-100 items-center justify-center">
+                  <Feather name="mail" size={24} color="#3b82f6" />
+                </View>
+                <View className="ml-4 flex-1">
+                  <Text className="text-base font-semibold text-slate-800">
+                    Register with Email
+                  </Text>
+                  <Text className="text-sm text-slate-500 mt-0.5">
+                    Get a 6-digit code via email
+                  </Text>
+                </View>
               </View>
-            ) : null}
+              <Button
+                title="Continue with Email"
+                variant="teal"
+                onPress={() => router.push("/auth/email-register")}
+                className="mt-2"
+              />
+            </View>
 
-            <Button
-              title={
-                isSubmitting
-                  ? "Sending verification..."
-                  : "Send verification email"
-              }
-              onPress={() => handleSubmit(onSubmit)()}
-              disabled={isSubmitting}
-              loading={isSubmitting}
-              variant="teal"
-              className="mt-6"
-            />
-            <Button
-              title="Back to login"
-              variant="outline"
-              className="mt-6"
-              onPress={() => router?.back()}
-            />
+            {/* Phone Registration Option */}
+            <View className="bg-white rounded-2xl p-5 mb-4 border border-slate-100 shadow-sm">
+              <View className="flex-row items-center mb-3">
+                <View className="w-12 h-12 rounded-full bg-emerald-100 items-center justify-center">
+                  <Feather name="smartphone" size={24} color="#10b981" />
+                </View>
+                <View className="ml-4 flex-1">
+                  <Text className="text-base font-semibold text-slate-800">
+                    Register with Phone
+                  </Text>
+                  <Text className="text-sm text-slate-500 mt-0.5">
+                    Get a 6-digit code via SMS
+                  </Text>
+                </View>
+              </View>
+              <Button
+                title="Continue with Phone"
+                variant="outline"
+                onPress={() => router.push("/auth/phone-register")}
+                className="mt-2"
+              />
+            </View>
 
-            {/* Or continue with phone */}
+            {/* Divider */}
             <View className="flex-row items-center my-6">
               <View className="flex-1 h-px bg-slate-200" />
-              <Text className="mx-4 text-sm text-slate-500">or</Text>
+              <Text className="mx-4 text-sm text-slate-500">
+                Already have an account?
+              </Text>
               <View className="flex-1 h-px bg-slate-200" />
             </View>
 
+            {/* Back to Login */}
             <Button
-              title="Sign up with Phone"
+              title="Back to Login"
               variant="outline"
-              onPress={() => router.replace("/auth/phone-register")}
+              onPress={() => router.back()}
             />
+
+            {/* Security Note */}
+            <View className="mt-8 p-4 bg-slate-50 rounded-xl">
+              <View className="flex-row items-start">
+                <Feather name="shield" size={20} color="#64748b" />
+                <View className="ml-3 flex-1">
+                  <Text className="text-sm font-medium text-slate-700">
+                    Your data is secure
+                  </Text>
+                  <Text className="text-xs text-slate-500 mt-1">
+                    We use OTP verification to ensure your account is protected.
+                    Verification codes expire after 10 minutes.
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </Screen>

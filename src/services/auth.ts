@@ -80,6 +80,39 @@ export const authApi = {
       requiresAuth: false,
     }),
 
+  // Email OTP verification endpoints
+  sendEmailOtp: (payload: {
+    email: string;
+    name?: string;
+    password?: string;
+  }) =>
+    api.post<{ message: string; expiresIn?: number }>(
+      "/customer/send-email-otp",
+      payload,
+      {
+        requiresAuth: false,
+      }
+    ),
+
+  confirmEmailOtp: (payload: {
+    email: string;
+    code: string;
+    name?: string;
+    password?: string;
+  }) =>
+    api.post<LoginResponse>("/customer/confirm-email-otp", payload, {
+      requiresAuth: false,
+    }),
+
+  resendEmailOtp: (payload: { email: string }) =>
+    api.post<{ message: string; expiresIn?: number }>(
+      "/customer/resend-email-otp",
+      payload,
+      {
+        requiresAuth: false,
+      }
+    ),
+
   // Phone OTP verification endpoints
   requestPhoneOtp: (payload: {
     phone: string;
