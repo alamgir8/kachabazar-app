@@ -9,7 +9,6 @@ import {
   Linking,
 } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
@@ -176,30 +175,51 @@ export default function OrderDetailScreen() {
               elevation: 4,
             }}
           >
-            <LinearGradient
-              colors={
-                order.status === "delivered"
-                  ? ["#10b981", "#059669"]
-                  : order.status === "pending"
-                    ? ["#f59e0b", "#d97706"]
-                    : order.status === "processing"
-                      ? ["#3b82f6", "#2563eb"]
-                      : ["#64748b", "#475569"]
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="px-6 py-5"
+            <View
+              className="px-5 py-6"
+              style={{
+                backgroundColor:
+                  order.status === "delivered"
+                    ? "#10b981"
+                    : order.status === "pending"
+                      ? "#f59e0b"
+                      : order.status === "processing"
+                        ? "#3b82f6"
+                        : "#64748b",
+              }}
             >
               <View className="flex-row items-center justify-between">
-                <View className="flex-1">
-                  <Text className="text-xs font-semibold text-white/80">
+                <View className="flex-1 pr-4">
+                  <Text
+                    style={{
+                      color: "rgba(255,255,255,0.7)",
+                      fontSize: 12,
+                      fontWeight: "500",
+                      letterSpacing: 0.5,
+                    }}
+                  >
                     Order Total
                   </Text>
-                  <Text className="mt-1 text-3xl font-black text-white">
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: 32,
+                      fontWeight: "900",
+                      marginTop: 8,
+                      letterSpacing: -0.5,
+                    }}
+                  >
                     {formatCurrency(order.total, currency)}
                   </Text>
-                  <Text className="mt-2 text-xs text-white/90">
-                    Placed on{" "}
+                  <Text
+                    style={{
+                      color: "rgba(255,255,255,0.9)",
+                      fontSize: 14,
+                      fontWeight: "500",
+                      marginTop: 12,
+                    }}
+                  >
+                    {"Placed on "}
                     {new Date(order.createdAt).toLocaleDateString("en-US", {
                       month: "long",
                       day: "numeric",
@@ -207,7 +227,14 @@ export default function OrderDetailScreen() {
                     })}
                   </Text>
                 </View>
-                <View className="items-center rounded-2xl bg-white/20 px-4 py-3">
+                <View
+                  className="items-center justify-center rounded-2xl"
+                  style={{
+                    backgroundColor: "rgba(255,255,255,0.25)",
+                    paddingHorizontal: 20,
+                    paddingVertical: 16,
+                  }}
+                >
                   <Feather
                     name={
                       order.status === "delivered"
@@ -218,34 +245,45 @@ export default function OrderDetailScreen() {
                             ? "truck"
                             : "package"
                     }
-                    size={24}
+                    size={28}
                     color="#fff"
                   />
-                  <Text className="mt-1.5 text-[10px] font-black uppercase text-white">
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: 11,
+                      fontWeight: "700",
+                      marginTop: 8,
+                      textTransform: "uppercase",
+                      letterSpacing: 1,
+                    }}
+                  >
                     {order.status}
                   </Text>
                 </View>
               </View>
-            </LinearGradient>
+            </View>
 
             {/* Payment & Invoice Actions */}
-            <View className="px-4 py-5">
-              <View className="mb-4 flex-row items-center gap-2">
-                <Feather name="credit-card" size={16} color="#64748b" />
-                <Text className="text-sm font-semibold text-slate-600">
+            <View className="px-5 py-5">
+              <View className="mb-2 flex-row items-center gap-3">
+                <View className="h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                  <Feather name="credit-card" size={14} color="#64748b" />
+                </View>
+                <Text className="text-base font-semibold text-slate-700">
                   {order.paymentMethod}
                 </Text>
               </View>
 
               {/* Action Buttons */}
-              <View className="flex-row gap-3 justify-between">
+              <View className="mt-4 flex-row gap-3">
                 <Button
                   variant="primary"
                   title={downloading ? "Generating..." : "Download"}
                   onPress={handleDownloadInvoice}
                   disabled={downloading}
                   loading={downloading}
-                  className="mt-4 flex-1"
+                  className="flex-1"
                 />
 
                 <Button
@@ -254,7 +292,7 @@ export default function OrderDetailScreen() {
                   onPress={handleEmailInvoice}
                   disabled={emailing}
                   loading={emailing}
-                  className="mt-4 flex-1"
+                  className="flex-1"
                 />
               </View>
             </View>
@@ -336,14 +374,14 @@ export default function OrderDetailScreen() {
               </Text>
             </View>
 
-            <View className="space-y-3">
+            <View className="gap-3">
               {order.cart.map((item: any, index: number) => (
                 <View
                   key={item.id ?? item.productId ?? `${item.slug ?? index}`}
                   className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
                 >
                   <View className="flex-row items-start justify-between">
-                    <View className="flex-1">
+                    <View className="flex-1 pr-3">
                       <Text className="text-sm font-bold text-slate-900">
                         {item.title}
                       </Text>
@@ -353,7 +391,7 @@ export default function OrderDetailScreen() {
                             Qty: {item.quantity}
                           </Text>
                         </View>
-                        <Text className="text-xs text-slate-500">×</Text>
+                        <Text className="text-xs text-slate-500">{"×"}</Text>
                         <Text className="text-xs text-slate-600">
                           {formatCurrency(item.price, currency)}
                         </Text>
@@ -368,26 +406,28 @@ export default function OrderDetailScreen() {
             </View>
 
             {/* Order Summary */}
-            <View className="mt-6 space-y-3 border-t border-slate-100 pt-4">
-              <DetailRow
-                label="Subtotal"
-                value={formatCurrency(order.subTotal, currency)}
-              />
-              <DetailRow
-                label="Shipping"
-                value={
-                  order.shippingCost
-                    ? formatCurrency(order.shippingCost, currency)
-                    : "Free"
-                }
-              />
-              {order.discount && order.discount > 0 && (
+            <View className="mt-6 border-t border-slate-100 pt-4">
+              <View className="gap-3">
                 <DetailRow
-                  label="Discount"
-                  value={`-${formatCurrency(order.discount, currency)}`}
-                  valueColor="text-green-600"
+                  label="Subtotal"
+                  value={formatCurrency(order.subTotal, currency)}
                 />
-              )}
+                <DetailRow
+                  label="Shipping"
+                  value={
+                    order.shippingCost
+                      ? formatCurrency(order.shippingCost, currency)
+                      : "Free"
+                  }
+                />
+                {order.discount && order.discount > 0 ? (
+                  <DetailRow
+                    label="Discount"
+                    value={`-${formatCurrency(order.discount, currency)}`}
+                    valueColor="text-green-600"
+                  />
+                ) : null}
+              </View>
 
               <View className="mt-4 rounded-2xl bg-teal-50 p-4">
                 <View className="flex-row items-center justify-between">
