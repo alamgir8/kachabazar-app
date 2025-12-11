@@ -87,6 +87,15 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
+// Simple register schema (without confirm password - for mobile app)
+export const simpleRegisterSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+export type SimpleRegisterInput = z.infer<typeof simpleRegisterSchema>;
+
 export const resetPasswordSchema = z.object({
   email: emailSchema,
 });
@@ -186,9 +195,10 @@ export const contactFormSchema = z.object({
   email: emailSchema,
   subject: z
     .string()
-    .min(3, "Subject must be at least 3 characters")
     .max(100, "Subject must be less than 100 characters")
-    .trim(),
+    .trim()
+    .optional()
+    .or(z.literal("")),
   message: z
     .string()
     .min(10, "Message must be at least 10 characters")

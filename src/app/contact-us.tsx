@@ -11,6 +11,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
@@ -18,13 +19,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
 import Button from "@/components/ui/Button";
 import { BackButton, EnhancedInput, TextArea } from "@/components/ui";
-
-interface ContactFormValues {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+import { contactFormSchema, type ContactFormInput } from "@/utils/validation";
 
 export default function ContactUsScreen() {
   const router = useRouter();
@@ -38,7 +33,8 @@ export default function ContactUsScreen() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ContactFormValues>({
+  } = useForm<ContactFormInput>({
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -47,7 +43,7 @@ export default function ContactUsScreen() {
     },
   });
 
-  const onSubmit = async (values: ContactFormValues) => {
+  const onSubmit = async (values: ContactFormInput) => {
     setError(null);
     setSuccess(false);
     try {
@@ -148,7 +144,6 @@ export default function ContactUsScreen() {
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: "Name is required" }}
                 render={({ field: { value, onChange } }) => (
                   <EnhancedInput
                     label="Name"
@@ -165,13 +160,6 @@ export default function ContactUsScreen() {
               <Controller
                 control={control}
                 name="email"
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                }}
                 render={({ field: { value, onChange } }) => (
                   <EnhancedInput
                     label="Email"
@@ -206,7 +194,6 @@ export default function ContactUsScreen() {
               <Controller
                 control={control}
                 name="message"
-                rules={{ required: "Message is required" }}
                 render={({ field: { value, onChange } }) => (
                   <TextArea
                     label="Message"

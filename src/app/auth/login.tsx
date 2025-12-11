@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -15,11 +16,7 @@ import { Screen } from "@/components/layout/Screen";
 import { BackButton, EnhancedInput } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
+import { loginSchema, type LoginInput } from "@/utils/validation";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -30,14 +27,15 @@ export default function LoginScreen() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (values: LoginInput) => {
     setError(null);
     try {
       await login(values);
@@ -75,7 +73,6 @@ export default function LoginScreen() {
             <Controller
               control={control}
               name="email"
-              rules={{ required: "Email is required" }}
               render={({ field: { value, onChange } }) => (
                 <EnhancedInput
                   label="Email"
@@ -93,7 +90,6 @@ export default function LoginScreen() {
             <Controller
               control={control}
               name="password"
-              rules={{ required: "Password is required" }}
               render={({ field: { value, onChange } }) => (
                 <EnhancedInput
                   label="Password"

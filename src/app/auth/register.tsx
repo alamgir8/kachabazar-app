@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,12 +15,10 @@ import { Screen } from "@/components/layout/Screen";
 import { BackButton, EnhancedInput } from "@/components/ui";
 import { requestEmailVerification } from "@/services/auth";
 import Button from "@/components/ui/Button";
-
-interface RegisterFormValues {
-  name: string;
-  email: string;
-  password: string;
-}
+import {
+  simpleRegisterSchema,
+  type SimpleRegisterInput,
+} from "@/utils/validation";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -30,7 +29,8 @@ export default function RegisterScreen() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormValues>({
+  } = useForm<SimpleRegisterInput>({
+    resolver: zodResolver(simpleRegisterSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -38,7 +38,7 @@ export default function RegisterScreen() {
     },
   });
 
-  const onSubmit = async (values: RegisterFormValues) => {
+  const onSubmit = async (values: SimpleRegisterInput) => {
     setError(null);
     setResponseMessage(null);
     try {
@@ -68,7 +68,6 @@ export default function RegisterScreen() {
             <Controller
               control={control}
               name="name"
-              rules={{ required: "Name is required" }}
               render={({ field: { value, onChange } }) => (
                 <EnhancedInput
                   label="Full name"
@@ -84,7 +83,6 @@ export default function RegisterScreen() {
             <Controller
               control={control}
               name="email"
-              rules={{ required: "Email is required" }}
               render={({ field: { value, onChange } }) => (
                 <EnhancedInput
                   label="Email"
@@ -102,7 +100,6 @@ export default function RegisterScreen() {
             <Controller
               control={control}
               name="password"
-              rules={{ required: "Password is required" }}
               render={({ field: { value, onChange } }) => (
                 <EnhancedInput
                   label="Password"
