@@ -1,16 +1,16 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  ScrollView,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
@@ -20,33 +20,21 @@ import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { createOrder } from "@/services/orders";
 import { formatCurrency } from "@/utils";
-import { BackButton } from "@/components/ui/BackButton";
+import { BackButton, EnhancedInput } from "@/components/ui";
 import { cn } from "@/utils/cn";
+import { checkoutSchema, type CheckoutInput } from "@/utils/validation";
 import type { Coupon } from "@/services/coupons";
 import Button from "@/components/ui/Button";
 
-interface CheckoutFormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  contact: string;
-  address: string;
-  city: string;
-  country: string;
-  zipCode: string;
-  shippingOption: string;
-  paymentMethod: "Cash" | "Card" | "RazorPay";
-}
-
 const shippingOptions = [
   {
-    value: "Standard",
+    value: "Standard" as const,
     title: "Standard delivery",
     description:
       "Arrives within 30-45 minutes with temperature-controlled bags.",
   },
   {
-    value: "Express",
+    value: "Express" as const,
     title: "Express priority",
     description:
       "Limited availability — prioritised picking and doorstep drop-off.",
@@ -91,7 +79,8 @@ export default function CheckoutScreen() {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<CheckoutFormValues>({
+  } = useForm<CheckoutInput>({
+    resolver: zodResolver(checkoutSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -123,7 +112,7 @@ export default function CheckoutScreen() {
   }, [shippingAddress, user, setValue]);
 
   const mutation = useMutation({
-    mutationFn: async (data: CheckoutFormValues) => {
+    mutationFn: async (data: CheckoutInput) => {
       if (!accessToken) throw new Error("You need to login to place an order.");
 
       const userInfo = {
@@ -162,12 +151,12 @@ export default function CheckoutScreen() {
     },
   });
 
-  const onSubmit = (data: CheckoutFormValues) => mutation.mutate(data);
+  const onSubmit = (data: CheckoutInput) => mutation.mutate(data);
 
   if (!isAuthenticated) {
     return (
       <Screen className="px-4 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-[0_15px_35px_rgba(15,118,110,0.1)]">
+        <View className="rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">
             Almost there!
           </Text>
@@ -188,7 +177,7 @@ export default function CheckoutScreen() {
   if (isEmpty) {
     return (
       <Screen className="px-4 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-[0_15px_35px_rgba(15,118,110,0.1)]">
+        <View className="rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">
             Your cart is empty
           </Text>
@@ -215,76 +204,81 @@ export default function CheckoutScreen() {
       behavior={Platform.select({ ios: "padding" })}
       className="flex-1"
     >
-      <Screen
-        scrollable
-        edges={["bottom"]}
-        contentContainerClassName="gap-8 pb-28"
-      >
-        <View className="flex-row items-center justify-between">
-          <BackButton />
-          <View className="flex-1 pl-3">
-            <Text className="text-[12px] font-semibold uppercase tracking-[0.3em] text-primary-500">
-              Checkout
-            </Text>
-            <Text className="mt-1 font-display text-[28px] font-extrabold text-slate-900">
-              Almost there
-            </Text>
-            <Text className="mt-1 text-[12px] text-slate-500">
-              Provide delivery details and confirm your order.
-            </Text>
-          </View>
-        </View>
+      <Screen scrollable edges={["bottom"]}>
+        <View>
+          {/* Back Button - Same as Login */}
+          <BackButton
+            subTitle="Checkout"
+            subDescription="Complete your order"
+          />
 
-        <CheckoutSection
-          eyebrow="Shipping details"
-          headline="Where should we deliver?"
-          description="Double-check your contact info so we can hand off your groceries without a hitch."
-        >
-          <View>
-            <View className="flex-row gap-4">
-              <Controller
-                control={control}
-                name="firstName"
-                rules={{ required: "First name is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="First name"
-                    placeholder="John"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.firstName?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="lastName"
-                rules={{ required: "Last name is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="Last name"
-                    placeholder="Doe"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.lastName?.message}
-                  />
-                )}
-              />
+          {/* Shipping Details Section */}
+          <View className="mt-6 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="user" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Shipping Details
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  Where should we deliver?
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <Controller
+                  control={control}
+                  name="firstName"
+                  render={({ field: { value, onChange } }) => (
+                    <EnhancedInput
+                      label="First Name"
+                      placeholder="John"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.firstName?.message}
+                      leftIcon="user"
+                      containerClassName="mb-4"
+                    />
+                  )}
+                />
+              </View>
+              <View className="flex-1">
+                <Controller
+                  control={control}
+                  name="lastName"
+                  render={({ field: { value, onChange } }) => (
+                    <EnhancedInput
+                      label="Last Name"
+                      placeholder="Doe"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.lastName?.message}
+                      leftIcon="user"
+                      containerClassName="mb-4"
+                    />
+                  )}
+                />
+              </View>
             </View>
 
             <Controller
               control={control}
               name="email"
-              rules={{ required: "Email is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
+              render={({ field: { value, onChange } }) => (
+                <EnhancedInput
                   label="Email"
                   placeholder="you@example.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                   value={value}
                   onChangeText={onChange}
                   error={errors.email?.message}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
+                  leftIcon="mail"
+                  containerClassName="mb-4"
                 />
               )}
             />
@@ -292,320 +286,347 @@ export default function CheckoutScreen() {
             <Controller
               control={control}
               name="contact"
-              rules={{ required: "Contact number is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="Contact number"
+              render={({ field: { value, onChange } }) => (
+                <EnhancedInput
+                  label="Contact Number"
                   placeholder="+1 234 567 890"
+                  keyboardType="phone-pad"
                   value={value}
                   onChangeText={onChange}
                   error={errors.contact?.message}
-                  keyboardType="phone-pad"
+                  leftIcon="phone"
+                  containerClassName="mb-4"
                 />
               )}
             />
           </View>
-        </CheckoutSection>
 
-        <CheckoutSection
-          eyebrow="Delivery address"
-          headline="Where should the groceries go?"
-          description="Accurate address details help us get your groceries to you on time."
-        >
-          <View>
+          {/* Delivery Address Section */}
+          <View className="mt-4 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="map-pin" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Delivery Address
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  Where should the groceries go?
+                </Text>
+              </View>
+            </View>
+
             <Controller
               control={control}
               name="address"
-              rules={{ required: "Address is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
+              render={({ field: { value, onChange } }) => (
+                <EnhancedInput
                   label="Address"
                   placeholder="123 Greenway Ave"
                   value={value}
                   onChangeText={onChange}
                   error={errors.address?.message}
+                  leftIcon="home"
+                  containerClassName="mb-4"
                 />
               )}
             />
 
-            <View className="flex-row gap-4">
-              <Controller
-                control={control}
-                name="city"
-                rules={{ required: "City is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="City"
-                    placeholder="San Francisco"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.city?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="country"
-                rules={{ required: "Country is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInputField
-                    label="Country"
-                    placeholder="USA"
-                    value={value}
-                    onChangeText={onChange}
-                    error={errors.country?.message}
-                  />
-                )}
-              />
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <Controller
+                  control={control}
+                  name="city"
+                  render={({ field: { value, onChange } }) => (
+                    <EnhancedInput
+                      label="City"
+                      placeholder="San Francisco"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.city?.message}
+                      leftIcon="map"
+                      containerClassName="mb-4"
+                    />
+                  )}
+                />
+              </View>
+              <View className="flex-1">
+                <Controller
+                  control={control}
+                  name="country"
+                  render={({ field: { value, onChange } }) => (
+                    <EnhancedInput
+                      label="Country"
+                      placeholder="USA"
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.country?.message}
+                      leftIcon="globe"
+                      containerClassName="mb-4"
+                    />
+                  )}
+                />
+              </View>
             </View>
 
             <Controller
               control={control}
               name="zipCode"
-              rules={{ required: "ZIP code is required" }}
-              render={({ field: { onChange, value } }) => (
-                <TextInputField
-                  label="ZIP code"
+              render={({ field: { value, onChange } }) => (
+                <EnhancedInput
+                  label="ZIP Code"
                   placeholder="94105"
                   value={value}
                   onChangeText={onChange}
                   error={errors.zipCode?.message}
+                  leftIcon="hash"
+                  containerClassName="mb-4"
                 />
               )}
             />
           </View>
-        </CheckoutSection>
 
-        <CheckoutSection
-          eyebrow="Delivery preferences"
-          headline="Choose your shipping & payment"
-          description="Cash on delivery is available right now; more options coming soon."
-        >
-          <View className="space-y-4">
+          {/* Shipping Options Section */}
+          <View className="mt-4 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="truck" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Shipping Option
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  Choose your delivery preference
+                </Text>
+              </View>
+            </View>
+
             <Controller
               control={control}
               name="shippingOption"
               render={({ field: { onChange, value } }) => (
-                <View className="space-y-3">
+                <View className="gap-3">
                   {shippingOptions.map((option) => (
                     <Pressable
                       key={option.value}
                       onPress={() => onChange(option.value)}
                       className={cn(
-                        "rounded-[28px] border px-4 py-4",
+                        "rounded-2xl border p-4",
                         value === option.value
-                          ? "border-primary-500 bg-emerald-50/60"
-                          : "border-slate-200 bg-white/70"
+                          ? "border-teal-500 bg-teal-50"
+                          : "border-slate-200 bg-slate-50"
                       )}
                     >
-                      <Text className="text-[15px] font-bold text-slate-900">
-                        {option.title}
-                      </Text>
-                      <Text className="mt-1 text-[12px] leading-relaxed text-slate-600">
-                        {option.description}
-                      </Text>
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-1 pr-3">
+                          <Text className="text-sm font-bold text-slate-900">
+                            {option.title}
+                          </Text>
+                          <Text className="mt-1 text-xs text-slate-500">
+                            {option.description}
+                          </Text>
+                        </View>
+                        <View
+                          className={cn(
+                            "h-6 w-6 items-center justify-center rounded-full border-2",
+                            value === option.value
+                              ? "border-teal-500 bg-white"
+                              : "border-slate-300 bg-white"
+                          )}
+                        >
+                          {value === option.value ? (
+                            <View className="h-3 w-3 rounded-full bg-teal-500" />
+                          ) : null}
+                        </View>
+                      </View>
                     </Pressable>
                   ))}
                 </View>
               )}
             />
+          </View>
+
+          {/* Payment Method Section */}
+          <View className="mt-4 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="credit-card" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Payment Method
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  How would you like to pay?
+                </Text>
+              </View>
+            </View>
 
             <Controller
               control={control}
               name="paymentMethod"
               render={({ field: { onChange, value } }) => (
-                <View className="space-y-3">
-                  {paymentMethods.map((method) => (
-                    <PaymentOption
-                      key={method.value}
-                      title={method.title}
-                      description={method.description}
-                      active={value === method.value}
-                      disabled={method.value !== "Cash"}
-                      onPress={() => onChange(method.value)}
-                    />
-                  ))}
+                <View className="gap-3">
+                  {paymentMethods.map((method) => {
+                    const isDisabled = method.value !== "Cash";
+                    return (
+                      <Pressable
+                        key={method.value}
+                        onPress={() => !isDisabled && onChange(method.value)}
+                        className={cn(
+                          "rounded-2xl border p-4",
+                          value === method.value
+                            ? "border-teal-500 bg-teal-50"
+                            : "border-slate-200 bg-slate-50",
+                          isDisabled && "opacity-50"
+                        )}
+                      >
+                        <View className="flex-row items-center justify-between">
+                          <View className="flex-1 pr-3">
+                            <Text className="text-sm font-bold text-slate-900">
+                              {method.title}
+                            </Text>
+                            <Text className="mt-1 text-xs text-slate-500">
+                              {method.description}
+                            </Text>
+                            {isDisabled ? (
+                              <View className="mt-2 self-start rounded-full bg-amber-100 px-2 py-1">
+                                <Text className="text-[10px] font-bold uppercase text-amber-700">
+                                  Coming soon
+                                </Text>
+                              </View>
+                            ) : null}
+                          </View>
+                          <View
+                            className={cn(
+                              "h-6 w-6 items-center justify-center rounded-full border-2",
+                              value === method.value
+                                ? "border-teal-500 bg-white"
+                                : "border-slate-300 bg-white"
+                            )}
+                          >
+                            {value === method.value ? (
+                              <View className="h-3 w-3 rounded-full bg-teal-500" />
+                            ) : null}
+                          </View>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               )}
             />
           </View>
-        </CheckoutSection>
 
-        <CheckoutSection
-          eyebrow="Discounts"
-          headline="Apply coupon code"
-          description="Enter a valid coupon code to save on your order."
-        >
-          <CouponSection
-            cartTotal={subtotal}
-            onCouponApplied={(discount, coupon) => {
-              setDiscountAmount(discount);
-              setAppliedCoupon(coupon);
-            }}
-            appliedCoupon={appliedCoupon}
-            currency={currency}
-            token={accessToken || undefined}
-          />
-        </CheckoutSection>
+          {/* Coupon Section */}
+          <View className="mt-4 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="tag" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Discount Code
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  Have a coupon? Apply it here
+                </Text>
+              </View>
+            </View>
 
-        <CheckoutSection
-          eyebrow="Order summary"
-          headline="Review and confirm"
-          description="Check your totals before placing the order."
-        >
-          <View>
-            <View className="space-y-3">
-              <SummaryRow
-                label="Subtotal"
-                value={formatCurrency(subtotal, currency)}
-              />
-              <SummaryRow label="Delivery" value="Free" />
-              {discountAmount > 0 && (
+            <CouponSection
+              cartTotal={subtotal}
+              onCouponApplied={(discount, coupon) => {
+                setDiscountAmount(discount);
+                setAppliedCoupon(coupon);
+              }}
+              appliedCoupon={appliedCoupon}
+              currency={currency}
+              token={accessToken || undefined}
+            />
+          </View>
+
+          {/* Order Summary Section */}
+          <View className="mt-4 rounded-3xl bg-white px-4 py-6 shadow-lg">
+            <View className="mb-4 flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-teal-50">
+                <Feather name="shopping-bag" size={20} color="#0f766e" />
+              </View>
+              <View>
+                <Text className="text-lg font-bold text-slate-900">
+                  Order Summary
+                </Text>
+                <Text className="text-xs text-slate-500">
+                  Review your order details
+                </Text>
+              </View>
+            </View>
+
+            <View className="gap-3">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm font-medium text-slate-600">
+                  Subtotal
+                </Text>
+                <Text className="text-sm font-bold text-slate-900">
+                  {formatCurrency(subtotal, currency)}
+                </Text>
+              </View>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm font-medium text-slate-600">
+                  Delivery
+                </Text>
+                <Text className="text-sm font-bold text-teal-600">Free</Text>
+              </View>
+              {discountAmount > 0 ? (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-[13px] font-semibold text-emerald-600">
+                  <Text className="text-sm font-medium text-emerald-600">
                     Discount
                   </Text>
-                  <Text className="text-[15px] font-bold text-emerald-600">
+                  <Text className="text-sm font-bold text-emerald-600">
                     -{formatCurrency(discountAmount, currency)}
                   </Text>
                 </View>
-              )}
+              ) : null}
             </View>
-            <View className="mt-4 flex-row items-center justify-between rounded-[28px] bg-emerald-50/60 px-4 py-4 shadow-sm">
-              <Text className="text-[12px] font-semibold uppercase tracking-[0.2em] text-primary-600">
-                Total due today
-              </Text>
-              <Text className="font-display text-[30px] font-extrabold text-slate-900">
-                {formatCurrency(
-                  Math.max(0, subtotal - discountAmount),
-                  currency
-                )}
-              </Text>
+
+            <View className="mt-4 rounded-2xl bg-teal-50 p-4">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm font-bold uppercase text-teal-900">
+                  Total Due
+                </Text>
+                <Text className="text-2xl font-black text-teal-600">
+                  {formatCurrency(
+                    Math.max(0, subtotal - discountAmount),
+                    currency
+                  )}
+                </Text>
+              </View>
             </View>
+
+            {mutation.isError ? (
+              <View className="mt-4 flex-row items-center rounded-2xl border border-red-100 bg-red-50 px-3 py-3">
+                <Feather name="alert-triangle" size={18} color="#ef4444" />
+                <Text className="ml-2 flex-1 text-sm text-red-600">
+                  {mutation.error?.message || "Failed to place order"}
+                </Text>
+              </View>
+            ) : null}
+
             <Button
-              title={mutation.isPending ? "Placing order..." : "Confirm order"}
-              className="mt-6 rounded-full"
-              variant="primary"
+              title={mutation.isPending ? "Placing order..." : "Confirm Order"}
               onPress={handleSubmit(onSubmit)}
+              disabled={mutation.isPending}
               loading={mutation.isPending}
+              variant="teal"
+              className="mt-6"
             />
           </View>
-        </CheckoutSection>
+
+          <View className="h-8" />
+        </View>
       </Screen>
     </KeyboardAvoidingView>
   );
 }
-
-const CheckoutSection = ({
-  eyebrow,
-  headline,
-  description,
-  children,
-}: {
-  eyebrow: string;
-  headline: string;
-  description?: string;
-  children: ReactNode;
-}) => (
-  <View
-    className="overflow-hidden rounded-[36px] border border-white/70 bg-white/96 px-5 py-6"
-    style={{
-      shadowColor: "rgba(15,118,110,0.14)",
-      shadowOffset: { width: 0, height: 18 },
-      shadowOpacity: 0.16,
-      shadowRadius: 28,
-      elevation: 12,
-    }}
-  >
-    <Text className="text-[11px] font-bold uppercase tracking-[0.35em] text-primary-500">
-      {eyebrow}
-    </Text>
-    <Text className="mt-2 font-display text-[24px] font-extrabold text-slate-900">
-      {headline}
-    </Text>
-    {description ? (
-      <Text className="mt-2 text-[13px] leading-relaxed text-slate-500">
-        {description}
-      </Text>
-    ) : null}
-    <View className="mt-5">{children}</View>
-  </View>
-);
-
-const TextInputField: React.FC<
-  {
-    label: string;
-    error?: string;
-  } & React.ComponentProps<typeof TextInput>
-> = ({ label, error, className, ...props }) => (
-  <View className="mb-4 flex-1">
-    <Text className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
-      {label}
-    </Text>
-    <TextInput
-      className={cn(
-        "rounded-[26px] border px-4 py-3.5 text-[15px] text-slate-900 shadow-[0_12px_24px_rgba(15,118,110,0.08)]",
-        error ? "border-rose-400 bg-rose-50/40" : "border-white/70 bg-white/96",
-        className
-      )}
-      placeholderTextColor="#94a3b8"
-      {...props}
-    />
-    {error ? (
-      <Text className="mt-1.5 text-xs text-rose-500">{error}</Text>
-    ) : null}
-  </View>
-);
-
-const SummaryRow: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => (
-  <View className="flex-row items-center justify-between">
-    <Text className="text-[13px] font-semibold text-slate-600">{label}</Text>
-    <Text className="text-[15px] font-bold text-slate-900">{value}</Text>
-  </View>
-);
-
-const PaymentOption: React.FC<{
-  title: string;
-  description: string;
-  active?: boolean;
-  disabled?: boolean;
-  onPress: () => void;
-}> = ({ title, description, active, disabled, onPress }) => (
-  <Pressable
-    onPress={disabled ? undefined : onPress}
-    className={cn(
-      "flex-row items-center rounded-[28px] border px-4 py-4",
-      active
-        ? "border-primary-500 bg-emerald-50/60"
-        : "border-white/70 bg-white/95",
-      disabled ? "opacity-50" : "active:bg-primary-50/60"
-    )}
-  >
-    <View className="flex-1 pr-3">
-      <Text className="text-[15px] font-bold text-slate-900">{title}</Text>
-      <Text className="mt-1 text-[13px] leading-relaxed text-slate-600">
-        {description}
-      </Text>
-      {disabled ? (
-        <View className="mt-2 inline-flex self-start rounded-full bg-amber-50 px-2.5 py-1">
-          <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-600">
-            Coming soon
-          </Text>
-        </View>
-      ) : null}
-    </View>
-    <View
-      className={cn(
-        "h-7 w-7 items-center justify-center rounded-full border-2",
-        active ? "border-primary-500 bg-white" : "border-slate-300 bg-white"
-      )}
-    >
-      {active ? (
-        <View className="h-3.5 w-3.5 rounded-full bg-primary-500" />
-      ) : null}
-    </View>
-  </Pressable>
-);
