@@ -1,5 +1,6 @@
 import { DEFAULT_PAGE_SIZE } from "@/constants";
 import { http } from "@/services/http";
+import { api } from "@/services/api-client";
 import { OrderSummary } from "@/types";
 
 export interface OrderListResponse {
@@ -12,6 +13,7 @@ export interface OrderListResponse {
   delivered: number;
 }
 
+// Legacy functions using http (with manual token passing)
 export const createOrder = (
   order: Omit<OrderSummary, "_id" | "createdAt" | "updatedAt">,
   token: string
@@ -22,7 +24,7 @@ export const createPaymentIntent = (
   token: string
 ) =>
   http.post("/order/create-payment-intent", payload, {
-    token
+    token,
   });
 
 export const createRazorpayOrder = (
@@ -30,7 +32,7 @@ export const createRazorpayOrder = (
   token: string
 ) =>
   http.post("/order/create/razorpay", payload, {
-    token
+    token,
   });
 
 export const finalizeRazorpayOrder = (
@@ -38,7 +40,7 @@ export const finalizeRazorpayOrder = (
   token: string
 ) =>
   http.post("/order/add/razorpay", payload, {
-    token
+    token,
   });
 
 export const listOrders = (
@@ -47,7 +49,7 @@ export const listOrders = (
 ) => {
   const { page = 1, limit = DEFAULT_PAGE_SIZE } = params;
   return http.get<OrderListResponse>(`/order?limit=${limit}&page=${page}`, {
-    token
+    token,
   });
 };
 
@@ -59,5 +61,30 @@ export const emailInvoiceToCustomer = (
   token: string
 ) =>
   http.post("/order/customer/invoice", payload, {
-    token
+    token,
   });
+
+// New functions using api-client (with automatic token refresh)
+export const ordersApi = {
+  create: (order: Omit<OrderSummary, "_id" | "createdAt" | "updatedAt">) =>
+    api.post<OrderSummary>("/order/add", order),
+
+  createPaymentIntent: (payload: Record<string, unknown>) =>
+    api.post("/order/create-payment-intent", payload),
+
+  createRazorpayOrder: (payload: { amount: number }) =>
+    api.post("/order/create/razorpay", payload),
+
+  finalizeRazorpayOrder: (payload: Record<string, unknown>) =>
+    api.post("/order/add/razorpay", payload),
+
+  list: (params: { page?: number; limit?: number } = {}) => {
+    const { page = 1, limit = DEFAULT_PAGE_SIZE } = params;
+    return api.get<OrderListResponse>(`/order?limit=${limit}&page=${page}`);
+  },
+
+  getById: (id: string) => api.get<OrderSummary>(`/order/${id}`),
+
+  emailInvoice: (payload: Record<string, unknown>) =>
+    api.post("/order/customer/invoice", payload),
+};

@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { Alert } from "react-native";
 
 import { SECURE_STORAGE_KEYS } from "@/constants";
 import {
@@ -14,9 +16,14 @@ import {
   fetchCustomer,
   getShippingAddress,
   login as loginRequest,
-  refreshSession,
   updateCustomer,
 } from "@/services/auth";
+import {
+  setTokens,
+  clearTokens,
+  initializeTokens,
+  onAuthError,
+} from "@/services/api-client";
 import { Customer, ShippingAddress } from "@/types";
 
 interface LoginInput {
@@ -104,12 +111,47 @@ const clearSession = async () => {
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
+  const router = useRouter();
   const [user, setUser] = useState<Customer | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [shippingAddress, setShippingAddress] =
     useState<ShippingAddress | null>(null);
   const [isHydrating, setIsHydrating] = useState(true);
+
+  // Initialize tokens in api-client and listen for auth errors
+  useEffect(() => {
+    // Initialize api-client tokens from storage
+    initializeTokens();
+
+    // Listen for auth errors from api-client (token refresh failed)
+    const unsubscribe = onAuthError(() => {
+      // Clear local state
+      setUser(null);
+      setAccessToken(null);
+      setRefreshToken(null);
+      setShippingAddress(null);
+      clearSession();
+
+      // Show alert and redirect to login
+      Alert.alert(
+        "Session Expired",
+        "Your session has expired. Please log in again.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.replace("/auth/login");
+            },
+          },
+        ]
+      );
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [router]);
 
   useEffect(() => {
     let isMounted = true;
@@ -122,6 +164,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         }
         if (stored.refreshToken) {
           setRefreshToken(stored.refreshToken);
+        }
+        // Sync tokens with api-client for automatic refresh
+        if (stored.accessToken && stored.refreshToken) {
+          setTokens(stored.accessToken, stored.refreshToken, 900);
         }
         if (stored.user) {
           setUser(stored.user);
@@ -173,6 +219,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     setAccessToken(response.token);
     setRefreshToken(response.refreshToken);
 
+    // Sync tokens with api-client for automatic refresh
+    setTokens(response.token, response.refreshToken, 900); // 15 minutes
+
     await persistSession({
       accessToken: response.token,
       refreshToken: response.refreshToken,
@@ -193,29 +242,11 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   }, []);
 
   const refresh = useCallback(async () => {
-    if (!refreshToken) return;
-
-    try {
-      const newTokens = await refreshSession(refreshToken);
-      const nextAccess =
-        (newTokens as unknown as { token?: string }).token ??
-        newTokens.accessToken;
-      if (nextAccess) {
-        setAccessToken(nextAccess);
-      }
-      if (newTokens.refreshToken && newTokens.refreshToken !== refreshToken) {
-        setRefreshToken(newTokens.refreshToken);
-      }
-      await persistSession({
-        accessToken: nextAccess ?? accessToken,
-        refreshToken: newTokens.refreshToken ?? refreshToken,
-        user,
-      });
-    } catch (error) {
-      console.warn("Failed to refresh session", error);
-      await logout();
-    }
-  }, [accessToken, refreshToken, user]);
+    // Token refresh is now handled automatically by api-client
+    // This function is kept for backwards compatibility
+    // The api-client will refresh tokens before they expire
+    console.log("Token refresh is now handled automatically by api-client");
+  }, []);
 
   const reloadProfile = useCallback(async () => {
     if (!user?._id || !accessToken) return;
@@ -247,6 +278,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     setAccessToken(null);
     setRefreshToken(null);
     setShippingAddress(null);
+    // Clear tokens from api-client
+    clearTokens();
     await clearSession();
   }, []);
 
@@ -268,6 +301,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       setUser(updatedUser);
       setAccessToken(response.token);
       setRefreshToken(response.refreshToken);
+
+      // Sync tokens with api-client for automatic refresh
+      setTokens(response.token, response.refreshToken, 900);
 
       await persistSession({
         accessToken: response.token,

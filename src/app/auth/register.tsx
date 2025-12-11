@@ -149,6 +149,19 @@ export default function RegisterScreen() {
               className="mt-6"
               onPress={() => router?.back()}
             />
+
+            {/* Or continue with phone */}
+            <View className="flex-row items-center my-6">
+              <View className="flex-1 h-px bg-slate-200" />
+              <Text className="mx-4 text-sm text-slate-500">or</Text>
+              <View className="flex-1 h-px bg-slate-200" />
+            </View>
+
+            <Button
+              title="Sign up with Phone"
+              variant="outline"
+              onPress={() => router.replace("/auth/phone-register")}
+            />
           </View>
         </View>
       </Screen>

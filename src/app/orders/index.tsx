@@ -21,7 +21,8 @@ export default function OrdersScreen() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError, refetch, isRefetching } = useOrders(page);
+  const { data, isLoading, isError, refetch, isRefetching, error } =
+    useOrders(page);
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
 
@@ -44,6 +45,8 @@ export default function OrdersScreen() {
       setTimeout(() => setLoadingMore(false), 500);
     }
   };
+
+  console.log({ error });
 
   if (!isAuthenticated) {
     return (
