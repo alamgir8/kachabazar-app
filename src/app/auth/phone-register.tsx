@@ -13,9 +13,12 @@ import { Feather } from "@expo/vector-icons";
 import { z } from "zod";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton, EnhancedInput } from "@/components/ui";
+import {
+  BackButton,
+  EnhancedInput,
+  PasswordStrengthIndicator,
+} from "@/components/ui";
 import { authApi } from "@/services/auth";
-import { setTokens } from "@/services/api-client";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 
@@ -43,7 +46,7 @@ type Step = "phone" | "otp";
 
 export default function PhoneRegisterScreen() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { loginWithToken } = useAuth();
   const [step, setStep] = useState<Step>("phone");
   const [phoneData, setPhoneData] = useState<PhoneInput | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -158,8 +161,18 @@ export default function PhoneRegisterScreen() {
         password: phoneData.password,
       });
 
-      // Set tokens and login
-      setTokens(res.token, res.refreshToken, 900);
+      // Login with the received tokens
+      await loginWithToken({
+        _id: res._id,
+        name: res.name,
+        email: res.email,
+        phone: res.phone,
+        image: res.image,
+        address: res.address,
+        token: res.token,
+        refreshToken: res.refreshToken,
+      });
+
       setSuccessMessage("Registration successful!");
 
       // Navigate to home
@@ -249,16 +262,18 @@ export default function PhoneRegisterScreen() {
                   control={phoneForm.control}
                   name="password"
                   render={({ field: { value, onChange } }) => (
-                    <EnhancedInput
-                      label="Password"
-                      placeholder="••••••••"
-                      secureTextEntry
-                      value={value}
-                      onChangeText={onChange}
-                      error={phoneForm.formState.errors.password?.message}
-                      leftIcon="lock"
-                      containerClassName="mb-5"
-                    />
+                    <View className="mb-5">
+                      <EnhancedInput
+                        label="Password"
+                        placeholder="••••••••"
+                        secureTextEntry
+                        value={value}
+                        onChangeText={onChange}
+                        error={phoneForm.formState.errors.password?.message}
+                        leftIcon="lock"
+                      />
+                      <PasswordStrengthIndicator password={value} />
+                    </View>
                   )}
                 />
               </>

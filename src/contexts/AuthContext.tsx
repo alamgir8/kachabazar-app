@@ -31,6 +31,17 @@ interface LoginInput {
   password: string;
 }
 
+interface LoginWithTokenInput {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  image?: string;
+  address?: string;
+  token: string;
+  refreshToken: string;
+}
+
 interface UpdateProfileInput {
   name?: string;
   email?: string;
@@ -49,6 +60,7 @@ interface AuthContextValue {
   isHydrating: boolean;
   shippingAddress: ShippingAddress | null;
   login: (input: LoginInput) => Promise<void>;
+  loginWithToken: (input: LoginWithTokenInput) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   updateProfile: (input: UpdateProfileInput) => Promise<void>;
@@ -241,6 +253,46 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     }
   }, []);
 
+  /**
+   * Login with tokens (for OTP registration flows)
+   * Called after successful OTP verification
+   */
+  const loginWithToken = useCallback(async (response: LoginWithTokenInput) => {
+    const authenticatedUser: Customer = {
+      _id: response._id,
+      name: response.name,
+      email: response.email,
+      phone: response.phone,
+      image: response.image,
+      address: response.address,
+    };
+
+    setUser(authenticatedUser);
+    setAccessToken(response.token);
+    setRefreshToken(response.refreshToken);
+
+    // Sync tokens with api-client for automatic refresh
+    setTokens(response.token, response.refreshToken, 900); // 15 minutes
+
+    await persistSession({
+      accessToken: response.token,
+      refreshToken: response.refreshToken,
+      user: authenticatedUser,
+    });
+
+    if (response._id) {
+      try {
+        const addressResponse = await getShippingAddress(
+          response._id,
+          response.token
+        );
+        setShippingAddress(addressResponse?.shippingAddress ?? null);
+      } catch (error) {
+        console.log("Unable to fetch shipping address", error);
+      }
+    }
+  }, []);
+
   const refresh = useCallback(async () => {
     // Token refresh is now handled automatically by api-client
     // This function is kept for backwards compatibility
@@ -340,6 +392,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       isHydrating,
       shippingAddress,
       login,
+      loginWithToken,
       logout,
       refresh,
       updateProfile,
@@ -353,6 +406,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       isHydrating,
       shippingAddress,
       login,
+      loginWithToken,
       logout,
       refresh,
       updateProfile,

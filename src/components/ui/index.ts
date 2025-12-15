@@ -18,3 +18,7 @@ export { FilterChip } from "./FilterChip";
 export { SectionHeader } from "./SectionHeader";
 export { Surface } from "./Surface";
 export { Title, Subtitle, Body } from "./Typography";
+export {
+  PasswordStrengthIndicator,
+  usePasswordStrength,
+} from "./PasswordStrengthIndicator";
