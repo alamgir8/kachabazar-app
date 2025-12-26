@@ -39,7 +39,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
   return (
     <Pressable
       onPress={onExplorePress}
-      className="active:opacity-95"
+      className="active:opacity-95 my-4"
       style={{
         shadowColor: "#47f587",
         shadowOffset: { width: 0, height: 8 },
@@ -49,7 +49,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
       }}
     >
       <View
-        className="overflow-hidden rounded-3xl my-8"
+        className="overflow-hidden rounded-3xl"
         style={{
           borderWidth: 1,
           borderColor: "rgba(34, 197, 94, 0.2)",
@@ -127,6 +127,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplorePress }) => {
               <Button
                 title={cta}
                 variant="teal"
+                className="w-full"
                 onPress={() => onExplorePress?.()}
               />
             </View>
