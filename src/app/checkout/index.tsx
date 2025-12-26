@@ -20,41 +20,6 @@ import { formatCurrency } from "@/utils";
 import { useCheckoutSubmit } from "@/hooks/useCheckoutSubmit";
 import { cn } from "@/utils/cn";
 
-const shippingOptions = [
-  {
-    value: "Standard" as const,
-    title: "Standard delivery",
-    description:
-      "Arrives within 30-45 minutes with temperature-controlled bags.",
-    cost: 0,
-  },
-  {
-    value: "Express" as const,
-    title: "Express priority",
-    description:
-      "Limited availability — prioritised picking and doorstep drop-off.",
-    cost: 15,
-  },
-];
-
-const paymentMethods = [
-  {
-    value: "Cash" as const,
-    title: "Cash on delivery",
-    description: "Pay with cash or mobile wallet when your shopper arrives.",
-  },
-  {
-    value: "Card" as const,
-    title: "Card (coming soon)",
-    description: "Secure card payments launch shortly.",
-  },
-  {
-    value: "RazorPay" as const,
-    title: "Razorpay (coming soon)",
-    description: "Frictionless UPI and wallet checkout.",
-  },
-];
-
 export default function CheckoutScreen() {
   const router = useRouter();
   const {
@@ -75,6 +40,8 @@ export default function CheckoutScreen() {
     cartTotal,
     currency,
     user,
+    shippingOptions,
+    paymentMethods,
   } = useCheckoutSubmit();
 
   if (!isAuthenticated) {
@@ -402,49 +369,105 @@ export default function CheckoutScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="gap-3">
                   {paymentMethods.map((method) => {
-                    const isDisabled = method.value !== "Cash";
                     return (
-                      <Pressable
-                        key={method.value}
-                        onPress={() => !isDisabled && onChange(method.value)}
-                        className={cn(
-                          "rounded-2xl border p-4",
-                          value === method.value
-                            ? "border-teal-500 bg-teal-50"
-                            : "border-slate-200 bg-slate-50",
-                          isDisabled && "opacity-50"
-                        )}
-                      >
-                        <View className="flex-row items-center justify-between">
-                          <View className="flex-1 pr-3">
-                            <Text className="text-sm font-bold text-slate-900">
-                              {method.title}
-                            </Text>
-                            <Text className="mt-1 text-xs text-slate-500">
-                              {method.description}
-                            </Text>
-                            {isDisabled ? (
-                              <View className="mt-2 self-start rounded-full bg-amber-100 px-2 py-1">
-                                <Text className="text-[10px] font-bold uppercase text-amber-700">
-                                  Coming soon
-                                </Text>
+                      <View key={method.value} className="gap-3">
+                        <Pressable
+                          onPress={() => onChange(method.value)}
+                          className={cn(
+                            "rounded-2xl border p-4",
+                            value === method.value
+                              ? "border-teal-500 bg-teal-50"
+                              : "border-slate-200 bg-slate-50"
+                          )}
+                        >
+                          <View className="flex-row items-center justify-between">
+                            <View className="flex-1 pr-3">
+                              <Text className="text-sm font-bold text-slate-900">
+                                {method.title}
+                              </Text>
+                              <Text className="mt-1 text-xs text-slate-500">
+                                {method.description}
+                              </Text>
+                            </View>
+                            <View
+                              className={cn(
+                                "h-6 w-6 items-center justify-center rounded-full border-2",
+                                value === method.value
+                                  ? "border-teal-500 bg-white"
+                                  : "border-slate-300 bg-white"
+                              )}
+                            >
+                              {value === method.value ? (
+                                <View className="h-3 w-3 rounded-full bg-teal-500" />
+                              ) : null}
+                            </View>
+                          </View>
+                        </Pressable>
+
+                        {value === "Card" && method.value === "Card" && (
+                          <View className="rounded-2xl border border-slate-200 bg-white p-4 gap-4">
+                            <Controller
+                              control={control}
+                              name="cardNumber"
+                              render={({
+                                field: { onChange, onBlur, value },
+                              }) => (
+                                <EnhancedInput
+                                  label="Card Number"
+                                  placeholder="0000 0000 0000 0000"
+                                  keyboardType="numeric"
+                                  maxLength={19}
+                                  onBlur={onBlur}
+                                  onChangeText={onChange}
+                                  value={value}
+                                  error={errors.cardNumber?.message}
+                                />
+                              )}
+                            />
+                            <View className="flex-row gap-4">
+                              <View className="flex-1">
+                                <Controller
+                                  control={control}
+                                  name="cardExpiry"
+                                  render={({
+                                    field: { onChange, onBlur, value },
+                                  }) => (
+                                    <EnhancedInput
+                                      label="Expiry Date"
+                                      placeholder="MM/YY"
+                                      maxLength={5}
+                                      onBlur={onBlur}
+                                      onChangeText={onChange}
+                                      value={value}
+                                      error={errors.cardExpiry?.message}
+                                    />
+                                  )}
+                                />
                               </View>
-                            ) : null}
+                              <View className="flex-1">
+                                <Controller
+                                  control={control}
+                                  name="cardCvc"
+                                  render={({
+                                    field: { onChange, onBlur, value },
+                                  }) => (
+                                    <EnhancedInput
+                                      label="CVC"
+                                      placeholder="123"
+                                      keyboardType="numeric"
+                                      maxLength={4}
+                                      onBlur={onBlur}
+                                      onChangeText={onChange}
+                                      value={value}
+                                      error={errors.cardCvc?.message}
+                                    />
+                                  )}
+                                />
+                              </View>
+                            </View>
                           </View>
-                          <View
-                            className={cn(
-                              "h-6 w-6 items-center justify-center rounded-full border-2",
-                              value === method.value
-                                ? "border-teal-500 bg-white"
-                                : "border-slate-300 bg-white"
-                            )}
-                          >
-                            {value === method.value ? (
-                              <View className="h-3 w-3 rounded-full bg-teal-500" />
-                            ) : null}
-                          </View>
-                        </View>
-                      </Pressable>
+                        )}
+                      </View>
                     );
                   })}
                 </View>

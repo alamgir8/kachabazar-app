@@ -1,4 +1,3 @@
-import { http } from "@/services/http";
 import { api } from "@/services/api-client";
 import {
   Customer,
@@ -12,53 +11,49 @@ interface LoginPayload {
   password: string;
 }
 
-// Legacy functions using http (with manual token passing)
+// Functions using api-client (with automatic token refresh)
 export const login = (payload: LoginPayload) =>
-  http.post<LoginResponse>("/customer/login", payload);
+  api.post<LoginResponse>("/customer/login", payload, { requiresAuth: false });
 
 export const signUpWithOAuth = (payload: {
   name: string;
   email: string;
   image?: string;
-}) => http.post<LoginResponse>("/customer/signup/oauth", payload);
+}) =>
+  api.post<LoginResponse>("/customer/signup/oauth", payload, {
+    requiresAuth: false,
+  });
 
 export const refreshSession = (refreshToken: string) =>
-  http.post<RefreshResponse>("/customer/refresh", { refreshToken });
+  api.post<RefreshResponse>(
+    "/customer/refresh",
+    { refreshToken },
+    { requiresAuth: false }
+  );
 
-export const fetchCustomer = (id: string, token: string) =>
-  http.get<Customer>(`/customer/${id}`, { token });
+export const fetchCustomer = (id: string) =>
+  api.get<Customer>(`/customer/${id}`);
 
-export const updateCustomer = (
-  id: string,
-  data: Partial<Customer>,
-  token: string
-) =>
-  http.put<LoginResponse>(`/customer/${id}`, data, {
-    token,
-  });
+export const updateCustomer = (id: string, data: Partial<Customer>) =>
+  api.put<LoginResponse>(`/customer/${id}`, data);
 
-export const addShippingAddress = (
-  id: string,
-  address: ShippingAddress,
-  token: string
-) =>
-  http.post<{ message: string }>(`/customer/shipping/address/${id}`, address, {
-    token,
-  });
+export const addShippingAddress = (id: string, address: ShippingAddress) =>
+  api.post<{ message: string }>(`/customer/shipping/address/${id}`, address);
 
-export const getShippingAddress = (id: string, token: string) =>
-  http.get<{ shippingAddress: ShippingAddress }>(
-    `/customer/shipping/address/${id}`,
-    { token }
+export const getShippingAddress = (id: string) =>
+  api.get<{ shippingAddress: ShippingAddress }>(
+    `/customer/shipping/address/${id}`
   );
 
 export const requestEmailVerification = (payload: {
   name: string;
   email: string;
   password: string;
-}) => http.post<{ message: string }>("/customer/verify-email", payload);
+}) =>
+  api.post<{ message: string }>("/customer/verify-email", payload, {
+    requiresAuth: false,
+  });
 
-// New functions using api-client (with automatic token refresh)
 export const authApi = {
   // Auth endpoints (no token required)
   login: (payload: LoginPayload) =>

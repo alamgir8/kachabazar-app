@@ -138,35 +138,64 @@ export const shippingAddressSchema = z.object({
 /**
  * Checkout Schema
  */
-export const checkoutSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "First name is required")
-    .max(50, "First name must be less than 50 characters")
-    .trim(),
-  lastName: z
-    .string()
-    .min(1, "Last name is required")
-    .max(50, "Last name must be less than 50 characters")
-    .trim(),
-  email: emailSchema,
-  contact: z
-    .string()
-    .min(1, "Contact number is required")
-    .regex(
-      /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
-      "Invalid phone number"
-    ),
-  address: addressSchema,
-  city: citySchema,
-  country: countrySchema,
-  zipCode: z
-    .string()
-    .min(1, "ZIP code is required")
-    .regex(/^[0-9a-zA-Z\s-]{3,10}$/, "Invalid ZIP code"),
-  shippingOption: z.enum(["Standard", "Express"]),
-  paymentMethod: z.enum(["Cash", "Card", "RazorPay"]),
-});
+export const checkoutSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, "First name is required")
+      .max(50, "First name must be less than 50 characters")
+      .trim(),
+    lastName: z
+      .string()
+      .min(1, "Last name is required")
+      .max(50, "Last name must be less than 50 characters")
+      .trim(),
+    email: emailSchema,
+    contact: z
+      .string()
+      .min(1, "Contact number is required")
+      .regex(
+        /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
+        "Invalid phone number"
+      ),
+    address: addressSchema,
+    city: citySchema,
+    country: countrySchema,
+    zipCode: z
+      .string()
+      .min(1, "ZIP code is required")
+      .regex(/^[0-9a-zA-Z\s-]{3,10}$/, "Invalid ZIP code"),
+    shippingOption: z.string(),
+    paymentMethod: z.string(),
+    cardNumber: z.string().optional(),
+    cardExpiry: z.string().optional(),
+    cardCvc: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.paymentMethod === "Card") {
+      if (!data.cardNumber || data.cardNumber.length < 16) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid card number is required",
+          path: ["cardNumber"],
+        });
+      }
+      if (!data.cardExpiry) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Expiry date is required",
+          path: ["cardExpiry"],
+        });
+      }
+      if (!data.cardCvc || data.cardCvc.length < 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid CVC is required",
+          path: ["cardCvc"],
+        });
+      }
+    }
+  });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 

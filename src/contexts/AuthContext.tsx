@@ -186,10 +186,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
           // Load shipping address after user is restored
           if (stored.accessToken && stored.user._id) {
             try {
-              const addressResponse = await getShippingAddress(
-                stored.user._id,
-                stored.accessToken
-              );
+              const addressResponse = await getShippingAddress(stored.user._id);
               if (isMounted) {
                 setShippingAddress(addressResponse?.shippingAddress ?? null);
               }
@@ -242,10 +239,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
 
     if (response._id) {
       try {
-        const addressResponse = await getShippingAddress(
-          response._id,
-          response.token
-        );
+        const addressResponse = await getShippingAddress(response._id);
         setShippingAddress(addressResponse?.shippingAddress ?? null);
       } catch (error) {
         console.log("Unable to fetch shipping address", error);
@@ -282,10 +276,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
 
     if (response._id) {
       try {
-        const addressResponse = await getShippingAddress(
-          response._id,
-          response.token
-        );
+        const addressResponse = await getShippingAddress(response._id);
         setShippingAddress(addressResponse?.shippingAddress ?? null);
       } catch (error) {
         console.log("Unable to fetch shipping address", error);
@@ -304,8 +295,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     if (!user?._id || !accessToken) return;
     try {
       const [profile, address] = await Promise.all([
-        fetchCustomer(user._id, accessToken),
-        getShippingAddress(user._id, accessToken),
+        fetchCustomer(user._id),
+        getShippingAddress(user._id),
       ]);
 
       const nextUser: Customer = {
@@ -339,7 +330,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
     async (input: UpdateProfileInput) => {
       if (!user?._id || !accessToken) return;
 
-      const response = await updateCustomer(user._id, input, accessToken);
+      const response = await updateCustomer(user._id, input);
 
       const updatedUser: Customer = {
         _id: response._id,
@@ -369,7 +360,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   const upsertShippingAddress = useCallback(
     async (address: ShippingAddress) => {
       if (!user?._id || !accessToken) return;
-      await addShippingAddress(user._id, address, accessToken);
+      await addShippingAddress(user._id, address);
       setShippingAddress(address);
       await persistSession({
         accessToken,

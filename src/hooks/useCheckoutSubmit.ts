@@ -26,7 +26,7 @@ export const useCheckoutSubmit = () => {
     shippingAddress,
   } = useAuth();
   const { items, clearCart, isEmpty } = useCart();
-  const { globalSetting } = useSettings();
+  const { globalSetting, storeSetting, storeCustomization } = useSettings();
 
   const cartTotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -45,6 +45,69 @@ export const useCheckoutSubmit = () => {
 
   const currency = globalSetting?.default_currency || "$";
 
+  const showingTranslateValue = (data: any) => {
+    if (data !== undefined && typeof data === "object") {
+      return data?.en || Object.values(data)[0];
+    }
+    return data;
+  };
+
+  // Dynamic Shipping Options
+  const checkout = storeCustomization?.checkout as
+    | Record<string, any>
+    | undefined;
+
+  const shippingOptions = [
+    {
+      value: showingTranslateValue(checkout?.shipping_name_one) || "Standard",
+      title:
+        showingTranslateValue(checkout?.shipping_name_one) ||
+        "Standard Delivery",
+      description:
+        showingTranslateValue(checkout?.shipping_one_desc) ||
+        "Delivery within 7-10 days",
+      cost: Number(checkout?.shipping_one_cost) || 0,
+    },
+    {
+      value: showingTranslateValue(checkout?.shipping_name_two) || "Express",
+      title:
+        showingTranslateValue(checkout?.shipping_name_two) ||
+        "Express Delivery",
+      description:
+        showingTranslateValue(checkout?.shipping_two_desc) ||
+        "Delivery within 2-3 days",
+      cost: Number(checkout?.shipping_two_cost) || 15,
+    },
+  ];
+
+  // Dynamic Payment Methods
+  const paymentMethods = [
+    {
+      value: "Cash",
+      title: "Cash on Delivery",
+      description: "Pay with cash upon delivery.",
+      enabled: storeSetting?.cod_status,
+    },
+    {
+      value: "Card",
+      title: "Credit/Debit Card",
+      description: "Pay securely with your card.",
+      enabled: storeSetting?.stripe_status,
+    },
+    {
+      value: "RazorPay",
+      title: "RazorPay",
+      description: "Pay securely with RazorPay.",
+      enabled: storeSetting?.razorpay_status,
+    },
+    {
+      value: "PayPal",
+      title: "PayPal",
+      description: "Pay securely with PayPal.",
+      enabled: storeSetting?.paypal_status,
+    },
+  ].filter((method) => method.enabled);
+
   const {
     control,
     handleSubmit,
@@ -61,8 +124,11 @@ export const useCheckoutSubmit = () => {
       city: shippingAddress?.city ?? "",
       country: shippingAddress?.country ?? "",
       zipCode: shippingAddress?.zipCode ?? "",
-      shippingOption: "Standard",
-      paymentMethod: "Cash",
+      shippingOption: shippingOptions[0]?.value,
+      paymentMethod: paymentMethods[0]?.value || "Cash",
+      cardNumber: "",
+      cardExpiry: "",
+      cardCvc: "",
     },
   });
   // Initialize form with user data
@@ -165,7 +231,7 @@ export const useCheckoutSubmit = () => {
 
       // Handle payment methods
       if (data.paymentMethod === "Cash") {
-        const orderResponse = await createOrder(orderInfo, accessToken);
+        const orderResponse = await createOrder(orderInfo);
 
         // Handle success
         HapticFeedback.success();
@@ -206,5 +272,7 @@ export const useCheckoutSubmit = () => {
     cartTotal,
     currency,
     user,
+    shippingOptions,
+    paymentMethods,
   };
 };
