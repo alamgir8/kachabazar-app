@@ -291,7 +291,7 @@ export default function ProductScreen() {
         {/* Product Info Card */}
         <View className="-mt-12">
           <View
-            className="rounded-[40px] border border-white/70 bg-white/96 px-6 py-6"
+            className="rounded-[40px] border border-white/70 bg-white/96 px-1 py-6"
             style={{
               shadowColor: "rgba(15,118,110,0.16)",
               shadowOffset: { width: 0, height: 24 },
