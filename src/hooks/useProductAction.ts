@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { getLocalizedValue } from "@/utils";
 
@@ -24,8 +24,11 @@ export const useProductAction = ({
   const [discount, setDiscount] = useState(0);
   const [selectVariant, setSelectVariant] = useState<any>({});
   const [selectVa, setSelectVa] = useState<any>({});
-  const [variantTitle, setVariantTitle] = useState<any[]>([]);
   const [variants, setVariants] = useState<any[]>([]);
+
+  // Track if initial setup is done to prevent loops
+  const isInitialized = useRef(false);
+  const productId = product?._id;
 
   const currency = globalSetting?.default_currency || "$";
 
@@ -34,73 +37,36 @@ export const useProductAction = ({
     return isNaN(num) ? 0 : num;
   };
 
-  // Handle variant & price updates
+  // Compute variant titles - use useMemo to derive from attributes
+  const variantTitle = useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return [];
+    if (!attributes || attributes.length === 0) return [];
+
+    const variantKeys = Object.keys(Object.assign({}, ...product.variants));
+    const matchingAttributes = attributes.filter((att: any) =>
+      variantKeys.includes(att?._id)
+    );
+
+    return [...matchingAttributes].sort((a, b) => (a._id > b._id ? 1 : -1));
+  }, [attributes, product?.variants]);
+
+  // Initialize product data when product changes
   useEffect(() => {
-    // Guard against null/undefined product
     if (!product) return;
 
-    if (value) {
-      const result = product?.variants?.filter((variant: any) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
+    // Reset initialized flag when product changes
+    isInitialized.current = false;
 
-      const res = result?.map(
-        ({
-          originalPrice,
-          price,
-          discount,
-          quantity,
-          barcode,
-          sku,
-          productId,
-          image,
-          ...rest
-        }: any) => ({
-          ...rest,
-        })
-      );
-
-      const filterKey = Object.keys(Object.assign({}, ...res));
-      const selectVar = filterKey?.reduce(
-        (obj: any, key: string) => ({ ...obj, [key]: selectVariant[key] }),
-        {}
-      );
-      const newObj = Object.entries(selectVar).reduce(
-        (a: any, [k, v]) => (v ? ((a[k] = v), a) : a),
-        {}
-      );
-
-      const result2 = result?.find((v: any) =>
-        Object.keys(newObj).every((k) => newObj[k] === v[k])
-      );
-
-      if (result.length <= 0 || result2 === undefined) return setStock(0);
-
-      setVariants(result);
-      setSelectVariant(result2);
-      setSelectVa(result2);
-      setSelectedImage(result2?.image);
-      setStock(result2?.quantity);
-      const priceValue = getNumber(result2?.price);
-      const originalPriceValue = getNumber(result2?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPriceValue - priceValue) / originalPriceValue) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(priceValue);
-      setOriginalPrice(originalPriceValue);
-    } else if (product?.variants?.length > 0) {
-      const result = product?.variants?.filter((variant: any) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
-
-      setVariants(result);
-      setStock(product.variants[0]?.quantity);
-      setSelectVariant(product.variants[0]);
-      setSelectVa(product.variants[0]);
-      setSelectedImage(product.variants[0]?.image);
-      const priceValue = getNumber(product.variants[0]?.price);
-      const originalPriceValue = getNumber(product.variants[0]?.originalPrice);
+    if (product?.variants?.length > 0) {
+      // Initialize with first variant
+      const firstVariant = product.variants[0];
+      setVariants(product.variants);
+      setStock(firstVariant?.quantity ?? 0);
+      setSelectVariant(firstVariant);
+      setSelectVa(firstVariant);
+      setSelectedImage(firstVariant?.image || product?.image?.[0]);
+      const priceValue = getNumber(firstVariant?.price);
+      const originalPriceValue = getNumber(firstVariant?.originalPrice);
       const discountPercentage = getNumber(
         ((originalPriceValue - priceValue) / originalPriceValue) * 100
       );
@@ -108,8 +74,10 @@ export const useProductAction = ({
       setPrice(priceValue);
       setOriginalPrice(originalPriceValue);
     } else {
-      setStock(product?.stock);
-      setSelectedImage(product?.image?.[0]);
+      // No variants - use product base values
+      setVariants([]);
+      setStock(product?.stock ?? 0);
+      setSelectedImage(product?.image?.[0] || "");
       const priceValue = getNumber(product?.prices?.price);
       const originalPriceValue = getNumber(product?.prices?.originalPrice);
       const discountPercentage = getNumber(
@@ -119,24 +87,72 @@ export const useProductAction = ({
       setPrice(priceValue);
       setOriginalPrice(originalPriceValue);
     }
-  }, [
-    product?.prices?.discount,
-    product?.prices?.originalPrice,
-    product?.prices?.price,
-    product?.stock,
-    product?.variants,
-    selectVa,
-    selectVariant,
-    value,
-  ]);
 
-  // Handle variant title mapping
+    isInitialized.current = true;
+  }, [productId]); // Only re-run when product ID changes
+
+  // Handle variant selection changes (when user selects a variant)
   useEffect(() => {
-    if (!product?.variants || !attributes) return;
-    const res = Object.keys(Object.assign({}, ...product?.variants));
-    const varTitle = attributes?.filter((att: any) => res.includes(att?._id));
-    setVariantTitle(varTitle?.sort());
-  }, [variants, attributes, product?.variants]);
+    if (!product || !value || !isInitialized.current) return;
+
+    const result = product?.variants?.filter((variant: any) =>
+      Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
+    );
+
+    if (!result || result.length === 0) {
+      setStock(0);
+      return;
+    }
+
+    const res = result.map(
+      ({
+        originalPrice,
+        price,
+        discount,
+        quantity,
+        barcode,
+        sku,
+        productId,
+        image,
+        ...rest
+      }: any) => ({
+        ...rest,
+      })
+    );
+
+    const filterKey = Object.keys(Object.assign({}, ...res));
+    const selectVar = filterKey.reduce(
+      (obj: any, key: string) => ({ ...obj, [key]: selectVariant[key] }),
+      {}
+    );
+    const newObj = Object.entries(selectVar).reduce(
+      (a: any, [k, v]) => (v ? ((a[k] = v), a) : a),
+      {}
+    );
+
+    const result2 = result.find((v: any) =>
+      Object.keys(newObj).every((k) => newObj[k] === v[k])
+    );
+
+    if (!result2) {
+      setStock(0);
+      return;
+    }
+
+    setVariants(result);
+    setSelectVariant(result2);
+    setSelectVa(result2);
+    setSelectedImage(result2?.image || product?.image?.[0]);
+    setStock(result2?.quantity ?? 0);
+    const priceValue = getNumber(result2?.price);
+    const originalPriceValue = getNumber(result2?.originalPrice);
+    const discountPercentage = getNumber(
+      ((originalPriceValue - priceValue) / originalPriceValue) * 100
+    );
+    setDiscount(getNumber(discountPercentage));
+    setPrice(priceValue);
+    setOriginalPrice(originalPriceValue);
+  }, [value]); // Only re-run when user selects a new value
 
   // Add to cart
   const handleAddToCart = (quantity: number = 1) => {
@@ -144,10 +160,14 @@ export const useProductAction = ({
       return { success: false, message: "Product not found" };
     }
 
-    if (product?.variants?.length === 1 && product?.variants[0].quantity < 1) {
+    if (product?.variants?.length > 0 && stock <= 0) {
       return { success: false, message: "Insufficient stock" };
     }
-    if (stock <= 0) {
+
+    if (
+      product?.stock <= 0 &&
+      (!product?.variants || product?.variants?.length === 0)
+    ) {
       return { success: false, message: "Insufficient stock" };
     }
 
@@ -158,41 +178,28 @@ export const useProductAction = ({
       .map((el: any) => getLocalizedValue(el?.name));
 
     if (
+      product?.variants?.length > 0 &&
       product?.variants.some(
         (variant: any) =>
           Object.entries(variant).sort().toString() ===
           Object.entries(selectVariant).sort().toString()
       )
     ) {
-      const { variants, categories, description, ...updatedProduct } = product;
-      const newItem = {
-        ...updatedProduct,
-        id:
-          product?.variants.length <= 0
-            ? product._id
-            : product._id +
-              "-" +
-              variantTitle?.map((att: any) => selectVariant[att._id]).join("-"),
-        title:
-          product?.variants.length <= 0
-            ? getLocalizedValue(product.title)
-            : getLocalizedValue(product.title) +
-              " - " +
-              selectedVariantName.join(", "),
-        image: selectedImage,
-        variant: selectVariant || {},
-        price:
-          product.variants.length === 0
-            ? getNumber(product.prices.price)
-            : getNumber(price),
-        originalPrice:
-          product.variants.length === 0
-            ? getNumber(product.prices.originalPrice)
-            : getNumber(originalPrice),
+      addItem({
+        product,
         quantity,
-      };
-
-      addItem(newItem);
+        variantLabel: selectedVariantName.join(", "),
+        priceOverride: price,
+        image: selectedImage,
+      });
+      return { success: true, message: "Added to cart" };
+    } else if (!product?.variants || product?.variants?.length === 0) {
+      addItem({
+        product,
+        quantity,
+        priceOverride: getNumber(product.prices.price),
+        image: product.image[0],
+      });
       return { success: true, message: "Added to cart" };
     } else {
       return { success: false, message: "Please select all variant first!" };

@@ -16,6 +16,7 @@ import { BlurView } from "expo-blur";
 import { Product } from "@/types";
 import { useProductAction } from "@/hooks/useProductAction";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAttributes } from "@/hooks/queries/useAttributes";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { OptimizedImage } from "@/components/common/OptimizedImage";
 import {
@@ -28,6 +29,7 @@ import { HapticFeedback } from "@/utils/accessibility";
 import { analytics } from "@/utils/analytics";
 import Button from "../ui/Button";
 import Tags from "../common/Tags";
+import VariantList from "../variants/VariantList";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const MODAL_WIDTH = SCREEN_WIDTH - 32;
@@ -36,18 +38,29 @@ interface ProductModalProps {
   product: Product;
   visible: boolean;
   onClose: () => void;
-  attributes?: any[];
 }
 
 export const ProductModal: React.FC<ProductModalProps> = ({
   product,
   visible,
   onClose,
-  attributes = [],
 }) => {
   const router = useRouter();
   const { globalSetting } = useSettings();
   const [quantity, setQuantity] = useState(1);
+
+  // Only fetch attributes if product has variants
+  const hasVariants = !!(product?.variants && product.variants.length > 0);
+  const attributesQuery = useAttributes({
+    enabled: hasVariants && visible,
+  });
+  const attributes = attributesQuery.data || [];
+
+  // Check if attributes are loading when product has variants
+  const isAttributesLoading =
+    hasVariants &&
+    visible &&
+    (attributesQuery.isLoading || attributesQuery.isPending);
 
   const {
     price,
@@ -57,8 +70,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     originalPrice,
     selectVariant,
     setSelectVariant,
+    selectVa,
+    setSelectVa,
     setValue,
     variantTitle,
+    variants,
     handleAddToCart,
   } = useProductAction({
     product,
@@ -203,50 +219,31 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                     </Text>
                   )}
 
-                  {/* Variants */}
-                  {variantTitle && variantTitle.length > 0 && (
+                  {/* Variants - matching store's VariantList behavior */}
+                  {hasVariants && isAttributesLoading && (
+                    <View className="mb-4 items-center py-4">
+                      <Text className="text-sm text-slate-500">
+                        Loading variants...
+                      </Text>
+                    </View>
+                  )}
+                  {!isAttributesLoading && variantTitle?.length > 0 && (
                     <View className="mb-4">
                       {variantTitle.map((att: any) => (
                         <View key={att._id} className="mb-4">
                           <Text className="mb-2 text-sm font-semibold text-slate-700">
                             {getLocalizedValue(att.name)}:
                           </Text>
-                          <View className="flex-row flex-wrap gap-2">
-                            {att.variants
-                              ?.filter((v: any) => v.status === "show")
-                              .map((variant: any) => {
-                                const isSelected =
-                                  selectVariant[att._id] === variant._id;
-                                return (
-                                  <Pressable
-                                    key={variant._id}
-                                    onPress={() => {
-                                      setValue(variant._id);
-                                      setSelectVariant({
-                                        ...selectVariant,
-                                        [att._id]: variant._id,
-                                      });
-                                      HapticFeedback.selection();
-                                    }}
-                                    className={`rounded-xl border-2 px-4 py-2.5 ${
-                                      isSelected
-                                        ? "border-primary-500 bg-primary-50"
-                                        : "border-slate-200 bg-white"
-                                    }`}
-                                  >
-                                    <Text
-                                      className={`text-sm font-semibold ${
-                                        isSelected
-                                          ? "text-primary-700"
-                                          : "text-slate-600"
-                                      }`}
-                                    >
-                                      {getLocalizedValue(variant.name)}
-                                    </Text>
-                                  </Pressable>
-                                );
-                              })}
-                          </View>
+                          <VariantList
+                            att={att._id}
+                            option={att.option}
+                            variants={product?.variants || []}
+                            varTitle={variantTitle}
+                            setValue={setValue}
+                            selectVariant={selectVariant}
+                            setSelectVariant={setSelectVariant}
+                            setSelectVa={setSelectVa}
+                          />
                         </View>
                       ))}
                     </View>

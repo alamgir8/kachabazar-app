@@ -16,10 +16,13 @@ export interface Attribute {
 
 export const attributeService = {
   getAll: async (): Promise<Attribute[]> => {
-    const response = await http.get<{ attributes: Attribute[] }>(
-      "/attributes/show"
-    );
-    return response.attributes || [];
+    try {
+      const response = await http.get<Attribute[]>("/attributes/show");
+      return response || [];
+    } catch (error) {
+      console.error("AttributeService getAll error:", error);
+      return [];
+    }
   },
 
   getById: async (id: string): Promise<Attribute> => {

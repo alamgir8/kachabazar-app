@@ -19,7 +19,6 @@ interface ProductCardProps {
   variantLabel?: string;
   onPressAdd?: () => void;
   layout?: "grid" | "carousel";
-  attributes?: any[];
 }
 
 const ProductCardComponent: React.FC<ProductCardProps> = ({
@@ -27,7 +26,6 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
   variantLabel,
   onPressAdd,
   layout = "grid",
-  attributes = [],
 }) => {
   const { addItem, items, increment, decrement } = useCart();
   const { globalSetting } = useSettings();
@@ -308,7 +306,6 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
         product={product}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        attributes={attributes}
       />
     </>
   );

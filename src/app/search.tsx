@@ -20,7 +20,6 @@ import { ErrorState } from "@/components/common/ErrorState";
 import { CategoryDrawer } from "@/components/drawers/CategoryDrawer";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useCategories } from "@/hooks/queries/useCategories";
-import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Category, Product } from "@/types";
 import { getLocalizedValue } from "@/utils";
@@ -61,7 +60,6 @@ export default function SearchScreen() {
   });
 
   const categoriesQuery = useCategories();
-  const attributesQuery = useAttributes();
 
   useEffect(() => {
     if (params.q && params.q !== search) {
@@ -115,18 +113,10 @@ export default function SearchScreen() {
       ? `Results for "${debouncedSearch}"`
       : "Discover everything");
 
-  // Memoized attributes for ProductCard
-  const attributes = useMemo(
-    () => attributesQuery?.data || [],
-    [attributesQuery?.data]
-  );
-
   // Optimized renderItem callback
   const renderItem = useCallback(
-    ({ item }: { item: Product }) => (
-      <ProductCard product={item} attributes={attributes} />
-    ),
-    [attributes]
+    ({ item }: { item: Product }) => <ProductCard product={item} />,
+    []
   );
 
   // Key extractor for FlatList

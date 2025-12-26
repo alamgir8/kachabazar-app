@@ -13,7 +13,6 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { useProducts } from "@/hooks/queries/useProducts";
-import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useSettings } from "@/contexts/SettingsContext";
 import Button from "@/components/ui/Button";
 
@@ -22,7 +21,6 @@ export default function HomeScreen() {
   const { refetch: refetchSettings } = useSettings();
   const categoriesQuery = useCategories();
   const productsQuery = useProducts();
-  const attributesQuery = useAttributes();
 
   // console.log(
   //   "productsQuery.data",
@@ -105,7 +103,6 @@ export default function HomeScreen() {
           title="Trending now"
           subtitle="Loved by our community"
           products={popularProducts}
-          attributes={attributesQuery.data || []}
           onSeeAll={() =>
             router.push({ pathname: "/search", params: { sort: "popular" } })
           }
@@ -116,7 +113,6 @@ export default function HomeScreen() {
           title="Limited time offers"
           subtitle="Grab them before they are gone"
           products={discountedProducts}
-          attributes={attributesQuery.data || []}
           onSeeAll={() => router.push("/offers")}
           badgeLabel="Offers"
         />

@@ -33,6 +33,7 @@ import {
 import { theme } from "@/theme";
 import Button from "@/components/ui/Button";
 import Tags from "@/components/common/Tags";
+import VariantList from "@/components/variants/VariantList";
 
 const windowWidth = Dimensions.get("window").width;
 const carouselWidth = Math.max(windowWidth - 48, 320);
@@ -42,7 +43,6 @@ export default function ProductScreen() {
   const router = useRouter();
   const productQuery = useProduct(slug);
   const relatedQuery = useProducts({ slug });
-  const attributesQuery = useAttributes();
   const { globalSetting } = useSettings();
 
   // All hooks must be called before any early returns
@@ -54,9 +54,17 @@ export default function ProductScreen() {
   const [zoomedImageIndex, setZoomedImageIndex] = useState(0);
 
   const product = productQuery.data;
-  const attributes = attributesQuery.data || [];
   const reviews = relatedQuery.data?.reviews ?? [];
   const relatedProducts = relatedQuery.data?.relatedProducts ?? [];
+
+  // Only fetch attributes if product has variants
+  const hasVariants = !!(product?.variants && product.variants.length > 0);
+  const attributesQuery = useAttributes({ enabled: hasVariants });
+  const attributes = attributesQuery.data || [];
+
+  // Check if attributes are still loading (including when query transitions from disabled to enabled)
+  const attributesLoading =
+    hasVariants && (attributesQuery.isLoading || attributesQuery.isPending);
 
   // Use the product action hook (must be called unconditionally)
   const {
@@ -67,6 +75,8 @@ export default function ProductScreen() {
     originalPrice,
     selectVariant,
     setSelectVariant,
+    selectVa,
+    setSelectVa,
     setValue,
     variantTitle,
     handleAddToCart: addToCartAction,
@@ -77,11 +87,8 @@ export default function ProductScreen() {
   });
 
   // NOW we can do conditional rendering
-  if (
-    productQuery.isLoading ||
-    relatedQuery.isLoading ||
-    attributesQuery.isLoading
-  ) {
+  // Only show loading if product is loading, or if product has variants and attributes are loading
+  if (productQuery.isLoading || relatedQuery.isLoading || attributesLoading) {
     return <LoadingState message="Loading product..." />;
   }
 
@@ -374,48 +381,24 @@ export default function ProductScreen() {
             {/* Quantity & Add to Cart */}
             <View className="mt-6 gap-4">
               {/* Product Variants/Combinations */}
-              {variantTitle && variantTitle.length > 0 && (
+              {/* Product Variants/Combinations - matching store's VariantList behavior */}
+              {!attributesLoading && variantTitle?.length > 0 && (
                 <View className="mb-3">
                   {variantTitle.map((att: any) => (
                     <View key={att._id} className="mb-3">
                       <Text className="text-sm font-semibold text-slate-700 mb-2">
                         {getLocalizedValue(att.name)}:
                       </Text>
-                      <View className="flex-row flex-wrap gap-2">
-                        {att.variants
-                          ?.filter((v: any) => v.status === "show")
-                          .map((variant: any) => {
-                            const isSelected =
-                              selectVariant[att._id] === variant._id;
-                            return (
-                              <Pressable
-                                key={variant._id}
-                                onPress={() => {
-                                  setValue(variant._id);
-                                  setSelectVariant({
-                                    ...selectVariant,
-                                    [att._id]: variant._id,
-                                  });
-                                }}
-                                className={`px-4 py-2.5 rounded-xl border-2 ${
-                                  isSelected
-                                    ? "bg-primary-50 border-primary-500"
-                                    : "bg-white border-slate-200"
-                                }`}
-                              >
-                                <Text
-                                  className={`text-sm font-semibold ${
-                                    isSelected
-                                      ? "text-primary-700"
-                                      : "text-slate-600"
-                                  }`}
-                                >
-                                  {getLocalizedValue(variant.name)}
-                                </Text>
-                              </Pressable>
-                            );
-                          })}
-                      </View>
+                      <VariantList
+                        att={att._id}
+                        option={att.option}
+                        variants={product?.variants || []}
+                        varTitle={variantTitle}
+                        setValue={setValue}
+                        selectVariant={selectVariant}
+                        setSelectVariant={setSelectVariant}
+                        setSelectVa={setSelectVa}
+                      />
                     </View>
                   ))}
                 </View>

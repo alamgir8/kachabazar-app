@@ -17,6 +17,7 @@ interface AddToCartArgs {
   quantity?: number;
   variantLabel?: string;
   priceOverride?: number;
+  image?: string;
 }
 
 interface CartContextValue {
@@ -98,7 +99,13 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
   );
 
   const addItem = useCallback(
-    ({ product, quantity = 1, variantLabel, priceOverride }: AddToCartArgs) => {
+    ({
+      product,
+      quantity = 1,
+      variantLabel,
+      priceOverride,
+      image,
+    }: AddToCartArgs) => {
       const id = buildItemId(product, variantLabel);
       const price = priceOverride ?? product.prices?.price ?? 0;
       const originalPrice = product.prices?.originalPrice ?? price;
@@ -129,7 +136,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
           productId: product._id,
           name: getLocalizedValue(product.title),
           slug: product.slug,
-          image: getProductImage(product),
+          image: image || getProductImage(product),
           quantity,
           price,
           originalPrice,

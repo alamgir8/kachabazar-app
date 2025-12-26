@@ -5,30 +5,22 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { useProducts } from "@/hooks/queries/useProducts";
-import { useAttributes } from "@/hooks/queries/useAttributes";
 import { BackButton } from "@/components/ui/BackButton";
 import { Product } from "@/types";
 
 export default function OffersScreen() {
   const router = useRouter();
   const { data, isLoading, isError, refetch, isRefetching } = useProducts();
-  const attributesQuery = useAttributes();
   const discounted = data?.discountedProducts ?? [];
-
-  // Memoized attributes for ProductCard
-  const attributes = useMemo(
-    () => attributesQuery.data || [],
-    [attributesQuery.data]
-  );
 
   // Optimized renderItem callback
   const renderItem = useCallback(
     ({ item }: { item: Product }) => (
       <View className="flex-1 pb-6">
-        <ProductCard product={item} layout="grid" attributes={attributes} />
+        <ProductCard product={item} layout="grid" />
       </View>
     ),
-    [attributes]
+    []
   );
 
   // Key extractor for FlatList
