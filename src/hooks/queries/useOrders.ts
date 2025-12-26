@@ -10,15 +10,14 @@ import {
 import { OrderSummary } from "@/types";
 
 export const useOrders = (page = 1) => {
-  const { accessToken, isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return useQuery<OrderListResponse>({
     queryKey: [QUERY_KEYS.orders, page, user?._id],
     queryFn: async () => {
-      if (!accessToken) throw new Error("Missing token");
-      return listOrders(accessToken, { page });
+      return listOrders({ page });
     },
-    enabled: isAuthenticated && Boolean(accessToken),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
     refetchOnMount: true,
@@ -29,16 +28,15 @@ export const useOrders = (page = 1) => {
 };
 
 export const useOrder = (orderId?: string) => {
-  const { accessToken, isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return useQuery<OrderSummary>({
     queryKey: [QUERY_KEYS.order, orderId, user?._id],
     queryFn: async () => {
       if (!orderId) throw new Error("Order id is required");
-      if (!accessToken) throw new Error("Missing token");
-      return fetchOrderById(accessToken, orderId);
+      return fetchOrderById(orderId);
     },
-    enabled: isAuthenticated && Boolean(orderId) && Boolean(accessToken),
+    enabled: isAuthenticated && Boolean(orderId),
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
     refetchOnMount: true,

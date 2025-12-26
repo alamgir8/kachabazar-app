@@ -398,7 +398,10 @@ export default function OrderDetailScreen() {
                       </View>
                     </View>
                     <Text className="text-base font-black text-teal-600">
-                      {formatCurrency(item.itemTotal, currency)}
+                      {formatCurrency(
+                        item.itemTotal || item.price * item.quantity,
+                        currency
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -415,7 +418,7 @@ export default function OrderDetailScreen() {
                 <DetailRow
                   label="Shipping"
                   value={
-                    order.shippingCost
+                    order.shippingCost > 0
                       ? formatCurrency(order.shippingCost, currency)
                       : "Free"
                   }

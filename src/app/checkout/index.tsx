@@ -27,7 +27,6 @@ export default function CheckoutScreen() {
     handleSubmit,
     errors,
     submitHandler,
-    handleShippingCost,
     handleCouponApplied,
     couponInfo,
     discountAmount,
@@ -304,7 +303,6 @@ export default function CheckoutScreen() {
                       key={option.value}
                       onPress={() => {
                         onChange(option.value);
-                        handleShippingCost(option.cost);
                       }}
                       className={cn(
                         "rounded-2xl border p-4",

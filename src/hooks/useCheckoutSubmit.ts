@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,13 @@ import { HapticFeedback } from "@/utils/accessibility";
 import { checkoutSchema } from "@/utils/validation";
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
+
+const showingTranslateValue = (data: any) => {
+  if (data !== undefined && typeof data === "object") {
+    return data?.en || Object.values(data)[0];
+  }
+  return data;
+};
 
 export const useCheckoutSubmit = () => {
   const router = useRouter();
@@ -45,40 +52,36 @@ export const useCheckoutSubmit = () => {
 
   const currency = globalSetting?.default_currency || "$";
 
-  const showingTranslateValue = (data: any) => {
-    if (data !== undefined && typeof data === "object") {
-      return data?.en || Object.values(data)[0];
-    }
-    return data;
-  };
-
   // Dynamic Shipping Options
   const checkout = storeCustomization?.checkout as
     | Record<string, any>
     | undefined;
 
-  const shippingOptions = [
-    {
-      value: showingTranslateValue(checkout?.shipping_name_one) || "Standard",
-      title:
-        showingTranslateValue(checkout?.shipping_name_one) ||
-        "Standard Delivery",
-      description:
-        showingTranslateValue(checkout?.shipping_one_desc) ||
-        "Delivery within 7-10 days",
-      cost: Number(checkout?.shipping_one_cost) || 0,
-    },
-    {
-      value: showingTranslateValue(checkout?.shipping_name_two) || "Express",
-      title:
-        showingTranslateValue(checkout?.shipping_name_two) ||
-        "Express Delivery",
-      description:
-        showingTranslateValue(checkout?.shipping_two_desc) ||
-        "Delivery within 2-3 days",
-      cost: Number(checkout?.shipping_two_cost) || 15,
-    },
-  ];
+  const shippingOptions = useMemo(
+    () => [
+      {
+        value: showingTranslateValue(checkout?.shipping_name_one) || "Standard",
+        title:
+          showingTranslateValue(checkout?.shipping_name_one) ||
+          "Standard Delivery",
+        description:
+          showingTranslateValue(checkout?.shipping_one_desc) ||
+          "Delivery within 7-10 days",
+        cost: Number(checkout?.shipping_one_cost) || 0,
+      },
+      {
+        value: showingTranslateValue(checkout?.shipping_name_two) || "Express",
+        title:
+          showingTranslateValue(checkout?.shipping_name_two) ||
+          "Express Delivery",
+        description:
+          showingTranslateValue(checkout?.shipping_two_desc) ||
+          "Delivery within 2-3 days",
+        cost: Number(checkout?.shipping_two_cost) || 15,
+      },
+    ],
+    [checkout]
+  );
 
   // Dynamic Payment Methods
   const paymentMethods = [
@@ -112,6 +115,7 @@ export const useCheckoutSubmit = () => {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CheckoutInput>({
     resolver: zodResolver(checkoutSchema),
@@ -131,6 +135,18 @@ export const useCheckoutSubmit = () => {
       cardCvc: "",
     },
   });
+
+  const selectedShippingOption = watch("shippingOption");
+
+  useEffect(() => {
+    const option = shippingOptions.find(
+      (o) => o.value === selectedShippingOption
+    );
+    if (option) {
+      setShippingCost(option.cost);
+    }
+  }, [selectedShippingOption, shippingOptions]);
+
   // Initialize form with user data
   useEffect(() => {
     if (user) {
@@ -174,10 +190,6 @@ export const useCheckoutSubmit = () => {
       setIsCouponApplied(false);
     }
   }, [minimumAmount, total, isEmpty, discountAmount]);
-
-  const handleShippingCost = (value: number) => {
-    setShippingCost(value);
-  };
 
   const handleCouponApplied = (discount: number, coupon: Coupon | null) => {
     if (coupon) {
@@ -259,7 +271,6 @@ export const useCheckoutSubmit = () => {
     handleSubmit,
     errors,
     submitHandler,
-    handleShippingCost,
     handleCouponApplied,
     couponInfo,
     discountAmount,
