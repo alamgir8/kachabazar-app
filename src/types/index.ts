@@ -149,6 +149,7 @@ export interface OrderSummary {
   shippingOption?: string;
   paymentMethod: string;
   status: "pending" | "processing" | "delivered" | "cancel";
+  coupon?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,30 +1,24 @@
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import React from "react";
 import {
+  View,
+  Text,
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Text,
-  View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { Controller } from "react-hook-form";
+import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
+import { BackButton } from "@/components/ui/BackButton";
+import { EnhancedInput } from "@/components/ui/EnhancedInput";
+import Button from "@/components/ui/Button";
 import { LoadingState } from "@/components/common/LoadingState";
 import { CouponSection } from "@/components/checkout/CouponSection";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCart } from "@/contexts/CartContext";
-import { useSettings } from "@/contexts/SettingsContext";
-import { createOrder } from "@/services/orders";
 import { formatCurrency } from "@/utils";
-import { BackButton, EnhancedInput } from "@/components/ui";
+import { useCheckoutSubmit } from "@/hooks/useCheckoutSubmit";
 import { cn } from "@/utils/cn";
-import { checkoutSchema, type CheckoutInput } from "@/utils/validation";
-import type { Coupon } from "@/services/coupons";
-import Button from "@/components/ui/Button";
 
 const shippingOptions = [
   {
@@ -32,12 +26,14 @@ const shippingOptions = [
     title: "Standard delivery",
     description:
       "Arrives within 30-45 minutes with temperature-controlled bags.",
+    cost: 0,
   },
   {
     value: "Express" as const,
     title: "Express priority",
     description:
       "Limited availability — prioritised picking and doorstep drop-off.",
+    cost: 15,
   },
 ];
 
@@ -62,96 +58,24 @@ const paymentMethods = [
 export default function CheckoutScreen() {
   const router = useRouter();
   const {
-    user,
-    isAuthenticated,
-    accessToken,
-    upsertShippingAddress,
-    shippingAddress,
-  } = useAuth();
-  const { items, subtotal, clearCart, isEmpty } = useCart();
-  const { globalSetting } = useSettings();
-  const currency = globalSetting?.default_currency ?? "$";
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
-  const [discountAmount, setDiscountAmount] = useState(0);
-
-  const {
     control,
     handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<CheckoutInput>({
-    resolver: zodResolver(checkoutSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: user?.email ?? "",
-      contact: user?.phone ?? "",
-      address: shippingAddress?.address ?? "",
-      city: shippingAddress?.city ?? "",
-      country: shippingAddress?.country ?? "",
-      zipCode: shippingAddress?.zipCode ?? "",
-      shippingOption: "Standard",
-      paymentMethod: "Cash",
-    },
-  });
-
-  useEffect(() => {
-    if (user) {
-      const [firstName, ...last] = user.name.split(" ");
-      setValue("firstName", firstName ?? "");
-      setValue("lastName", last.join(" ") ?? "");
-      setValue("email", user.email);
-      if (user.phone) setValue("contact", user.phone);
-    }
-    if (shippingAddress) {
-      if (shippingAddress.address) setValue("address", shippingAddress.address);
-      if (shippingAddress.city) setValue("city", shippingAddress.city);
-      if (shippingAddress.country) setValue("country", shippingAddress.country);
-      if (shippingAddress.zipCode) setValue("zipCode", shippingAddress.zipCode);
-    }
-  }, [shippingAddress, user, setValue]);
-
-  const mutation = useMutation({
-    mutationFn: async (data: CheckoutInput) => {
-      if (!accessToken) throw new Error("You need to login to place an order.");
-
-      const userInfo = {
-        name: `${data.firstName} ${data.lastName}`.trim(),
-        contact: data.contact,
-        email: data.email,
-        address: data.address,
-        city: data.city,
-        country: data.country,
-        zipCode: data.zipCode,
-      };
-
-      await upsertShippingAddress(userInfo);
-
-      const orderPayload = {
-        user_info: userInfo,
-        shippingOption: data.shippingOption,
-        paymentMethod: data.paymentMethod,
-        status: "pending" as const,
-        cart: items,
-        subTotal: subtotal,
-        shippingCost: 0,
-        discount: discountAmount,
-        total: subtotal - discountAmount,
-        coupon: appliedCoupon?.couponCode || undefined,
-      };
-
-      return createOrder(orderPayload, accessToken);
-    },
-    onSuccess: async (order) => {
-      await clearCart();
-      router.replace({
-        pathname: "/checkout/success",
-        params: { orderId: order._id },
-      });
-    },
-  });
-
-  const onSubmit = (data: CheckoutInput) => mutation.mutate(data);
+    errors,
+    submitHandler,
+    handleShippingCost,
+    handleCouponApplied,
+    couponInfo,
+    discountAmount,
+    total,
+    shippingCost,
+    isCheckoutSubmit,
+    isAuthenticated,
+    isEmpty,
+    items,
+    cartTotal,
+    currency,
+    user,
+  } = useCheckoutSubmit();
 
   if (!isAuthenticated) {
     return (
@@ -206,7 +130,7 @@ export default function CheckoutScreen() {
     >
       <Screen scrollable edges={["bottom"]}>
         <View>
-          {/* Back Button - Same as Login */}
+          {/* Back Button */}
           <BackButton
             subTitle="Checkout"
             subDescription="Complete your order"
@@ -411,7 +335,10 @@ export default function CheckoutScreen() {
                   {shippingOptions.map((option) => (
                     <Pressable
                       key={option.value}
-                      onPress={() => onChange(option.value)}
+                      onPress={() => {
+                        onChange(option.value);
+                        handleShippingCost(option.cost);
+                      }}
                       className={cn(
                         "rounded-2xl border p-4",
                         value === option.value
@@ -441,6 +368,11 @@ export default function CheckoutScreen() {
                           ) : null}
                         </View>
                       </View>
+                      {option.cost > 0 && (
+                        <Text className="mt-2 text-xs font-bold text-teal-600">
+                          +{formatCurrency(option.cost, currency)}
+                        </Text>
+                      )}
                     </Pressable>
                   ))}
                 </View>
@@ -537,14 +469,10 @@ export default function CheckoutScreen() {
             </View>
 
             <CouponSection
-              cartTotal={subtotal}
-              onCouponApplied={(discount, coupon) => {
-                setDiscountAmount(discount);
-                setAppliedCoupon(coupon);
-              }}
-              appliedCoupon={appliedCoupon}
+              cartTotal={cartTotal}
+              onCouponApplied={handleCouponApplied}
+              appliedCoupon={couponInfo}
               currency={currency}
-              token={accessToken || undefined}
             />
           </View>
 
@@ -570,14 +498,18 @@ export default function CheckoutScreen() {
                   Subtotal
                 </Text>
                 <Text className="text-sm font-bold text-slate-900">
-                  {formatCurrency(subtotal, currency)}
+                  {formatCurrency(cartTotal, currency)}
                 </Text>
               </View>
               <View className="flex-row items-center justify-between">
                 <Text className="text-sm font-medium text-slate-600">
                   Delivery
                 </Text>
-                <Text className="text-sm font-bold text-teal-600">Free</Text>
+                <Text className="text-sm font-bold text-teal-600">
+                  {shippingCost > 0
+                    ? formatCurrency(shippingCost, currency)
+                    : "Free"}
+                </Text>
               </View>
               {discountAmount > 0 ? (
                 <View className="flex-row items-center justify-between">
@@ -597,28 +529,16 @@ export default function CheckoutScreen() {
                   Total Due
                 </Text>
                 <Text className="text-2xl font-black text-teal-600">
-                  {formatCurrency(
-                    Math.max(0, subtotal - discountAmount),
-                    currency
-                  )}
+                  {formatCurrency(total, currency)}
                 </Text>
               </View>
             </View>
 
-            {mutation.isError ? (
-              <View className="mt-4 flex-row items-center rounded-2xl border border-red-100 bg-red-50 px-3 py-3">
-                <Feather name="alert-triangle" size={18} color="#ef4444" />
-                <Text className="ml-2 flex-1 text-sm text-red-600">
-                  {mutation.error?.message || "Failed to place order"}
-                </Text>
-              </View>
-            ) : null}
-
             <Button
-              title={mutation.isPending ? "Placing order..." : "Confirm Order"}
-              onPress={handleSubmit(onSubmit)}
-              disabled={mutation.isPending}
-              loading={mutation.isPending}
+              title={isCheckoutSubmit ? "Placing order..." : "Confirm Order"}
+              onPress={handleSubmit(submitHandler)}
+              disabled={isCheckoutSubmit}
+              loading={isCheckoutSubmit}
               variant="teal"
               className="mt-6"
             />
