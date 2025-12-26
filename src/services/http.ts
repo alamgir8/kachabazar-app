@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/constants";
+import { notifyAuthError } from "@/services/api-client";
 
 if (__DEV__) {
   // eslint-disable-next-line no-console
@@ -84,6 +85,20 @@ export async function request<TResponse = unknown, TBody = unknown>(
       (payload && typeof payload === "object" && "message" in payload
         ? String(payload.message)
         : response.statusText) || "Request failed";
+
+    // Check if this is an auth error (401, or JWT/token related message)
+    const isAuthError =
+      response.status === 401 ||
+      message.toLowerCase().includes("jwt") ||
+      message.toLowerCase().includes("token") ||
+      message.toLowerCase().includes("unauthorized") ||
+      message.toLowerCase().includes("expired");
+
+    if (isAuthError) {
+      // Notify auth system to log out the user
+      notifyAuthError();
+    }
+
     throw new ApiError(message, response.status, payload ?? undefined);
   }
 

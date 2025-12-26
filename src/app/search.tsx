@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -22,7 +22,7 @@ import { useProducts } from "@/hooks/queries/useProducts";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { useAttributes } from "@/hooks/queries/useAttributes";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Category } from "@/types";
+import { Category, Product } from "@/types";
 import { getLocalizedValue } from "@/utils";
 
 const sortOptions = [
@@ -115,6 +115,23 @@ export default function SearchScreen() {
       ? `Results for "${debouncedSearch}"`
       : "Discover everything");
 
+  // Memoized attributes for ProductCard
+  const attributes = useMemo(
+    () => attributesQuery?.data || [],
+    [attributesQuery?.data]
+  );
+
+  // Optimized renderItem callback
+  const renderItem = useCallback(
+    ({ item }: { item: Product }) => (
+      <ProductCard product={item} attributes={attributes} />
+    ),
+    [attributes]
+  );
+
+  // Key extractor for FlatList
+  const keyExtractor = useCallback((item: Product) => item._id, []);
+
   if (productsQuery.isLoading && !productsQuery.isFetching) {
     return <LoadingState message="Searching our catalogue..." />;
   }
@@ -134,7 +151,8 @@ export default function SearchScreen() {
     <Screen edges={["bottom"]}>
       <FlatList
         data={products}
-        keyExtractor={(item) => item._id}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         numColumns={2}
         columnWrapperStyle={{
           gap: 12,
@@ -151,6 +169,12 @@ export default function SearchScreen() {
         contentContainerStyle={{
           paddingBottom: 140,
         }}
+        // Performance optimizations
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={8}
+        updateCellsBatchingPeriod={50}
         ListHeaderComponent={
           <View className="mb-4">
             {/* Back Button */}
@@ -209,12 +233,6 @@ export default function SearchScreen() {
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            attributes={attributesQuery?.data || []}
-          />
-        )}
         ListEmptyComponent={
           <View className="px-5 py-20">
             {productsQuery.isFetching ? (

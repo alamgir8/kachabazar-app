@@ -1,6 +1,13 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -11,6 +18,9 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import { theme } from "@/theme";
 import Button from "@/components/ui/Button";
+
+// Store URL for web-based operations
+const STORE_URL = process.env.EXPO_PUBLIC_STORE_URL || "http://localhost:3000";
 
 type MenuItemProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -231,6 +241,16 @@ export default function ProfileScreen() {
               subtitle="View all your orders"
               badge={stats?.pending}
               onPress={() => router.push("/orders")}
+            />
+            <MenuItem
+              icon="lock"
+              title="Change Password"
+              subtitle="Update your password securely"
+              onPress={async () => {
+                const url = `${STORE_URL}/user/change-password`;
+                const canOpen = await Linking.canOpenURL(url);
+                if (canOpen) await Linking.openURL(url);
+              }}
             />
             <MenuItem
               icon="tag"

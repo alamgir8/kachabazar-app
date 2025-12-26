@@ -27,6 +27,7 @@ import {
 import { HapticFeedback } from "@/utils/accessibility";
 import { analytics } from "@/utils/analytics";
 import Button from "../ui/Button";
+import Tags from "../common/Tags";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const MODAL_WIDTH = SCREEN_WIDTH - 32;
@@ -299,26 +300,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
 
                   {/* Tags */}
                   {product.tag && product.tag.length > 0 && (
-                    <View className="mb-10 border-t border-slate-100 pt-4">
-                      <Text className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                        Tags
-                      </Text>
-                      <View className="flex-row flex-wrap gap-2">
-                        {JSON.parse(product?.tag)?.map(
-                          (tag: string, idx: number) => (
-                            <View
-                              key={idx}
-                              className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
-                            >
-                              <Feather name="tag" size={12} color="#3b82f6" />
-                              <Text className="ml-1.5 text-xs font-semibold text-blue-700">
-                                {tag}
-                              </Text>
-                            </View>
-                          )
-                        )}
-                      </View>
-                    </View>
+                    <Tags product={product} />
                   )}
                 </View>
               </ScrollView>

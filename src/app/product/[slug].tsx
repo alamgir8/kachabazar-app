@@ -32,6 +32,7 @@ import {
 } from "@/utils";
 import { theme } from "@/theme";
 import Button from "@/components/ui/Button";
+import Tags from "@/components/common/Tags";
 
 const windowWidth = Dimensions.get("window").width;
 const carouselWidth = Math.max(windowWidth - 48, 320);
@@ -491,19 +492,7 @@ export default function ProductScreen() {
                 <Text className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
                   Tags
                 </Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {product.tag.slice(0, 5).map((tag: string, idx: number) => (
-                    <View
-                      key={idx}
-                      className="flex-row items-center rounded-lg bg-blue-50 px-3 py-1.5"
-                    >
-                      <Feather name="tag" size={12} color="#3b82f6" />
-                      <Text className="ml-1.5 text-xs font-semibold text-blue-700">
-                        {tag}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
+                <Tags product={product} />
               </View>
             )}
           </View>

@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -6,6 +7,7 @@ import { ProductCard } from "@/components/cards/ProductCard";
 import { useProducts } from "@/hooks/queries/useProducts";
 import { useAttributes } from "@/hooks/queries/useAttributes";
 import { BackButton } from "@/components/ui/BackButton";
+import { Product } from "@/types";
 
 export default function OffersScreen() {
   const router = useRouter();
@@ -13,11 +15,31 @@ export default function OffersScreen() {
   const attributesQuery = useAttributes();
   const discounted = data?.discountedProducts ?? [];
 
+  // Memoized attributes for ProductCard
+  const attributes = useMemo(
+    () => attributesQuery.data || [],
+    [attributesQuery.data]
+  );
+
+  // Optimized renderItem callback
+  const renderItem = useCallback(
+    ({ item }: { item: Product }) => (
+      <View className="flex-1 pb-6">
+        <ProductCard product={item} layout="grid" attributes={attributes} />
+      </View>
+    ),
+    [attributes]
+  );
+
+  // Key extractor for FlatList
+  const keyExtractor = useCallback((item: Product) => item._id, []);
+
   return (
     <Screen edges={["bottom"]}>
       <FlatList
         data={discounted}
-        keyExtractor={(item) => item._id}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         numColumns={2}
         columnWrapperStyle={{ gap: 16, paddingHorizontal: 20 }}
         refreshControl={
@@ -26,6 +48,12 @@ export default function OffersScreen() {
             onRefresh={() => refetch()}
           />
         }
+        // Performance optimizations
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={8}
+        updateCellsBatchingPeriod={50}
         ListHeaderComponent={
           <View className="mb-4">
             <BackButton
@@ -40,15 +68,6 @@ export default function OffersScreen() {
             ) : null}
           </View>
         }
-        renderItem={({ item }) => (
-          <View className="flex-1 pb-6">
-            <ProductCard
-              product={item}
-              layout="grid"
-              attributes={attributesQuery.data || []}
-            />
-          </View>
-        )}
         ListEmptyComponent={
           <View className="px-5 py-20">
             <Text className="text-center text-sm text-slate-500">

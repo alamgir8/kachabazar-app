@@ -16,7 +16,7 @@ export const onAuthError = (listener: AuthEventListener) => {
   return () => authEventListeners.delete(listener);
 };
 
-const notifyAuthError = () => {
+export const notifyAuthError = () => {
   authEventListeners.forEach((listener) => listener());
 };
 

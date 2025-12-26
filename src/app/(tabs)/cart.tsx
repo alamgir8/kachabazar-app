@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useRouter } from "expo-router";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,6 +12,10 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import Button from "@/components/ui/Button";
 import { BackButton } from "@/components/ui";
+import { CartItem } from "@/types";
+
+// Memoized separator component
+const ItemSeparator = () => <View className="h-4" />;
 
 export default function CartScreen() {
   const router = useRouter();
@@ -25,6 +30,15 @@ export default function CartScreen() {
     }
     router.push("/checkout");
   };
+
+  // Optimized renderItem callback
+  const renderItem = useCallback(
+    ({ item }: { item: CartItem }) => <CartItemRow item={item} />,
+    []
+  );
+
+  // Key extractor for FlatList
+  const keyExtractor = useCallback((item: CartItem) => item.id, []);
 
   return (
     <Screen
@@ -148,11 +162,14 @@ export default function CartScreen() {
 
             <FlatList
               data={items}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <CartItemRow item={item} />}
-              ItemSeparatorComponent={() => <View className="h-4" />}
+              keyExtractor={keyExtractor}
+              renderItem={renderItem}
+              ItemSeparatorComponent={ItemSeparator}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 32 }}
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={10}
+              windowSize={5}
             />
           </View>
 

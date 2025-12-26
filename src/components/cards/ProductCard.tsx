@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Pressable, Text, View } from "react-native";
@@ -22,7 +22,7 @@ interface ProductCardProps {
   attributes?: any[];
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
+const ProductCardComponent: React.FC<ProductCardProps> = ({
   product,
   variantLabel,
   onPressAdd,
@@ -313,3 +313,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     </>
   );
 };
+
+// Memoize the component to prevent unnecessary re-renders in FlatList
+export const ProductCard = memo(
+  ProductCardComponent,
+  (prevProps, nextProps) => {
+    // Custom comparison for better performance
+    return (
+      prevProps.product._id === nextProps.product._id &&
+      prevProps.product.stock === nextProps.product.stock &&
+      prevProps.product.prices?.price === nextProps.product.prices?.price &&
+      prevProps.variantLabel === nextProps.variantLabel &&
+      prevProps.layout === nextProps.layout
+    );
+  }
+);

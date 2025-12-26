@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { Image, Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,7 +13,7 @@ interface CartItemRowProps {
   item: CartItem;
 }
 
-export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
+const CartItemRowComponent: React.FC<CartItemRowProps> = ({ item }) => {
   const { increment, decrement, removeItem } = useCart();
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
@@ -94,3 +95,15 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
     </View>
   );
 };
+
+// Memoize to prevent unnecessary re-renders in FlatList
+export const CartItemRow = memo(
+  CartItemRowComponent,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.item.quantity === nextProps.item.quantity &&
+      prevProps.item.price === nextProps.item.price
+    );
+  }
+);
