@@ -14,10 +14,11 @@ import { format } from "date-fns";
 
 import { useDeliveryOrders } from "@/hooks/queries/useDelivery";
 import type { DeliveryOrder } from "@/services/delivery";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 const STATUS_FILTERS = [
   { label: "All", value: undefined },
-  { label: "Processing", value: "processing" },
+  { label: "Active", value: "processing" },
   { label: "Delivered", value: "delivered" },
   { label: "Cancelled", value: "cancel" },
 ] as const;
@@ -25,7 +26,7 @@ const STATUS_FILTERS = [
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   pending: { bg: "#fef3c7", text: "#92400e" },
   processing: { bg: "#dbeafe", text: "#1e40af" },
-  "out-for-delivery": { bg: "#ffedd5", text: "#c2410c" },
+  "out-for-delivery": { bg: "#e0e7ff", text: "#3730a3" },
   delivered: { bg: "#dcfce7", text: "#166534" },
   cancel: { bg: "#fee2e2", text: "#991b1b" },
 };
@@ -176,7 +177,8 @@ export default function DeliveryOrdersScreen() {
               borderRadius: 20,
               paddingHorizontal: 14,
               paddingVertical: 7,
-              backgroundColor: statusFilter === f.value ? "#ea580c" : "#f1f5f9",
+              backgroundColor:
+                statusFilter === f.value ? DELIVERY_COLORS.primary : "#f1f5f9",
             }}
           >
             <Text
@@ -212,7 +214,7 @@ export default function DeliveryOrdersScreen() {
             </View>
           ) : (
             <View style={{ alignItems: "center", paddingVertical: 80 }}>
-              <ActivityIndicator color="#f97316" />
+              <ActivityIndicator color={DELIVERY_COLORS.primaryLight} />
             </View>
           )
         }

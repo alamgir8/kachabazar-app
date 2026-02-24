@@ -20,6 +20,7 @@ import {
   useCurrentOrder,
   useUpdateAvailability,
 } from "@/hooks/queries/useDelivery";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 const AVAILABILITY_COLORS: Record<
   string,
@@ -31,9 +32,9 @@ const AVAILABILITY_COLORS: Record<
     dot: "bg-emerald-500",
   },
   "on-delivery": {
-    bg: "bg-orange-100",
-    text: "text-orange-700",
-    dot: "bg-orange-500",
+    bg: "bg-indigo-100",
+    text: "text-indigo-700",
+    dot: "bg-indigo-500",
   },
   offline: { bg: "bg-slate-200", text: "text-slate-600", dot: "bg-slate-400" },
 };
@@ -79,7 +80,7 @@ export default function DeliveryDashboard() {
       >
         {/* Hero Header - Full width, handles safe area itself */}
         <LinearGradient
-          colors={["#ea580c", "#f97316", "#fb923c"]}
+          colors={DELIVERY_COLORS.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -193,10 +194,10 @@ export default function DeliveryDashboard() {
                 marginTop: 16,
                 borderRadius: 20,
                 borderWidth: 2,
-                borderColor: "#fed7aa",
-                backgroundColor: "#fff7ed",
+                borderColor: DELIVERY_COLORS.accentBorder,
+                backgroundColor: DELIVERY_COLORS.accentBg,
                 padding: 16,
-                shadowColor: "#f97316",
+                shadowColor: DELIVERY_COLORS.primaryLight,
                 shadowOffset: { width: 0, height: 6 },
                 shadowOpacity: 0.08,
                 shadowRadius: 14,
@@ -208,13 +209,13 @@ export default function DeliveryDashboard() {
                   <MaterialCommunityIcons
                     name="bike-fast"
                     size={20}
-                    color="#ea580c"
+                    color={DELIVERY_COLORS.primary}
                   />
-                  <Text className="ml-2 text-sm font-bold text-orange-800">
+                  <Text className="ml-2 text-sm font-bold text-indigo-800">
                     Active Delivery
                   </Text>
                 </View>
-                <View className="rounded-full bg-orange-500 px-3 py-1">
+                <View className="rounded-full bg-indigo-500 px-3 py-1">
                   <Text className="text-[10px] font-bold text-white uppercase">
                     {currentOrderData.tracking?.status?.replace(/-/g, " ") ||
                       currentOrderData.order.status}
@@ -228,7 +229,7 @@ export default function DeliveryDashboard() {
                 📍 {currentOrderData.order.user_info?.address || "No address"}
               </Text>
               <View className="flex-row items-center mt-3">
-                <Text className="text-xs text-orange-600 font-semibold">
+                <Text className="text-xs text-indigo-600 font-semibold">
                   Tap to manage →
                 </Text>
               </View>
@@ -350,7 +351,7 @@ export default function DeliveryDashboard() {
                     width: 44,
                     height: 44,
                     borderRadius: 14,
-                    backgroundColor: "#ffedd5",
+                    backgroundColor: DELIVERY_COLORS.accentBgLight,
                     alignItems: "center",
                     justifyContent: "center",
                   }}
@@ -358,7 +359,7 @@ export default function DeliveryDashboard() {
                   <MaterialCommunityIcons
                     name="bike-fast"
                     size={22}
-                    color="#ea580c"
+                    color={DELIVERY_COLORS.primary}
                   />
                 </View>
                 <Text

@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, Text } from "react-native";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 export default function DeliveryTabsLayout() {
   return (
@@ -8,7 +9,7 @@ export default function DeliveryTabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: "#ea580c",
+        tabBarActiveTintColor: DELIVERY_COLORS.tabActive,
         tabBarInactiveTintColor: "#94a3b8",
         tabBarLabelStyle: {
           fontSize: 11,
@@ -21,7 +22,7 @@ export default function DeliveryTabsLayout() {
           paddingBottom: 8,
           paddingTop: 8,
           borderTopWidth: 1,
-          borderTopColor: "#fff7ed",
+          borderTopColor: DELIVERY_COLORS.tabBorderTop,
           backgroundColor: "#ffffff",
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -61,6 +62,15 @@ export default function DeliveryTabsLayout() {
                 color={color}
               />
             </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: "History",
+          tabBarIcon: ({ color }) => (
+            <Feather name="clock" size={22} color={color} />
           ),
         }}
       />

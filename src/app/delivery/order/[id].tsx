@@ -7,6 +7,10 @@ import {
   Alert,
   ActivityIndicator,
   Linking,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,6 +22,7 @@ import {
   useOrderTrackingHistory,
   useUpdateTrackingStatus,
 } from "@/hooks/queries/useDelivery";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 const NEXT_STATUS_MAP: Record<string, { value: string; label: string }> = {
   "order-placed": { value: "confirmed", label: "Confirm Order" },
@@ -36,6 +41,12 @@ export default function DeliveryOrderDetailScreen() {
   const { data, isLoading, refetch } = useOrderTrackingHistory(id!);
   const updateStatus = useUpdateTrackingStatus();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [commentModal, setCommentModal] = useState<{
+    visible: boolean;
+    status: string;
+    label: string;
+  }>({ visible: false, status: "", label: "" });
+  const [comment, setComment] = useState("");
 
   if (isLoading || !data) {
     return (
@@ -48,7 +59,7 @@ export default function DeliveryOrderDetailScreen() {
           paddingTop: insets.top,
         }}
       >
-        <ActivityIndicator size="large" color="#f97316" />
+        <ActivityIndicator size="large" color={DELIVERY_COLORS.primaryLight} />
       </View>
     );
   }
@@ -61,55 +72,41 @@ export default function DeliveryOrderDetailScreen() {
 
   const handleNext = () => {
     if (!nextStatus || !order) return;
+    setComment("");
+    setCommentModal({
+      visible: true,
+      status: nextStatus.value,
+      label: nextStatus.label,
+    });
+  };
 
-    Alert.alert("Update Status", `Set order to "${nextStatus.label}"?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Confirm",
-        onPress: async () => {
-          setIsUpdating(true);
-          try {
-            await updateStatus.mutateAsync({
-              orderId: order._id,
-              trackingStatus: nextStatus.value,
-            });
-            refetch();
-          } catch (err: any) {
-            Alert.alert("Error", err.message || "Failed to update");
-          } finally {
-            setIsUpdating(false);
-          }
-        },
-      },
-    ]);
+  const confirmStatusUpdate = async () => {
+    if (!order) return;
+    const targetStatus = commentModal.status;
+    setCommentModal({ visible: false, status: "", label: "" });
+    setIsUpdating(true);
+    try {
+      await updateStatus.mutateAsync({
+        orderId: order._id,
+        trackingStatus: targetStatus,
+        message: comment.trim() || undefined,
+      });
+      refetch();
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "Failed to update");
+    } finally {
+      setIsUpdating(false);
+      setComment("");
+    }
   };
 
   const handleCancel = () => {
-    Alert.alert(
-      "Cancel Delivery",
-      "Are you sure you want to cancel this delivery?",
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Yes, Cancel",
-          style: "destructive",
-          onPress: async () => {
-            setIsUpdating(true);
-            try {
-              await updateStatus.mutateAsync({
-                orderId: order._id,
-                trackingStatus: "cancelled",
-              });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message);
-            } finally {
-              setIsUpdating(false);
-            }
-          },
-        },
-      ],
-    );
+    setComment("");
+    setCommentModal({
+      visible: true,
+      status: "cancelled",
+      label: "Cancel Delivery",
+    });
   };
 
   return (
@@ -154,7 +151,7 @@ export default function DeliveryOrderDetailScreen() {
               ? ["#22c55e", "#16a34a"]
               : isTerminal
                 ? ["#ef4444", "#dc2626"]
-                : ["#ea580c", "#f97316"]
+                : (DELIVERY_COLORS.gradientHorizontal)
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -209,7 +206,9 @@ export default function DeliveryOrderDetailScreen() {
           >
             <LinearGradient
               colors={
-                isUpdating ? ["#fdba74", "#fdba74"] : ["#ea580c", "#f97316"]
+                isUpdating
+                  ? [DELIVERY_COLORS.loadingBg, DELIVERY_COLORS.loadingBg]
+                  : (DELIVERY_COLORS.gradientHorizontal)
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -328,7 +327,8 @@ export default function DeliveryOrderDetailScreen() {
                       width: 12,
                       height: 12,
                       borderRadius: 6,
-                      backgroundColor: i === 0 ? "#ea580c" : "#cbd5e1",
+                      backgroundColor:
+                        i === 0 ? DELIVERY_COLORS.primary : "#cbd5e1",
                     }}
                   />
                   {i < tracking.history.length - 1 && (
@@ -397,6 +397,276 @@ export default function DeliveryOrderDetailScreen() {
           </Pressable>
         )}
       </ScrollView>
+
+      {/* Status Update Modal with Comment */}
+      <Modal
+        visible={commentModal.visible}
+        transparent
+        animationType="slide"
+        onRequestClose={() =>
+          setCommentModal({ visible: false, status: "", label: "" })
+        }
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.select({ ios: "padding", android: undefined })}
+          style={{ flex: 1 }}
+        >
+          <Pressable
+            onPress={() =>
+              setCommentModal({ visible: false, status: "", label: "" })
+            }
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Pressable
+              onPress={() => {}}
+              style={{
+                backgroundColor: "white",
+                borderTopLeftRadius: 28,
+                borderTopRightRadius: 28,
+                padding: 24,
+                paddingBottom: 40,
+              }}
+            >
+              {/* Handle bar */}
+              <View
+                style={{
+                  width: 40,
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: "#e2e8f0",
+                  alignSelf: "center",
+                  marginBottom: 20,
+                }}
+              />
+
+              {/* Title */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 12,
+                    backgroundColor: DELIVERY_COLORS.accentBg,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Feather
+                    name="send"
+                    size={18}
+                    color={DELIVERY_COLORS.primary}
+                  />
+                </View>
+                <View style={{ marginLeft: 12, flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "800",
+                      color: "#1e293b",
+                    }}
+                  >
+                    {commentModal.label}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: "#64748b",
+                      marginTop: 2,
+                    }}
+                  >
+                    Add an optional note for the customer
+                  </Text>
+                </View>
+              </View>
+
+              {/* Warning for terminal statuses */}
+              {(commentModal.status === "delivered" ||
+                commentModal.status === "cancelled") && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor:
+                      commentModal.status === "delivered"
+                        ? "#f0fdf4"
+                        : "#fef2f2",
+                    borderWidth: 1,
+                    borderColor:
+                      commentModal.status === "delivered"
+                        ? "#bbf7d0"
+                        : "#fecaca",
+                    borderRadius: 14,
+                    padding: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Feather
+                    name="alert-circle"
+                    size={16}
+                    color={
+                      commentModal.status === "delivered"
+                        ? "#16a34a"
+                        : "#dc2626"
+                    }
+                  />
+                  <Text
+                    style={{
+                      marginLeft: 8,
+                      fontSize: 12,
+                      color:
+                        commentModal.status === "delivered"
+                          ? "#166534"
+                          : "#991b1b",
+                      flex: 1,
+                    }}
+                  >
+                    This action cannot be undone.
+                  </Text>
+                </View>
+              )}
+
+              {/* Comment Input */}
+              <View style={{ marginBottom: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "600",
+                    color: "#334155",
+                    marginBottom: 8,
+                  }}
+                >
+                  Note{" "}
+                  <Text style={{ fontWeight: "400", color: "#94a3b8" }}>
+                    (optional)
+                  </Text>
+                </Text>
+                <TextInput
+                  value={comment}
+                  onChangeText={setComment}
+                  placeholder="e.g. Left package at the door, slight delay due to traffic..."
+                  placeholderTextColor="#94a3b8"
+                  multiline
+                  numberOfLines={3}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#e2e8f0",
+                    borderRadius: 16,
+                    backgroundColor: "#f8fafc",
+                    padding: 14,
+                    fontSize: 14,
+                    color: "#0f172a",
+                    minHeight: 80,
+                    textAlignVertical: "top",
+                  }}
+                />
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: "#94a3b8",
+                    marginTop: 6,
+                  }}
+                >
+                  This note will be sent as a notification to the customer.
+                </Text>
+              </View>
+
+              {/* Buttons */}
+              <View style={{ flexDirection: "row", gap: 12 }}>
+                <Pressable
+                  onPress={() =>
+                    setCommentModal({
+                      visible: false,
+                      status: "",
+                      label: "",
+                    })
+                  }
+                  style={{
+                    flex: 1,
+                    borderRadius: 16,
+                    borderWidth: 1,
+                    borderColor: "#e2e8f0",
+                    paddingVertical: 14,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: "#64748b",
+                    }}
+                  >
+                    Cancel
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={confirmStatusUpdate}
+                  style={{
+                    flex: 2,
+                    borderRadius: 16,
+                    overflow: "hidden",
+                  }}
+                >
+                  <LinearGradient
+                    colors={
+                      commentModal.status === "cancelled"
+                        ? ["#ef4444", "#dc2626"]
+                        : commentModal.status === "delivered"
+                          ? ["#22c55e", "#16a34a"]
+                          : (DELIVERY_COLORS.gradientHorizontal)
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={{
+                      paddingVertical: 14,
+                      alignItems: "center",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      borderRadius: 16,
+                    }}
+                  >
+                    <Feather
+                      name={
+                        commentModal.status === "cancelled"
+                          ? "x-circle"
+                          : commentModal.status === "delivered"
+                            ? "check-circle"
+                            : "arrow-right"
+                      }
+                      size={16}
+                      color="white"
+                    />
+                    <Text
+                      style={{
+                        marginLeft: 8,
+                        fontSize: 14,
+                        fontWeight: "700",
+                        color: "white",
+                      }}
+                    >
+                      {commentModal.status === "cancelled"
+                        ? "Cancel Delivery"
+                        : commentModal.status === "delivered"
+                          ? "Confirm Delivered"
+                          : "Update Status"}
+                    </Text>
+                  </LinearGradient>
+                </Pressable>
+              </View>
+            </Pressable>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }

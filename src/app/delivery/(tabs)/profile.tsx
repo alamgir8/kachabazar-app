@@ -13,6 +13,7 @@ import {
   useDeliveryProfile,
   useDeliveryStats,
 } from "@/hooks/queries/useDelivery";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 const VEHICLE_ICONS: Record<string, string> = {
   bike: "motorbike",
@@ -71,7 +72,7 @@ export default function DeliveryProfileScreen() {
       >
         {/* Profile Header - Full width */}
         <LinearGradient
-          colors={["#ea580c", "#f97316", "#fb923c"]}
+          colors={DELIVERY_COLORS.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -260,7 +261,7 @@ export default function DeliveryProfileScreen() {
                     width: 48,
                     height: 48,
                     borderRadius: 16,
-                    backgroundColor: "#ffedd5",
+                    backgroundColor: DELIVERY_COLORS.accentBgLight,
                     alignItems: "center",
                     justifyContent: "center",
                   }}
@@ -271,7 +272,7 @@ export default function DeliveryProfileScreen() {
                         "truck-delivery") as any
                     }
                     size={24}
-                    color="#ea580c"
+                    color={DELIVERY_COLORS.primary}
                   />
                 </View>
                 <View>

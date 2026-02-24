@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useDeliveryAuth } from "@/contexts/DeliveryAuthContext";
 import { useAppMode } from "@/contexts/AppModeContext";
+import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -62,7 +63,7 @@ export default function DeliveryLoginScreen() {
         >
           {/* Header Gradient - Full Width */}
           <LinearGradient
-            colors={["#ea580c", "#f97316", "#fb923c"]}
+            colors={DELIVERY_COLORS.gradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -254,7 +255,9 @@ export default function DeliveryLoginScreen() {
             >
               <LinearGradient
                 colors={
-                  loading ? ["#fdba74", "#fdba74"] : ["#ea580c", "#f97316"]
+                  loading
+                    ? [DELIVERY_COLORS.loadingBg, DELIVERY_COLORS.loadingBg]
+                    : (DELIVERY_COLORS.gradientHorizontal)
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
