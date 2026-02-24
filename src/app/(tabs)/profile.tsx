@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Screen } from "@/components/layout/Screen";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/queries/useOrders";
+import { useUnreadNotificationCount } from "@/hooks/queries/useNotifications";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import { theme } from "@/theme";
@@ -70,6 +71,7 @@ export default function ProfileScreen() {
   } = useOrders(1);
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
+  const { data: unreadCount } = useUnreadNotificationCount();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -241,6 +243,19 @@ export default function ProfileScreen() {
               subtitle="View all your orders"
               badge={stats?.pending}
               onPress={() => router.push("/orders")}
+            />
+            <MenuItem
+              icon="navigation"
+              title="Track Order"
+              subtitle="Real-time delivery tracking"
+              onPress={() => router.push("/tracking")}
+            />
+            <MenuItem
+              icon="bell"
+              title="Notifications"
+              subtitle="Order updates & delivery alerts"
+              badge={unreadCount ?? undefined}
+              onPress={() => router.push("/notifications")}
             />
             <MenuItem
               icon="lock"

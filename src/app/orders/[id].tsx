@@ -8,7 +8,7 @@ import {
   Pressable,
   Linking,
 } from "react-native";
-import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useFocusEffect, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
@@ -26,6 +26,7 @@ export default function OrderDetailScreen() {
   const { data: order, isLoading, isError, refetch } = useOrder(id);
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
+  const router = useRouter();
 
   const [downloading, setDownloading] = useState(false);
   const [emailing, setEmailing] = useState(false);
@@ -36,7 +37,7 @@ export default function OrderDetailScreen() {
       if (isAuthenticated && user && id) {
         refetch();
       }
-    }, [isAuthenticated, user, id, refetch])
+    }, [isAuthenticated, user, id, refetch]),
   );
 
   const handleDownloadInvoice = async () => {
@@ -63,7 +64,7 @@ export default function OrderDetailScreen() {
       console.error("Invoice export error:", error);
       Alert.alert(
         "Error",
-        "Could not generate the invoice PDF. Please try again."
+        "Could not generate the invoice PDF. Please try again.",
       );
     } finally {
       setDownloading(false);
@@ -85,8 +86,8 @@ export default function OrderDetailScreen() {
           order.invoice
         }.\n\nTotal: ${formatCurrency(
           order.total,
-          currency
-        )}\n\nThank you for your order!`
+          currency,
+        )}\n\nThank you for your order!`,
       );
 
       const mailtoUrl = `mailto:${order.user_info.email}?subject=${subject}&body=${body}`;
@@ -98,7 +99,7 @@ export default function OrderDetailScreen() {
       } else {
         Alert.alert(
           "Error",
-          "Unable to open email client. Please ensure you have an email app installed."
+          "Unable to open email client. Please ensure you have an email app installed.",
         );
       }
     } catch (error) {
@@ -298,6 +299,109 @@ export default function OrderDetailScreen() {
             </View>
           </View>
 
+          {/* Tracking & Delivery Section */}
+          {(order as any).trackingId && (
+            <View
+              className="mb-4 overflow-hidden rounded-3xl bg-white shadow-lg"
+              style={{
+                shadowColor: "#0f766e",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 12,
+                elevation: 4,
+              }}
+            >
+              <View
+                className="px-5 py-4"
+                style={{ backgroundColor: "#f0fdfa" }}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Feather name="navigation" size={16} color="#0f766e" />
+                  <Text className="text-sm font-bold text-teal-800">
+                    Tracking & Delivery
+                  </Text>
+                </View>
+              </View>
+
+              <View className="px-5 py-4">
+                {/* Tracking ID */}
+                <View className="mb-3 flex-row items-center justify-between rounded-2xl bg-slate-50 p-3">
+                  <View>
+                    <Text className="text-xs font-medium text-slate-400">
+                      Tracking ID
+                    </Text>
+                    <Text className="mt-0.5 text-sm font-bold text-teal-600">
+                      {(order as any).trackingId}
+                    </Text>
+                  </View>
+                  <View
+                    className="rounded-full px-2.5 py-1"
+                    style={{
+                      backgroundColor:
+                        order.status === "delivered"
+                          ? "#dcfce7"
+                          : order.status === "processing"
+                            ? "#dbeafe"
+                            : order.status === "pending"
+                              ? "#fef3c7"
+                              : "#f1f5f9",
+                    }}
+                  >
+                    <Text
+                      className="text-[11px] font-bold uppercase"
+                      style={{
+                        color:
+                          order.status === "delivered"
+                            ? "#16a34a"
+                            : order.status === "processing"
+                              ? "#2563eb"
+                              : order.status === "pending"
+                                ? "#d97706"
+                                : "#64748b",
+                      }}
+                    >
+                      {order.status}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Delivery Partner name if assigned */}
+                {(order as any).deliveryBoy && (
+                  <View className="mb-3 flex-row items-center gap-3 rounded-2xl bg-slate-50 p-3">
+                    <View className="h-9 w-9 items-center justify-center rounded-full bg-teal-50">
+                      <Feather name="user-check" size={16} color="#0f766e" />
+                    </View>
+                    <View>
+                      <Text className="text-xs font-medium text-slate-400">
+                        Delivery Partner
+                      </Text>
+                      <Text className="text-sm font-semibold text-slate-700">
+                        Partner Assigned
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* Track Order Button */}
+                <Pressable
+                  onPress={() =>
+                    router.push({
+                      pathname: "/tracking/[trackingId]",
+                      params: { trackingId: (order as any).trackingId },
+                    })
+                  }
+                  className="flex-row items-center justify-center gap-2 rounded-2xl py-4 active:opacity-80"
+                  style={{ backgroundColor: "#0f766e" }}
+                >
+                  <Feather name="navigation" size={18} color="#fff" />
+                  <Text className="text-sm font-bold text-white">
+                    Track Order
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
           {/* Delivery Information */}
           <View
             className="mb-4 rounded-3xl bg-white py-6 px-4 shadow-lg"
@@ -400,7 +504,7 @@ export default function OrderDetailScreen() {
                     <Text className="text-base font-black text-teal-600">
                       {formatCurrency(
                         item.itemTotal || item.price * item.quantity,
-                        currency
+                        currency,
                       )}
                     </Text>
                   </View>

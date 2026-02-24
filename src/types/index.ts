@@ -148,8 +148,20 @@ export interface OrderSummary {
   total: number;
   shippingOption?: string;
   paymentMethod: string;
-  status: "pending" | "processing" | "delivered" | "cancel";
+  status:
+    | "pending"
+    | "processing"
+    | "delivered"
+    | "cancel"
+    | "out-for-delivery";
   coupon?: string;
+  trackingId?: string;
+  deliveryBoy?: string;
+  deliveryRating?: {
+    rating: number;
+    review?: string;
+    ratedAt?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }

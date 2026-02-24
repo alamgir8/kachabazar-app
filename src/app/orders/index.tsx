@@ -35,7 +35,7 @@ export default function OrdersScreen() {
       if (isAuthenticated && user) {
         refetch();
       }
-    }, [isAuthenticated, user, refetch])
+    }, [isAuthenticated, user, refetch]),
   );
 
   const handleLoadMore = () => {
@@ -177,7 +177,7 @@ export default function OrdersScreen() {
               month: "short",
               day: "numeric",
               year: "numeric",
-            }
+            },
           );
 
           const statusBg =
@@ -248,17 +248,32 @@ export default function OrdersScreen() {
                 </View>
 
                 {/* CTA */}
-                <Button
-                  title="View details"
-                  variant="outline"
-                  className="mt-4"
-                  onPress={() =>
-                    router.push({
-                      pathname: "/orders/[id]",
-                      params: { id: item._id },
-                    })
-                  }
-                />
+                <View className="mt-4 flex-row gap-3">
+                  <Button
+                    title="View details"
+                    variant="outline"
+                    className="flex-1"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/orders/[id]",
+                        params: { id: item._id },
+                      })
+                    }
+                  />
+                  {(item as any).trackingId && (
+                    <Button
+                      title="Track"
+                      variant="primary"
+                      className="flex-1"
+                      onPress={() =>
+                        router.push({
+                          pathname: "/tracking/[trackingId]",
+                          params: { trackingId: (item as any).trackingId },
+                        })
+                      }
+                    />
+                  )}
+                </View>
               </View>
             </View>
           );

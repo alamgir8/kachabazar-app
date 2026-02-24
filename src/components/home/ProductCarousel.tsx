@@ -26,7 +26,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
 }) => (
   <View>
     <SectionHeader
-      className="px-0"
+      className="px-4"
       title={title}
       subtitle={subtitle}
       actionLabel={products.length > 0 ? "See all" : undefined}
@@ -35,7 +35,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
     />
     {products.length === 0 ? (
       <View
-        className="overflow-hidden rounded-3xl"
+        className="mx-4 overflow-hidden rounded-3xl"
         style={{
           shadowColor: "#47f587",
           shadowOffset: { width: 0, height: 4 },
@@ -117,8 +117,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           gap: 20,
-          paddingLeft: 6,
-          paddingRight: 28,
+          paddingHorizontal: 16,
           paddingVertical: 12,
         }}
       >

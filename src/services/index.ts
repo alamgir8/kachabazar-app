@@ -7,6 +7,7 @@ export * from "./reviews";
 export * from "./coupons";
 export * from "./wishlist";
 export * from "./notifications";
+export * from "./tracking";
 export * from "./settings";
 export * from "./http";
 

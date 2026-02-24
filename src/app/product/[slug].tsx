@@ -11,7 +11,7 @@ import {
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
@@ -144,7 +144,7 @@ export default function ProductScreen() {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Feather
+          <FontAwesome
             key={i}
             name="star"
             size={14}
@@ -155,14 +155,14 @@ export default function ProductScreen() {
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <View key={i} style={{ marginRight: 2 }}>
-            <Feather name="star" size={14} color="#fde68a" />
+            <FontAwesome name="star-half-full" size={14} color="#f59e0b" />
           </View>
         );
       } else {
         stars.push(
-          <Feather
+          <FontAwesome
             key={i}
-            name="star"
+            name="star-o"
             size={14}
             color="#e5e7eb"
             style={{ marginRight: 2 }}
@@ -194,458 +194,410 @@ export default function ProductScreen() {
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
 
   return (
-    <Screen scrollable edges={["bottom"]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 260,
-          paddingTop: 16,
-          // paddingHorizontal: 8,
-          // paddingVertical: 6,
-        }}
-      >
-        {/* Header with Back Button */}
-        <View className="absolute top-6 left-1 right-1 z-10 flex-row items-center justify-between">
-          <BackButton />
-          <View className="flex-row gap-2">
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
-              <Feather name="share-2" size={18} color="#475569" />
-            </View>
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
-              <Feather name="heart" size={18} color="#475569" />
-            </View>
+    <Screen
+      edges={["bottom"]}
+      noHorizontalPadding
+      scrollable
+      contentContainerClassName="pb-10 pt-4"
+    >
+      {/* Header with Back Button */}
+      <View className="absolute top-6 left-5 right-5 z-10 flex-row items-center justify-between">
+        <BackButton />
+        <View className="flex-row gap-2">
+          <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
+            <Feather name="share-2" size={18} color="#475569" />
+          </View>
+          <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
+            <Feather name="heart" size={18} color="#475569" />
           </View>
         </View>
+      </View>
 
-        {/* Product Images Carousel with Indicators */}
-        <View className="relative">
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            style={{ width: carouselWidth }}
-            onScroll={(event) => {
-              const index = Math.round(
-                event.nativeEvent.contentOffset.x / carouselWidth
-              );
-              setActiveImageIndex(index);
-            }}
-            scrollEventThrottle={16}
-          >
-            {displayCarouselImages.map((img, index) => (
-              <View
-                key={`${img}-${index}`}
-                style={{ width: carouselWidth }}
-                className="items-center justify-center bg-gradient-to-b from-slate-50 to-white py-10"
-              >
-                {img ? (
-                  <Image
-                    source={{ uri: img }}
-                    className="h-48 w-48"
-                    resizeMode="contain"
-                  />
-                ) : (
-                  <View className="h-64 w-64 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-50 to-primary-100">
-                    <Feather name="image" size={64} color="#10b981" />
-                  </View>
-                )}
-              </View>
-            ))}
-          </ScrollView>
-
-          {/* Image Indicators */}
-          {displayCarouselImages.length > 1 && (
-            <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-2">
-              {displayCarouselImages.map((_, index) => (
-                <View
-                  key={index}
-                  style={{
-                    height: 8,
-                    borderRadius: 4,
-                    width: index === activeImageIndex ? 32 : 8,
-                    backgroundColor:
-                      index === activeImageIndex ? "#059669" : "#cbd5e1",
-                  }}
-                />
-              ))}
-            </View>
-          )}
-
-          {/* Discount Badge */}
-          {discount > 0 && (
-            <View className="absolute top-4 right-4">
-              <LinearGradient
-                colors={["#ef4444", "#dc2626"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                className="rounded-full px-3.5 py-2 shadow-lg"
-              >
-                <Text className="text-xs font-bold text-white">
-                  {discount}% OFF
-                </Text>
-              </LinearGradient>
-            </View>
-          )}
-        </View>
-
-        {/* Product Info Card */}
-        <View className="-mt-12">
-          <View
-            className="rounded-[40px] border border-white/70 bg-white/96 px-1 py-6"
-            style={{
-              shadowColor: "rgba(15,118,110,0.16)",
-              shadowOffset: { width: 0, height: 24 },
-              shadowOpacity: 0.18,
-              shadowRadius: 36,
-              elevation: 16,
-            }}
-          >
-            {/* Category & Rating */}
-            <View className="flex-row items-center justify-between mb-3">
-              <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
-                <Feather name="tag" size={12} color="#10b981" />
-                <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
-                  {product.category && typeof product.category === "object"
-                    ? getLocalizedValue(
-                        product.category.name as Record<string, string>
-                      )
-                    : "Fresh Pick"}
-                </Text>
-              </View>
-
-              {/* Rating Display */}
-              {product.average_rating && product.average_rating > 0 && (
-                <View className="flex-row items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
-                  <View className="flex-row items-center">
-                    {renderStars(product.average_rating)}
-                  </View>
-                  <Text className="text-xs font-bold text-amber-700 ml-1">
-                    {product.average_rating.toFixed(1)}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* Title */}
-            <Text className="mb-1 text-[28px] font-extrabold leading-tight text-slate-900">
-              {displayName}
-            </Text>
-
-            {/* Reviews Count */}
-            {reviews.length > 0 && (
-              <Text className="text-sm text-slate-500 mb-4">
-                {reviews.length} customer review
-                {reviews.length !== 1 ? "s" : ""}
-              </Text>
-            )}
-
-            {/* Price & Stock Row */}
-            <View className="mt-6 flex-row items-end justify-between rounded-[28px] border border-emerald-100/60 bg-emerald-50/40 px-4 py-4">
-              <View className="flex-1">
-                <Text className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-600">
-                  Price
-                </Text>
-                <View className="flex-row items-baseline gap-2">
-                  <Text className="text-3xl font-extrabold text-emerald-600">
-                    {formatCurrency(price, currency)}
-                  </Text>
-                  {originalPrice > price && (
-                    <Text className="text-base font-semibold text-slate-400 line-through">
-                      {formatCurrency(originalPrice, currency)}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              {/* Stock Badge */}
-              <View className="items-end">
-                <View
-                  className={`rounded-xl px-4 py-2.5 ${stock > 0 ? "bg-emerald-50" : "bg-red-50"}`}
-                >
-                  <View className="flex-row items-center gap-1.5">
-                    <Feather
-                      name={stock > 0 ? "check-circle" : "x-circle"}
-                      size={14}
-                      color={stock > 0 ? "#059669" : "#dc2626"}
-                    />
-                    <Text
-                      className={`text-xs font-bold ${stock > 0 ? "text-emerald-700" : "text-red-700"}`}
-                    >
-                      {stock > 0 ? `${stock} in stock` : "Out of stock"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            {/* Quantity & Add to Cart */}
-            <View className="mt-6 gap-4">
-              {/* Product Variants/Combinations */}
-              {/* Product Variants/Combinations - matching store's VariantList behavior */}
-              {!attributesLoading && variantTitle?.length > 0 && (
-                <View className="mb-3">
-                  {variantTitle.map((att: any) => (
-                    <View key={att._id} className="mb-3">
-                      <Text className="text-sm font-semibold text-slate-700 mb-2">
-                        {getLocalizedValue(att.name)}:
-                      </Text>
-                      <VariantList
-                        att={att._id}
-                        option={att.option}
-                        variants={product?.variants || []}
-                        varTitle={variantTitle}
-                        setValue={setValue}
-                        selectVariant={selectVariant}
-                        setSelectVariant={setSelectVariant}
-                        setSelectVa={setSelectVa}
-                      />
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              <View className="flex-row items-center gap-3">
-                <View className="px-4">
-                  <QuantityStepper
-                    value={quantity}
-                    onDecrement={() =>
-                      setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
-                    }
-                    onIncrement={() => setQuantity((prev) => prev + 1)}
-                  />
-                </View>
-
-                <Button
-                  title="Add to cart"
-                  onPress={handleAddToCartClick}
-                  variant="cyan"
-                  disabled={stock <= 0}
-                />
-              </View>
-            </View>
-          </View>
-
-          {/* Description with Toggle */}
-          <View
-            className="mt-6 rounded-[32px] border border-white/70 bg-white/96 px-5 py-6"
-            style={{
-              shadowColor: "rgba(15,118,110,0.12)",
-              shadowOffset: { width: 0, height: 18 },
-              shadowOpacity: 0.16,
-              shadowRadius: 28,
-              elevation: 12,
-            }}
-          >
-            <View className="flex-row items-center gap-2 mb-3">
-              <Feather name="file-text" size={16} color="#10b981" />
-              <Text className="text-base font-bold text-slate-900">
-                Product Details
-              </Text>
-            </View>
-
-            <Text
-              className="text-sm text-slate-600 leading-relaxed"
-              numberOfLines={showFullDescription ? undefined : 3}
+      {/* Product Images Carousel with Indicators */}
+      <View className="relative items-center">
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          style={{ width: carouselWidth }}
+          onScroll={(event) => {
+            const index = Math.round(
+              event.nativeEvent.contentOffset.x / carouselWidth
+            );
+            setActiveImageIndex(index);
+          }}
+          scrollEventThrottle={16}
+        >
+          {displayCarouselImages.map((img, index) => (
+            <View
+              key={`${img}-${index}`}
+              style={{ width: carouselWidth }}
+              className="items-center justify-center bg-gradient-to-b from-slate-50 to-white py-10 rounded-3xl"
             >
-              {description ||
-                "Detailed description will appear here once added from the dashboard."}
-            </Text>
-
-            {description && description.length > 100 && (
-              <Pressable
-                onPress={() => setShowFullDescription(!showFullDescription)}
-                className="mt-3"
-              >
-                <View className="flex-row items-center gap-1">
-                  <Text className="text-sm font-semibold text-primary-600">
-                    {showFullDescription ? "Show less" : "Read more"}
-                  </Text>
-                  <Feather
-                    name={showFullDescription ? "chevron-up" : "chevron-down"}
-                    size={16}
-                    color="#10b981"
-                  />
+              {img ? (
+                <Image
+                  source={{ uri: img }}
+                  className="h-48 w-48"
+                  resizeMode="contain"
+                />
+              ) : (
+                <View className="h-64 w-64 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-50 to-primary-100">
+                  <Feather name="image" size={64} color="#10b981" />
                 </View>
-              </Pressable>
-            )}
+              )}
+            </View>
+          ))}
+        </ScrollView>
 
-            {/* Product Tags */}
-            {product.tag && product.tag.length > 0 && (
-              <View className="mt-4 pt-4 border-t border-slate-100">
-                <Text className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-                  Tags
+        {/* Image Indicators */}
+        {displayCarouselImages.length > 1 && (
+          <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-2">
+            {displayCarouselImages.map((_, index) => (
+              <View
+                key={index}
+                style={{
+                  height: 8,
+                  borderRadius: 4,
+                  width: index === activeImageIndex ? 32 : 8,
+                  backgroundColor:
+                    index === activeImageIndex ? "#059669" : "#cbd5e1",
+                }}
+              />
+            ))}
+          </View>
+        )}
+
+        {/* Discount Badge */}
+        {discount > 0 && (
+          <View className="absolute top-20 right-4 z-20">
+            <LinearGradient
+              colors={["#ef4444", "#dc2626"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="rounded-full px-3 py-1.5 shadow-sm"
+            >
+              <Text className="text-[10px] font-bold text-white">
+                {Math.round(discount)}% OFF
+              </Text>
+            </LinearGradient>
+          </View>
+        )}
+      </View>
+
+      {/* Product Info Card */}
+      <View className="-mt-12 mx-4">
+        <View
+          className="rounded-[40px] border border-white/70 bg-white/96 px-5 py-6"
+          style={{
+            shadowColor: "rgba(15,118,110,0.16)",
+            shadowOffset: { width: 0, height: 24 },
+            shadowOpacity: 0.18,
+            shadowRadius: 36,
+            elevation: 16,
+          }}
+        >
+          {/* Category & Rating */}
+          <View className="flex-row items-center justify-between mb-3">
+            <View className="flex-row items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
+              <Feather name="tag" size={12} color="#10b981" />
+              <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
+                {product.category && typeof product.category === "object"
+                  ? getLocalizedValue(
+                      product.category.name as Record<string, string>
+                    )
+                  : "Fresh Pick"}
+              </Text>
+            </View>
+
+            {/* Rating Display */}
+            {product.average_rating && product.average_rating > 0 && (
+              <View className="flex-row items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
+                <View className="flex-row items-center">
+                  {renderStars(product.average_rating)}
+                </View>
+                <Text className="text-xs font-bold text-amber-700 ml-1">
+                  {product.average_rating.toFixed(1)}
                 </Text>
-                <Tags product={product} />
               </View>
             )}
           </View>
 
-          {/* Reviews Section */}
+          {/* Title */}
+          <Text className="mb-1 text-[28px] font-extrabold leading-tight text-slate-900">
+            {displayName}
+          </Text>
+
+          {/* Reviews Count */}
           {reviews.length > 0 && (
-            <View className="mt-4">
-              <View className="mb-3 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4">
-                <View className="flex-row items-center justify-between">
-                  <View>
-                    <Text className="text-lg font-bold text-slate-900">
-                      Customer Reviews
-                    </Text>
-                    <View className="flex-row items-center gap-2 mt-1">
-                      <View className="flex-row items-center">
-                        {renderStars(product.average_rating || 0)}
-                      </View>
-                      <Text className="text-sm font-semibold text-slate-600">
-                        {product.average_rating?.toFixed(1) || "0.0"} out of 5
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="items-center justify-center h-14 w-14 rounded-full bg-white shadow-sm">
-                    <Text className="text-2xl font-bold text-amber-600">
-                      {reviews.length}
-                    </Text>
-                    <Text className="text-xs text-slate-500 -mt-1">
-                      {reviews.length === 1 ? "review" : "reviews"}
+            <Text className="text-sm text-slate-500 mb-4">
+              {reviews.length} customer review
+              {reviews.length !== 1 ? "s" : ""}
+            </Text>
+          )}
+
+          {/* Price & Stock Row */}
+          <View className="mt-4 flex-row items-center justify-between">
+            <View className="flex-row items-center gap-2">
+              <Text className="text-2xl font-bold text-emerald-700">
+                {formatCurrency(price, currency)}
+              </Text>
+              {originalPrice > price && (
+                <View className="flex-row items-center gap-1.5">
+                  <Text className="text-sm text-slate-400 line-through">
+                    {formatCurrency(originalPrice, currency)}
+                  </Text>
+                  <View className="rounded-md bg-rose-100 px-1.5 py-0.5">
+                    <Text className="text-[10px] font-bold text-rose-600">
+                      -{Math.round(discount)}%
                     </Text>
                   </View>
                 </View>
+              )}
+            </View>{" "}
+            {/* Stock Badge */}
+            <View
+              className={`rounded-lg px-2.5 py-1 ${stock > 0 ? "bg-emerald-50" : "bg-red-50"}`}
+            >
+              <View className="flex-row items-center gap-1.5">
+                <Feather
+                  name={stock > 0 ? "check-circle" : "x-circle"}
+                  size={12}
+                  color={stock > 0 ? "#059669" : "#dc2626"}
+                />
+                <Text
+                  className={`text-[10px] font-bold uppercase tracking-wide ${stock > 0 ? "text-emerald-700" : "text-red-700"}`}
+                >
+                  {stock > 0 ? `${stock} in stock` : "Out of stock"}
+                </Text>
               </View>
+            </View>
+          </View>
 
-              <View className="space-y-3">
-                {displayedReviews.map((review: any) => (
-                  <View
-                    key={review._id}
-                    className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm"
-                  >
-                    <View className="mb-3 flex-row items-start justify-between">
-                      <View className="flex-1">
-                        <View className="flex-row items-center gap-2 mb-1">
-                          <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-100">
-                            <Text className="text-sm font-bold text-primary-700">
-                              {(review.user?.name ?? "A")
-                                .charAt(0)
-                                .toUpperCase()}
-                            </Text>
-                          </View>
-                          <View className="flex-1">
-                            <Text className="text-sm font-bold text-slate-900">
-                              {review.user?.name ?? "Anonymous"}
-                            </Text>
-                            <View className="flex-row items-center mt-0.5">
-                              {renderStars(review.rating)}
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                      <View className="rounded-lg bg-amber-50 px-2.5 py-1.5">
-                        <Text className="text-xs font-bold text-amber-700">
-                          {review.rating}.0
-                        </Text>
-                      </View>
-                    </View>
-                    <Text className="text-sm text-slate-600 leading-relaxed pl-12">
-                      {review.review || review.comment}
+          {/* Variants & Quantity Section */}
+          <View className="mt-5 gap-5">
+            {/* Product Variants/Combinations */}
+            {!attributesLoading && variantTitle?.length > 0 && (
+              <View>
+                {variantTitle.map((att: any) => (
+                  <View key={att._id} className="mb-3">
+                    <Text className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                      {getLocalizedValue(att.name)}
                     </Text>
-
-                    {/* Review Images */}
-                    {review.images && review.images.length > 0 && (
-                      <View className="flex-row flex-wrap gap-2 mt-3 pl-12">
-                        {review.images.map((img: string, idx: number) => (
-                          <Pressable
-                            key={idx}
-                            onPress={() => handleImageZoom(review.images, idx)}
-                            className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200"
-                          >
-                            <Image
-                              source={{ uri: img }}
-                              className="w-full h-full"
-                              resizeMode="cover"
-                            />
-                          </Pressable>
-                        ))}
-                      </View>
-                    )}
+                    <VariantList
+                      att={att._id}
+                      option={att.option}
+                      variants={product?.variants || []}
+                      varTitle={variantTitle}
+                      setValue={setValue}
+                      selectVariant={selectVariant}
+                      setSelectVariant={setSelectVariant}
+                      setSelectVa={setSelectVa}
+                    />
                   </View>
                 ))}
               </View>
+            )}
 
-              {reviews.length > 3 && (
-                <Pressable
-                  className="mt-3"
-                  onPress={() => setShowAllReviews(!showAllReviews)}
-                >
-                  <View className="rounded-xl bg-slate-50 border border-slate-200 p-4 items-center">
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-sm font-semibold text-slate-700">
-                        {showAllReviews
-                          ? "Show less"
-                          : `View all ${reviews.length} reviews`}
-                      </Text>
-                      <Feather
-                        name={showAllReviews ? "chevron-up" : "chevron-down"}
-                        size={16}
-                        color="#334155"
-                      />
-                    </View>
-                  </View>
-                </Pressable>
-              )}
-            </View>
-          )}
-
-          {/* Related Products */}
-          {relatedProducts.length > 0 && (
-            <View className="mt-8 mx-4">
-              <ProductCarousel
-                title="You might also like"
-                subtitle="Complementary picks curated for you"
-                products={relatedProducts}
-                onSeeAll={() => router.push("/search")}
+            {/* Quantity & Add to Cart Row */}
+            <View className="flex-row items-center gap-3">
+              <QuantityStepper
+                value={quantity}
+                onDecrement={() =>
+                  setQuantity((prev) => (prev > 1 ? prev - 1 : prev))
+                }
+                onIncrement={() => setQuantity((prev) => prev + 1)}
+                height="h-11"
+                width="w-11"
               />
-            </View>
-          )}
-        </View>
-      </ScrollView>
 
-      {/* Sticky CTA */}
-      <View className="absolute bottom-0 left-0 right-0 px-5 pb-6">
-        <LinearGradient
-          colors={["rgba(255,255,255,0.95)", "rgba(248,250,252,0.95)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="rounded-[32px] border border-white/70 px-4 py-4"
-          style={{
-            shadowColor: "rgba(15,118,110,0.12)",
-            shadowOffset: { width: 0, height: -8 },
-            shadowOpacity: 0.1,
-            shadowRadius: 16,
-            elevation: 10,
-          }}
-        >
-          <View className="flex-row items-center gap-4">
-            <View className="flex-1">
-              <Text className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-600">
-                Total
-              </Text>
-              <View className="flex-row items-baseline gap-2">
-                <Text className="text-3xl font-extrabold text-emerald-600">
-                  {formatCurrency(price * quantity, currency)}
-                </Text>
-                {originalPrice > price && (
-                  <Text className="text-sm font-semibold text-slate-400 line-through">
-                    {formatCurrency(originalPrice * quantity, currency)}
-                  </Text>
-                )}
-              </View>
-            </View>
-            <View className="flex-1">
               <Button
                 title="Add to cart"
                 onPress={handleAddToCartClick}
                 variant="cyan"
+                disabled={stock <= 0}
+                className="flex-1"
+                height={44}
               />
             </View>
           </View>
-        </LinearGradient>
+        </View>
+
+        {/* Description with Toggle */}
+        <View
+          className="mt-6 mx-4 rounded-[32px] border border-white/70 bg-white/96 px-5 py-6"
+          style={{
+            shadowColor: "rgba(15,118,110,0.12)",
+            shadowOffset: { width: 0, height: 18 },
+            shadowOpacity: 0.16,
+            shadowRadius: 28,
+            elevation: 12,
+          }}
+        >
+          <View className="flex-row items-center gap-2 mb-3">
+            <Feather name="file-text" size={16} color="#10b981" />
+            <Text className="text-base font-bold text-slate-900">
+              Product Details
+            </Text>
+          </View>
+
+          <Text
+            className="text-sm text-slate-600 leading-relaxed"
+            numberOfLines={showFullDescription ? undefined : 3}
+          >
+            {description ||
+              "Detailed description will appear here once added from the dashboard."}
+          </Text>
+
+          {description && description.length > 100 && (
+            <Pressable
+              onPress={() => setShowFullDescription(!showFullDescription)}
+              className="mt-3"
+            >
+              <View className="flex-row items-center gap-1">
+                <Text className="text-sm font-semibold text-primary-600">
+                  {showFullDescription ? "Show less" : "Read more"}
+                </Text>
+                <Feather
+                  name={showFullDescription ? "chevron-up" : "chevron-down"}
+                  size={16}
+                  color="#10b981"
+                />
+              </View>
+            </Pressable>
+          )}
+
+          {/* Product Tags */}
+          {product.tag && product.tag.length > 0 && (
+            <View className="mt-4 pt-4 border-t border-slate-100">
+              <Tags product={product} />
+            </View>
+          )}
+        </View>
+
+        {/* Reviews Section */}
+        {reviews.length > 0 && (
+          <View className="mt-4 mx-4">
+            <View className="mb-3 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-lg font-bold text-slate-900">
+                    Customer Reviews
+                  </Text>
+                  <View className="flex-row items-center gap-2 mt-1">
+                    <View className="flex-row items-center">
+                      {renderStars(product.average_rating || 0)}
+                    </View>
+                    <Text className="text-sm font-semibold text-slate-600">
+                      {product.average_rating?.toFixed(1) || "0.0"} out of 5
+                    </Text>
+                  </View>
+                </View>
+                <View className="items-center justify-center h-14 w-14 rounded-full bg-white shadow-sm">
+                  <Text className="text-2xl font-bold text-amber-600">
+                    {reviews.length}
+                  </Text>
+                  <Text className="text-xs text-slate-500 -mt-1">
+                    {reviews.length === 1 ? "review" : "reviews"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="space-y-3">
+              {displayedReviews.map((review: any) => (
+                <View
+                  key={review._id}
+                  className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm"
+                >
+                  <View className="mb-3 flex-row items-start justify-between">
+                    <View className="flex-1">
+                      <View className="flex-row items-center gap-2 mb-1">
+                        <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-100">
+                          <Text className="text-sm font-bold text-primary-700">
+                            {(review.user?.name ?? "A").charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View className="flex-1">
+                          <Text className="text-sm font-bold text-slate-900">
+                            {review.user?.name ?? "Anonymous"}
+                          </Text>
+                          <View className="flex-row items-center mt-0.5">
+                            {renderStars(review.rating)}
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                    <View className="rounded-lg bg-amber-50 px-2.5 py-1.5">
+                      <Text className="text-xs font-bold text-amber-700">
+                        {review.rating}.0
+                      </Text>
+                    </View>
+                  </View>
+                  <Text className="text-sm text-slate-600 leading-relaxed pl-12">
+                    {review.review || review.comment}
+                  </Text>
+
+                  {/* Review Images */}
+                  {review.images && review.images.length > 0 && (
+                    <View className="flex-row flex-wrap gap-2 mt-3 pl-12">
+                      {review.images.map((img: string, idx: number) => (
+                        <Pressable
+                          key={idx}
+                          onPress={() => handleImageZoom(review.images, idx)}
+                          className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200"
+                        >
+                          <Image
+                            source={{ uri: img }}
+                            className="w-full h-full"
+                            resizeMode="cover"
+                          />
+                        </Pressable>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
+
+            {reviews.length > 3 && (
+              <Pressable
+                className="mt-3"
+                onPress={() => setShowAllReviews(!showAllReviews)}
+              >
+                <View className="rounded-xl bg-slate-50 border border-slate-200 p-4 items-center">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-sm font-semibold text-slate-700">
+                      {showAllReviews
+                        ? "Show less"
+                        : `View all ${reviews.length} reviews`}
+                    </Text>
+                    <Feather
+                      name={showAllReviews ? "chevron-up" : "chevron-down"}
+                      size={16}
+                      color="#334155"
+                    />
+                  </View>
+                </View>
+              </Pressable>
+            )}
+          </View>
+        )}
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <View className="mt-8">
+            <ProductCarousel
+              title="You might also like"
+              subtitle="Complementary picks curated for you"
+              products={relatedProducts}
+              onSeeAll={() => router.push("/search")}
+            />
+          </View>
+        )}
       </View>
+
+      {/* Sticky CTA */}
+      {/* Removed as per request */}
 
       {/* Image Zoom Modal */}
       <Modal

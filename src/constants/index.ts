@@ -5,7 +5,9 @@ const sanitizeUrl = (value?: string | null) =>
   value ? value.replace(/\/$/, "") : undefined;
 
 const resolveDevBaseUrl = () => {
-  const expoGoConfig = (Constants as unknown as { expoGoConfig?: Record<string, string> }).expoGoConfig ?? {};
+  const expoGoConfig =
+    (Constants as unknown as { expoGoConfig?: Record<string, string> })
+      .expoGoConfig ?? {};
   const hostUri =
     Constants.expoConfig?.hostUri ??
     expoGoConfig.hostUri ??
@@ -41,7 +43,8 @@ const envBaseUrl =
   sanitizeUrl(process.env.EXPO_PUBLIC_API_BASE_URL) ??
   sanitizeUrl(process.env.EXPO_PUBLIC_BASE_URL);
 
-export const API_BASE_URL = envBaseUrl ?? resolveDevBaseUrl() ?? "http://127.0.0.1:5000/v1";
+export const API_BASE_URL =
+  envBaseUrl ?? resolveDevBaseUrl() ?? "http://127.0.0.1:5000/v1";
 
 export const SECURE_STORAGE_KEYS = {
   accessToken: "@kachabazar/accessToken",
@@ -63,6 +66,9 @@ export const QUERY_KEYS = {
   shippingAddress: "shipping-address",
   wishlist: "wishlist",
   coupons: "coupons",
+  tracking: "order-tracking",
+  notifications: "customer-notifications",
+  unreadNotifications: "customer-notifications-unread",
 } as const;
 
 export const DEFAULT_PAGE_SIZE = 20;
