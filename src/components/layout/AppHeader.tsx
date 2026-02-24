@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useUnreadNotificationCount } from "@/hooks/queries/useNotifications";
 import { MenuDrawer } from "./MenuDrawer";
 import { theme } from "@/theme";
 
@@ -14,17 +15,14 @@ export const AppHeader: React.FC = () => {
   const { storeCustomization } = useSettings();
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: unreadCount } = useUnreadNotificationCount();
 
   return (
     <>
-      <View
-        className="pb-2"
-        // style={{
-        //   paddingTop: Math.max(insets.top - theme.spacing.md, theme.spacing.sm),
-        // }}
-      >
+      <View className="pb-2">
+        {/* Search Bar Row */}
         <View
-          className="flex-row items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2"
+          className="flex-row items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2"
           style={{
             shadowColor: "rgba(0, 0, 0, 0.08)",
             shadowOffset: { width: 0, height: 2 },
@@ -43,13 +41,41 @@ export const AppHeader: React.FC = () => {
             <Text className="text-sm text-slate-400">Search keywords...</Text>
           </Pressable>
 
+          {/* Tracking Icon */}
+          <Pressable
+            onPress={() => router.push("/tracking")}
+            className="h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 active:bg-emerald-100"
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          >
+            <Feather name="navigation" size={17} color="#16a34a" />
+          </Pressable>
+
+          {/* Notification Bell */}
+          <Pressable
+            onPress={() => router.push("/notifications")}
+            className="relative h-9 w-9 items-center justify-center rounded-xl bg-slate-50 active:bg-slate-100"
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          >
+            <Feather name="bell" size={17} color="#64748b" />
+            {(unreadCount ?? 0) > 0 && (
+              <View
+                className="absolute -right-1 -top-1 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1"
+                style={{ height: 16 }}
+              >
+                <Text className="text-[9px] font-bold text-white">
+                  {(unreadCount ?? 0) > 9 ? "9+" : unreadCount}
+                </Text>
+              </View>
+            )}
+          </Pressable>
+
           {/* Menu Icon */}
           <Pressable
             onPress={() => setMenuOpen(true)}
-            className="h-10 w-10 items-center justify-center rounded-xl bg-slate-50 active:bg-slate-100"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            className="h-9 w-9 items-center justify-center rounded-xl bg-slate-50 active:bg-slate-100"
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           >
-            <Feather name="menu" size={20} color={theme.colors.slate[700]} />
+            <Feather name="menu" size={18} color={theme.colors.slate[700]} />
           </Pressable>
         </View>
       </View>

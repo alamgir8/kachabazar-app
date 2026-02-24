@@ -11,9 +11,9 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { format } from "date-fns";
 
-import { Screen } from "@/components/layout/Screen";
 import {
   useOrderTrackingHistory,
   useUpdateTrackingStatus,
@@ -32,17 +32,24 @@ const NEXT_STATUS_MAP: Record<string, { value: string; label: string }> = {
 export default function DeliveryOrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data, isLoading, refetch } = useOrderTrackingHistory(id!);
   const updateStatus = useUpdateTrackingStatus();
   const [isUpdating, setIsUpdating] = useState(false);
 
   if (isLoading || !data) {
     return (
-      <Screen edges={["bottom"]}>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#f97316" />
-        </View>
-      </Screen>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#fafafa",
+          paddingTop: insets.top,
+        }}
+      >
+        <ActivityIndicator size="large" color="#f97316" />
+      </View>
     );
   }
 
@@ -106,18 +113,36 @@ export default function DeliveryOrderDetailScreen() {
   };
 
   return (
-    <Screen scrollable edges={["bottom"]}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#fafafa",
+        paddingTop: insets.top,
+      }}
+    >
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 30 }}
+        contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 16 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Back + Title */}
         <Pressable
           onPress={() => router.back()}
-          className="flex-row items-center mb-4"
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 16,
+            paddingVertical: 8,
+          }}
         >
           <Feather name="arrow-left" size={20} color="#64748b" />
-          <Text className="ml-2 text-base font-bold text-slate-700">
+          <Text
+            style={{
+              marginLeft: 8,
+              fontSize: 16,
+              fontWeight: "700",
+              color: "#334155",
+            }}
+          >
             Order #{order.invoice}
           </Text>
         </Pressable>
@@ -133,16 +158,43 @@ export default function DeliveryOrderDetailScreen() {
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          className="rounded-2xl p-5 mb-4"
+          style={{
+            borderRadius: 20,
+            padding: 20,
+            marginBottom: 12,
+          }}
         >
-          <Text className="text-white/70 text-xs font-medium uppercase tracking-wider">
+          <Text
+            style={{
+              color: "rgba(255,255,255,0.7)",
+              fontSize: 11,
+              fontWeight: "500",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
             Current Status
           </Text>
-          <Text className="text-white text-xl font-bold mt-1 capitalize">
+          <Text
+            style={{
+              color: "white",
+              fontSize: 22,
+              fontWeight: "800",
+              marginTop: 4,
+              textTransform: "capitalize",
+            }}
+          >
             {currentStatus.replace(/-/g, " ")}
           </Text>
           {order.trackingId && (
-            <Text className="text-white/60 text-xs mt-2 font-mono">
+            <Text
+              style={{
+                color: "rgba(255,255,255,0.6)",
+                fontSize: 11,
+                marginTop: 8,
+                fontFamily: "monospace",
+              }}
+            >
               Tracking: {order.trackingId}
             </Text>
           )}
@@ -153,7 +205,7 @@ export default function DeliveryOrderDetailScreen() {
           <Pressable
             onPress={handleNext}
             disabled={isUpdating}
-            className="mb-4 overflow-hidden rounded-2xl"
+            style={{ marginBottom: 12, borderRadius: 16, overflow: "hidden" }}
           >
             <LinearGradient
               colors={
@@ -161,13 +213,27 @@ export default function DeliveryOrderDetailScreen() {
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="py-4 px-5 flex-row items-center justify-center"
+              style={{
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 16,
+              }}
             >
               {isUpdating ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
                 <>
-                  <Text className="text-base font-bold text-white mr-2">
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "700",
+                      color: "white",
+                      marginRight: 8,
+                    }}
+                  >
                     {nextStatus.label}
                   </Text>
                   <Feather name="arrow-right" size={18} color="#fff" />
@@ -179,8 +245,11 @@ export default function DeliveryOrderDetailScreen() {
 
         {/* Customer Info */}
         <View
-          className="rounded-2xl bg-white p-4 mb-4"
           style={{
+            borderRadius: 20,
+            backgroundColor: "white",
+            padding: 16,
+            marginBottom: 12,
             shadowColor: "#94a3b8",
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.06,
@@ -188,20 +257,39 @@ export default function DeliveryOrderDetailScreen() {
             elevation: 3,
           }}
         >
-          <Text className="text-sm font-bold text-slate-800 mb-3">
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "700",
+              color: "#1e293b",
+              marginBottom: 12,
+            }}
+          >
             Delivery To
           </Text>
           {order.deliveryBoyName && (
-            <View className="flex-row items-center mb-2">
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 8,
+              }}
+            >
               <Feather name="user" size={14} color="#64748b" />
-              <Text className="ml-2 text-sm text-slate-700">
+              <Text style={{ marginLeft: 8, fontSize: 14, color: "#334155" }}>
                 {order.deliveryBoyName}
               </Text>
             </View>
           )}
-          <View className="flex-row items-center mb-2">
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
             <Feather name="calendar" size={14} color="#64748b" />
-            <Text className="ml-2 text-sm text-slate-600">
+            <Text style={{ marginLeft: 8, fontSize: 13, color: "#475569" }}>
               {format(new Date(order.createdAt), "MMM dd, yyyy 'at' h:mm a")}
             </Text>
           </View>
@@ -210,8 +298,11 @@ export default function DeliveryOrderDetailScreen() {
         {/* Tracking History */}
         {tracking?.history && tracking.history.length > 0 && (
           <View
-            className="rounded-2xl bg-white p-4 mb-4"
             style={{
+              borderRadius: 20,
+              backgroundColor: "white",
+              padding: 16,
+              marginBottom: 12,
               shadowColor: "#94a3b8",
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.06,
@@ -219,29 +310,65 @@ export default function DeliveryOrderDetailScreen() {
               elevation: 3,
             }}
           >
-            <Text className="text-sm font-bold text-slate-800 mb-3">
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#1e293b",
+                marginBottom: 12,
+              }}
+            >
               Timeline
             </Text>
             {[...tracking.history].reverse().map((entry, i) => (
-              <View key={i} className="flex-row mb-3">
-                <View className="items-center mr-3">
+              <View key={i} style={{ flexDirection: "row", marginBottom: 12 }}>
+                <View style={{ alignItems: "center", marginRight: 12 }}>
                   <View
-                    className={`h-3 w-3 rounded-full ${
-                      i === 0 ? "bg-orange-500" : "bg-slate-300"
-                    }`}
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 6,
+                      backgroundColor: i === 0 ? "#ea580c" : "#cbd5e1",
+                    }}
                   />
                   {i < tracking.history.length - 1 && (
-                    <View className="w-0.5 flex-1 bg-slate-200 mt-1" />
+                    <View
+                      style={{
+                        width: 2,
+                        flex: 1,
+                        backgroundColor: "#e2e8f0",
+                        marginTop: 4,
+                      }}
+                    />
                   )}
                 </View>
-                <View className="flex-1 pb-3">
-                  <Text className="text-xs font-bold text-slate-700 capitalize">
+                <View style={{ flex: 1, paddingBottom: 4 }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "700",
+                      color: "#334155",
+                      textTransform: "capitalize",
+                    }}
+                  >
                     {entry.status.replace(/-/g, " ")}
                   </Text>
-                  <Text className="text-[10px] text-slate-500 mt-0.5">
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#64748b",
+                      marginTop: 2,
+                    }}
+                  >
                     {entry.message}
                   </Text>
-                  <Text className="text-[10px] text-slate-400 mt-0.5">
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#94a3b8",
+                      marginTop: 2,
+                    }}
+                  >
                     {format(new Date(entry.timestamp), "MMM dd, h:mm a")}
                   </Text>
                 </View>
@@ -255,14 +382,21 @@ export default function DeliveryOrderDetailScreen() {
           <Pressable
             onPress={handleCancel}
             disabled={isUpdating}
-            className="rounded-2xl border border-red-200 bg-red-50 py-3 items-center"
+            style={{
+              borderRadius: 16,
+              borderWidth: 1,
+              borderColor: "#fecaca",
+              backgroundColor: "#fef2f2",
+              paddingVertical: 14,
+              alignItems: "center",
+            }}
           >
-            <Text className="text-sm font-semibold text-red-600">
+            <Text style={{ fontSize: 14, fontWeight: "600", color: "#dc2626" }}>
               Cancel Delivery
             </Text>
           </Pressable>
         )}
       </ScrollView>
-    </Screen>
+    </View>
   );
 }

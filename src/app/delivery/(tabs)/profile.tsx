@@ -2,8 +2,8 @@ import { View, Text, Pressable, ScrollView, Image, Alert } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Screen } from "@/components/layout/Screen";
 import {
   useDeliveryAuth,
   getDeliveryBoyDisplayName,
@@ -25,6 +25,7 @@ const VEHICLE_ICONS: Record<string, string> = {
 
 export default function DeliveryProfileScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { user, logout } = useDeliveryAuth();
   const { setMode } = useAppMode();
   const { data: profile } = useDeliveryProfile();
@@ -63,192 +64,364 @@ export default function DeliveryProfileScreen() {
   };
 
   return (
-    <Screen scrollable edges={["bottom"]}>
+    <View style={{ flex: 1, backgroundColor: "#fafafa" }}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 30 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Header */}
+        {/* Profile Header - Full width */}
         <LinearGradient
           colors={["#ea580c", "#f97316", "#fb923c"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            marginHorizontal: -16,
-            marginTop: -16,
+            paddingTop: insets.top + 16,
+            paddingBottom: 28,
             paddingHorizontal: 20,
-            paddingTop: 24,
-            paddingBottom: 24,
             borderBottomLeftRadius: 32,
             borderBottomRightRadius: 32,
           }}
         >
-          <View className="flex-row items-center">
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             {user?.image ? (
               <Image
                 source={{ uri: user.image }}
-                className="h-16 w-16 rounded-3xl border-2 border-white/30"
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 24,
+                  borderWidth: 2,
+                  borderColor: "rgba(255,255,255,0.3)",
+                }}
               />
             ) : (
-              <View className="h-16 w-16 items-center justify-center rounded-3xl border-2 border-white/30 bg-white/20">
-                <Text className="text-2xl font-bold text-white">
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 24,
+                  borderWidth: 2,
+                  borderColor: "rgba(255,255,255,0.3)",
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 26, fontWeight: "800", color: "white" }}
+                >
                   {displayName[0] ?? "D"}
                 </Text>
               </View>
             )}
-            <View className="ml-4 flex-1">
-              <Text className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+            <View style={{ marginLeft: 16, flex: 1 }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "700",
+                  textTransform: "uppercase",
+                  letterSpacing: 2,
+                  color: "rgba(255,255,255,0.7)",
+                }}
+              >
                 Delivery Partner
               </Text>
-              <Text className="mt-1 text-lg font-bold text-white">
+              <Text
+                style={{
+                  marginTop: 4,
+                  fontSize: 20,
+                  fontWeight: "800",
+                  color: "white",
+                }}
+              >
                 {displayName}
               </Text>
-              <Text className="text-sm text-white/80">{user?.email}</Text>
+              <Text style={{ fontSize: 13, color: "rgba(255,255,255,0.8)" }}>
+                {user?.email}
+              </Text>
             </View>
           </View>
 
           {/* Rating & Stats Row */}
-          <View className="flex-row mt-5 gap-3">
-            <View className="flex-1 rounded-2xl bg-white/15 p-3 items-center">
-              <Text className="text-white/70 text-xs">Rating</Text>
-              <View className="flex-row items-center mt-1">
+          <View style={{ flexDirection: "row", marginTop: 20, gap: 10 }}>
+            <View
+              style={{
+                flex: 1,
+                borderRadius: 16,
+                backgroundColor: "rgba(255,255,255,0.15)",
+                padding: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
+                Rating
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 4,
+                }}
+              >
                 <Feather name="star" size={14} color="#fbbf24" />
-                <Text className="text-white text-base font-bold ml-1">
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: "800",
+                    marginLeft: 4,
+                  }}
+                >
                   {stats?.averageRating?.toFixed(1) ?? "—"}
                 </Text>
               </View>
             </View>
-            <View className="flex-1 rounded-2xl bg-white/15 p-3 items-center">
-              <Text className="text-white/70 text-xs">Completed</Text>
-              <Text className="text-white text-base font-bold mt-1">
+            <View
+              style={{
+                flex: 1,
+                borderRadius: 16,
+                backgroundColor: "rgba(255,255,255,0.15)",
+                padding: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
+                Completed
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "800",
+                  marginTop: 4,
+                }}
+              >
                 {stats?.completedDeliveries ?? 0}
               </Text>
             </View>
-            <View className="flex-1 rounded-2xl bg-white/15 p-3 items-center">
-              <Text className="text-white/70 text-xs">Earnings</Text>
-              <Text className="text-white text-base font-bold mt-1">
+            <View
+              style={{
+                flex: 1,
+                borderRadius: 16,
+                backgroundColor: "rgba(255,255,255,0.15)",
+                padding: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 11 }}>
+                Earnings
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "800",
+                  marginTop: 4,
+                }}
+              >
                 ${stats?.totalEarnings?.toFixed(0) ?? 0}
               </Text>
             </View>
           </View>
         </LinearGradient>
 
-        {/* Vehicle Info */}
-        {profile && (
-          <View
-            className="mt-5 rounded-2xl bg-white p-4"
-            style={{
-              shadowColor: "#94a3b8",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.06,
-              shadowRadius: 12,
-              elevation: 3,
-            }}
-          >
-            <Text className="text-sm font-bold text-slate-800 mb-3">
-              Vehicle Info
-            </Text>
-            <View className="flex-row items-center gap-3">
-              <View className="h-12 w-12 rounded-2xl bg-orange-100 items-center justify-center">
-                <MaterialCommunityIcons
-                  name={
-                    (VEHICLE_ICONS[profile.vehicleType] ||
-                      "truck-delivery") as any
-                  }
-                  size={24}
-                  color="#ea580c"
-                />
-              </View>
-              <View>
-                <Text className="text-sm font-semibold text-slate-700 capitalize">
-                  {profile.vehicleType}
-                </Text>
-                {profile.vehicleNumber && (
-                  <Text className="text-xs text-slate-500">
-                    {profile.vehicleNumber}
+        {/* Content Area */}
+        <View style={{ paddingHorizontal: 16, marginTop: 4 }}>
+          {/* Vehicle Info */}
+          {profile && (
+            <View
+              style={{
+                marginTop: 16,
+                borderRadius: 20,
+                backgroundColor: "white",
+                padding: 16,
+                shadowColor: "#94a3b8",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                elevation: 3,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "700",
+                  color: "#1e293b",
+                  marginBottom: 12,
+                }}
+              >
+                Vehicle Info
+              </Text>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+              >
+                <View
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 16,
+                    backgroundColor: "#ffedd5",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={
+                      (VEHICLE_ICONS[profile.vehicleType] ||
+                        "truck-delivery") as any
+                    }
+                    size={24}
+                    color="#ea580c"
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: "#334155",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {profile.vehicleType}
                   </Text>
+                  {profile.vehicleNumber && (
+                    <Text style={{ fontSize: 12, color: "#64748b" }}>
+                      {profile.vehicleNumber}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Contact Info */}
+          {profile && (
+            <View
+              style={{
+                marginTop: 12,
+                borderRadius: 20,
+                backgroundColor: "white",
+                padding: 16,
+                shadowColor: "#94a3b8",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                elevation: 3,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "700",
+                  color: "#1e293b",
+                  marginBottom: 12,
+                }}
+              >
+                Contact Details
+              </Text>
+              <View style={{ gap: 10 }}>
+                <InfoRow icon="phone" label="Phone" value={profile.phone} />
+                <InfoRow icon="mail" label="Email" value={profile.email} />
+                {profile.address && (
+                  <InfoRow
+                    icon="map-pin"
+                    label="Address"
+                    value={profile.address}
+                  />
+                )}
+                {(profile.city || profile.country) && (
+                  <InfoRow
+                    icon="globe"
+                    label="Location"
+                    value={[profile.city, profile.country]
+                      .filter(Boolean)
+                      .join(", ")}
+                  />
                 )}
               </View>
             </View>
+          )}
+
+          {/* Actions */}
+          <View style={{ marginTop: 24, gap: 12 }}>
+            <Pressable
+              onPress={handleSwitchToStore}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderRadius: 20,
+                backgroundColor: "#f0fdfa",
+                borderWidth: 1,
+                borderColor: "#99f6e4",
+                padding: 16,
+              }}
+            >
+              <View
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 14,
+                  backgroundColor: "#ccfbf1",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Feather name="shopping-bag" size={20} color="#0d9488" />
+              </View>
+              <View style={{ marginLeft: 16, flex: 1 }}>
+                <Text
+                  style={{ fontSize: 14, fontWeight: "700", color: "#115e59" }}
+                >
+                  Switch to Store
+                </Text>
+                <Text style={{ fontSize: 12, color: "#0d9488", marginTop: 2 }}>
+                  Browse products & place orders
+                </Text>
+              </View>
+              <Feather name="arrow-right" size={18} color="#0d9488" />
+            </Pressable>
+
+            <Pressable
+              onPress={handleLogout}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderRadius: 20,
+                backgroundColor: "#fef2f2",
+                borderWidth: 1,
+                borderColor: "#fecaca",
+                padding: 16,
+              }}
+            >
+              <View
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 14,
+                  backgroundColor: "#fee2e2",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Feather name="log-out" size={20} color="#ef4444" />
+              </View>
+              <View style={{ marginLeft: 16, flex: 1 }}>
+                <Text
+                  style={{ fontSize: 14, fontWeight: "700", color: "#b91c1c" }}
+                >
+                  Log Out
+                </Text>
+                <Text style={{ fontSize: 12, color: "#ef4444", marginTop: 2 }}>
+                  Sign out of delivery account
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color="#ef4444" />
+            </Pressable>
           </View>
-        )}
-
-        {/* Contact Info */}
-        {profile && (
-          <View
-            className="mt-4 rounded-2xl bg-white p-4"
-            style={{
-              shadowColor: "#94a3b8",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.06,
-              shadowRadius: 12,
-              elevation: 3,
-            }}
-          >
-            <Text className="text-sm font-bold text-slate-800 mb-3">
-              Contact Details
-            </Text>
-            <View className="gap-2.5">
-              <InfoRow icon="phone" label="Phone" value={profile.phone} />
-              <InfoRow icon="mail" label="Email" value={profile.email} />
-              {profile.address && (
-                <InfoRow
-                  icon="map-pin"
-                  label="Address"
-                  value={profile.address}
-                />
-              )}
-              {(profile.city || profile.country) && (
-                <InfoRow
-                  icon="globe"
-                  label="Location"
-                  value={[profile.city, profile.country]
-                    .filter(Boolean)
-                    .join(", ")}
-                />
-              )}
-            </View>
-          </View>
-        )}
-
-        {/* Actions */}
-        <View className="mt-6 gap-3">
-          <Pressable
-            onPress={handleSwitchToStore}
-            className="flex-row items-center rounded-2xl bg-teal-50 border border-teal-200 p-4"
-          >
-            <View className="h-10 w-10 rounded-2xl bg-teal-100 items-center justify-center">
-              <Feather name="shopping-bag" size={20} color="#0d9488" />
-            </View>
-            <View className="ml-4 flex-1">
-              <Text className="text-sm font-bold text-teal-800">
-                Switch to Store
-              </Text>
-              <Text className="text-xs text-teal-600 mt-0.5">
-                Browse products & place orders
-              </Text>
-            </View>
-            <Feather name="arrow-right" size={18} color="#0d9488" />
-          </Pressable>
-
-          <Pressable
-            onPress={handleLogout}
-            className="flex-row items-center rounded-2xl bg-red-50 border border-red-200 p-4"
-          >
-            <View className="h-10 w-10 rounded-2xl bg-red-100 items-center justify-center">
-              <Feather name="log-out" size={20} color="#ef4444" />
-            </View>
-            <View className="ml-4 flex-1">
-              <Text className="text-sm font-bold text-red-700">Log Out</Text>
-              <Text className="text-xs text-red-500 mt-0.5">
-                Sign out of delivery account
-              </Text>
-            </View>
-            <Feather name="chevron-right" size={18} color="#ef4444" />
-          </Pressable>
         </View>
       </ScrollView>
-    </Screen>
+    </View>
   );
 }
 
@@ -262,10 +435,14 @@ function InfoRow({
   value: string;
 }) {
   return (
-    <View className="flex-row items-center">
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
       <Feather name={icon} size={14} color="#64748b" />
-      <Text className="ml-2 text-xs text-slate-400 w-16">{label}</Text>
-      <Text className="text-sm text-slate-700 flex-1">{value}</Text>
+      <Text
+        style={{ marginLeft: 8, fontSize: 12, color: "#94a3b8", width: 60 }}
+      >
+        {label}
+      </Text>
+      <Text style={{ fontSize: 14, color: "#334155", flex: 1 }}>{value}</Text>
     </View>
   );
 }

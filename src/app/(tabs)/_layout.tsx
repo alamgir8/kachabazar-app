@@ -1,12 +1,10 @@
 import { Tabs } from "expo-router";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Text, View, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { Text, View } from "react-native";
 
 import { useCart } from "@/contexts/CartContext";
 import { theme } from "@/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUnreadNotificationCount } from "@/hooks/queries/useNotifications";
 
 const TabBarIcon = ({
   color,
@@ -21,28 +19,6 @@ const TabBarIcon = ({
 export default function TabsLayout() {
   const { totalItems } = useCart();
   const { isAuthenticated } = useAuth();
-  const router = useRouter();
-  const { data: unreadCount } = useUnreadNotificationCount();
-
-  const NotificationBell = () => (
-    <Pressable
-      onPress={() => router.push("/notifications")}
-      className="relative mr-4"
-      hitSlop={8}
-    >
-      <Feather name="bell" size={22} color="#64748b" />
-      {(unreadCount ?? 0) > 0 && (
-        <View
-          className="absolute -right-1.5 -top-1.5 min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1"
-          style={{ height: 18 }}
-        >
-          <Text className="text-[10px] font-bold text-white">
-            {(unreadCount ?? 0) > 9 ? "9+" : unreadCount}
-          </Text>
-        </View>
-      )}
-    </Pressable>
-  );
 
   return (
     <Tabs
@@ -79,21 +55,6 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Home",
-          headerShown: true,
-          headerTitle: "",
-          headerTransparent: true,
-          headerRight: () => (
-            <View className="flex-row items-center">
-              <Pressable
-                onPress={() => router.push("/tracking")}
-                className="mr-2"
-                hitSlop={8}
-              >
-                <Feather name="navigation" size={20} color="#64748b" />
-              </Pressable>
-              <NotificationBell />
-            </View>
-          ),
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
