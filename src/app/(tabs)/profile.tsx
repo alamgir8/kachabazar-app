@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppMode } from "@/contexts/AppModeContext";
 import { useOrders } from "@/hooks/queries/useOrders";
 import { useUnreadNotificationCount } from "@/hooks/queries/useNotifications";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -72,6 +73,7 @@ export default function ProfileScreen() {
   const { globalSetting } = useSettings();
   const currency = globalSetting?.default_currency ?? "$";
   const { data: unreadCount } = useUnreadNotificationCount();
+  const { setMode } = useAppMode();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -304,6 +306,32 @@ export default function ProfileScreen() {
               onPress={() => router.push("/privacy-policy")}
             />
           </View>
+
+          {/* Switch to Delivery Mode */}
+          <Pressable
+            onPress={() => setMode("delivery")}
+            className="mt-4 flex-row items-center rounded-2xl border border-orange-200 bg-orange-50 px-4 py-4"
+            style={{
+              shadowColor: "rgba(234, 88, 12, 0.2)",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.08,
+              shadowRadius: 12,
+              elevation: 3,
+            }}
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-2xl bg-orange-100">
+              <Feather name="truck" size={20} color="#ea580c" />
+            </View>
+            <View className="ml-4 flex-1">
+              <Text className="text-base font-semibold text-orange-800">
+                Delivery Partner Mode
+              </Text>
+              <Text className="mt-0.5 text-xs text-orange-600">
+                Switch to delivery management app
+              </Text>
+            </View>
+            <Feather name="arrow-right" size={20} color="#ea580c" />
+          </Pressable>
 
           <Button
             variant="rose"

@@ -8,6 +8,7 @@ export * from "./coupons";
 export * from "./wishlist";
 export * from "./notifications";
 export * from "./tracking";
+export * from "./delivery";
 export * from "./settings";
 export * from "./http";
 
