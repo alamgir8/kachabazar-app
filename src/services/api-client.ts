@@ -16,7 +16,16 @@ export const onAuthError = (listener: AuthEventListener) => {
   return () => authEventListeners.delete(listener);
 };
 
+// Debounce guard – only fire auth error once per 3 seconds to prevent
+// multiple concurrent 401 responses from showing duplicate alerts.
+let authErrorCooldown = false;
+
 export const notifyAuthError = () => {
+  if (authErrorCooldown) return;
+  authErrorCooldown = true;
+  setTimeout(() => {
+    authErrorCooldown = false;
+  }, 3000);
   authEventListeners.forEach((listener) => listener());
 };
 
@@ -30,7 +39,7 @@ let refreshPromise: Promise<string | null> | null = null;
 export const setTokens = (
   accessToken: string,
   refreshToken: string,
-  expiresIn: number = 900 // 15 minutes default
+  expiresIn: number = 900, // 15 minutes default
 ) => {
   cachedAccessToken = accessToken;
   cachedRefreshToken = refreshToken;
@@ -161,7 +170,7 @@ export class ApiError extends Error {
     message: string,
     status: number,
     code?: string,
-    payload?: unknown
+    payload?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -193,7 +202,7 @@ export class ApiError extends Error {
  */
 export async function apiRequest<TResponse = unknown>(
   endpoint: string,
-  options: ApiRequestOptions = {}
+  options: ApiRequestOptions = {},
 ): Promise<TResponse> {
   const {
     method = "GET",
@@ -287,30 +296,30 @@ export async function apiRequest<TResponse = unknown>(
 export const api = {
   get: <T>(
     endpoint: string,
-    options?: Omit<ApiRequestOptions, "method" | "data">
+    options?: Omit<ApiRequestOptions, "method" | "data">,
   ) => apiRequest<T>(endpoint, { ...options, method: "GET" }),
 
   post: <T>(
     endpoint: string,
     data?: unknown,
-    options?: Omit<ApiRequestOptions, "method" | "data">
+    options?: Omit<ApiRequestOptions, "method" | "data">,
   ) => apiRequest<T>(endpoint, { ...options, method: "POST", data }),
 
   put: <T>(
     endpoint: string,
     data?: unknown,
-    options?: Omit<ApiRequestOptions, "method" | "data">
+    options?: Omit<ApiRequestOptions, "method" | "data">,
   ) => apiRequest<T>(endpoint, { ...options, method: "PUT", data }),
 
   patch: <T>(
     endpoint: string,
     data?: unknown,
-    options?: Omit<ApiRequestOptions, "method" | "data">
+    options?: Omit<ApiRequestOptions, "method" | "data">,
   ) => apiRequest<T>(endpoint, { ...options, method: "PATCH", data }),
 
   delete: <T>(
     endpoint: string,
-    options?: Omit<ApiRequestOptions, "method" | "data">
+    options?: Omit<ApiRequestOptions, "method" | "data">,
   ) => apiRequest<T>(endpoint, { ...options, method: "DELETE" }),
 };
 

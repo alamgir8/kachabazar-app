@@ -39,7 +39,7 @@ const resolveUrl = (endpoint: string) => {
 
 export async function request<TResponse = unknown, TBody = unknown>(
   endpoint: string,
-  { method = "GET", token, data, headers, signal }: RequestOptions = {}
+  { method = "GET", token, data, headers, signal }: RequestOptions = {},
 ): Promise<TResponse> {
   const url = resolveUrl(endpoint);
   const isFormData =
@@ -86,16 +86,10 @@ export async function request<TResponse = unknown, TBody = unknown>(
         ? String(payload.message)
         : response.statusText) || "Request failed";
 
-    // Check if this is an auth error (401, or JWT/token related message)
-    const isAuthError =
-      response.status === 401 ||
-      message.toLowerCase().includes("jwt") ||
-      message.toLowerCase().includes("token") ||
-      message.toLowerCase().includes("unauthorized") ||
-      message.toLowerCase().includes("expired");
-
-    if (isAuthError) {
-      // Notify auth system to log out the user
+    // Only treat HTTP 401 as an auth error – the new api-client
+    // handles token refresh; http.ts is the legacy client and should
+    // not aggressively interpret message content as auth failure.
+    if (response.status === 401) {
       notifyAuthError();
     }
 
@@ -112,23 +106,23 @@ export async function request<TResponse = unknown, TBody = unknown>(
 export const http = {
   get: <T>(
     endpoint: string,
-    options?: Omit<RequestOptions, "method" | "data">
+    options?: Omit<RequestOptions, "method" | "data">,
   ) => request<T>(endpoint, { ...options, method: "GET" }),
   post: <TResponse, TBody = unknown>(
     endpoint: string,
     data?: TBody,
-    options?: Omit<RequestOptions, "method" | "data">
+    options?: Omit<RequestOptions, "method" | "data">,
   ) =>
     request<TResponse, TBody>(endpoint, { ...options, method: "POST", data }),
   put: <TResponse, TBody = unknown>(
     endpoint: string,
     data?: TBody,
-    options?: Omit<RequestOptions, "method" | "data">
+    options?: Omit<RequestOptions, "method" | "data">,
   ) => request<TResponse, TBody>(endpoint, { ...options, method: "PUT", data }),
   patch: <TResponse, TBody = unknown>(
     endpoint: string,
     data?: TBody,
-    options?: Omit<RequestOptions, "method" | "data">
+    options?: Omit<RequestOptions, "method" | "data">,
   ) =>
     request<TResponse, TBody>(endpoint, {
       ...options,
@@ -137,6 +131,6 @@ export const http = {
     }),
   delete: <T>(
     endpoint: string,
-    options?: Omit<RequestOptions, "method" | "data">
+    options?: Omit<RequestOptions, "method" | "data">,
   ) => request<T>(endpoint, { ...options, method: "DELETE" }),
 };

@@ -10,7 +10,9 @@ import * as Font from "expo-font";
 import { useSegments, useRouter } from "expo-router";
 
 // Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // Ignore - view controller may not be registered yet
+});
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
@@ -50,7 +52,11 @@ const RootContent = () => {
   useEffect(() => {
     const maybeHideSplash = async () => {
       if (isReady && modeReady) {
-        await SplashScreen.hideAsync();
+        try {
+          await SplashScreen.hideAsync();
+        } catch {
+          // Ignore - splash screen may already be hidden
+        }
       }
     };
     void maybeHideSplash();
