@@ -50,7 +50,7 @@ export default function OrdersScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="bg-slate-50 px-5">
+      <Screen edges={["bottom"]} className="bg-slate-50 px-5">
         <ScreenHeader title="Orders" />
         <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-teal-50">
@@ -76,7 +76,10 @@ export default function OrdersScreen() {
 
   if (isLoading) {
     return (
-      <Screen className="items-center justify-center bg-slate-50 px-5">
+      <Screen
+        edges={["bottom"]}
+        className="items-center justify-center bg-slate-50 px-5"
+      >
         <ActivityIndicator size="large" color="#0f766e" />
         <Text className="mt-4 text-sm text-slate-500">
           Fetching your orders...
@@ -87,7 +90,7 @@ export default function OrdersScreen() {
 
   if (isError) {
     return (
-      <Screen className="bg-slate-50 px-5">
+      <Screen edges={["bottom"]} className="bg-slate-50 px-5">
         <ScreenHeader title="Orders" />
         <View className="mt-6 rounded-3xl bg-white p-8 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-50">

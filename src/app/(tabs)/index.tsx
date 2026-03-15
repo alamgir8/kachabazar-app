@@ -49,12 +49,12 @@ export default function HomeScreen() {
 
   const popularProducts = useMemo(
     () => productsQuery.data?.popularProducts ?? [],
-    [productsQuery.data?.popularProducts]
+    [productsQuery.data?.popularProducts],
   );
 
   const discountedProducts = useMemo(
     () => productsQuery.data?.discountedProducts ?? [],
-    [productsQuery.data?.discountedProducts]
+    [productsQuery.data?.discountedProducts],
   );
 
   // console.log("categoriesQuery?.data", categoriesQuery?.data);
@@ -65,7 +65,7 @@ export default function HomeScreen() {
 
   if (isError) {
     return (
-      <Screen className="px-5 pt-20">
+      <Screen edges={["bottom"]} className="px-5">
         <ErrorState
           message="We could not load the freshest picks. Pull to refresh or try again shortly."
           onRetry={refresh}

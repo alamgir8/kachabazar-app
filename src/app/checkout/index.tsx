@@ -45,7 +45,7 @@ export default function CheckoutScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="px-4">
+      <Screen edges={["bottom"]} className="px-4">
         <ScreenHeader title="Checkout" />
         <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">
@@ -67,7 +67,7 @@ export default function CheckoutScreen() {
 
   if (isEmpty) {
     return (
-      <Screen className="px-4">
+      <Screen edges={["bottom"]} className="px-4">
         <ScreenHeader title="Checkout" />
         <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">

@@ -26,7 +26,7 @@ export default function TrackingSearchScreen() {
   };
 
   return (
-    <Screen className="bg-slate-50">
+    <Screen edges={["bottom"]} className="bg-slate-50">
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 16,

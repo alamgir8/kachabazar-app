@@ -94,7 +94,7 @@ export default function ProductScreen() {
 
   if (productQuery.isError || !product) {
     return (
-      <Screen>
+      <Screen edges={["bottom"]}>
         <ErrorState
           title="Product not found"
           message="We could not load this product. Try exploring other collections."

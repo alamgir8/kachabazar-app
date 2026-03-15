@@ -69,7 +69,7 @@ export default function CategoriesScreen() {
 
   if (categoriesQuery.isError) {
     return (
-      <Screen className="px-5 pt-20">
+      <Screen edges={["bottom"]} className="px-5">
         <ErrorState onRetry={() => categoriesQuery.refetch()} />
       </Screen>
     );

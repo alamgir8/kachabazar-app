@@ -60,7 +60,7 @@ export default function TrackingScreen() {
   // If no tracking ID, show search form
   if (!activeTrackingId) {
     return (
-      <Screen className="bg-slate-50">
+      <Screen edges={["bottom"]} className="bg-slate-50">
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: 16,
@@ -143,7 +143,10 @@ export default function TrackingScreen() {
   // Loading state
   if (isLoading) {
     return (
-      <Screen className="items-center justify-center bg-slate-50">
+      <Screen
+        edges={["bottom"]}
+        className="items-center justify-center bg-slate-50"
+      >
         <View className="items-center">
           <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-teal-50">
             <ActivityIndicator size="large" color="#0f766e" />
@@ -159,7 +162,7 @@ export default function TrackingScreen() {
   // Error state
   if (isError || !data) {
     return (
-      <Screen className="bg-slate-50 px-5">
+      <Screen edges={["bottom"]} className="bg-slate-50 px-5">
         <ScreenHeader title="Track Order" />
         <View
           className="mt-6 rounded-3xl bg-white p-8 shadow-lg"

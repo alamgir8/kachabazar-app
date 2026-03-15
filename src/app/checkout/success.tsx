@@ -137,7 +137,7 @@ export default function OrderSuccessScreen() {
   ];
 
   return (
-    <Screen innerClassName="px-0">
+    <Screen edges={["bottom"]} innerClassName="px-0">
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 20,

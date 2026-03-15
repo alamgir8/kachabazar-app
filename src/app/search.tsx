@@ -128,7 +128,7 @@ export default function SearchScreen() {
 
   if (productsQuery.isError) {
     return (
-      <Screen className="px-5 pt-20">
+      <Screen edges={["bottom"]} className="px-5">
         <ErrorState
           message="We could not fetch products right now."
           onRetry={() => productsQuery.refetch()}
