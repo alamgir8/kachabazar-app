@@ -23,6 +23,7 @@ import {
   useUpdateTrackingStatus,
 } from "@/hooks/queries/useDelivery";
 import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 
 const NEXT_STATUS_MAP: Record<string, { value: string; label: string }> = {
   "order-placed": { value: "confirmed", label: "Confirm Order" },
@@ -122,27 +123,7 @@ export default function DeliveryOrderDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Back + Title */}
-        <Pressable
-          onPress={() => router.back()}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 16,
-            paddingVertical: 8,
-          }}
-        >
-          <Feather name="arrow-left" size={20} color="#64748b" />
-          <Text
-            style={{
-              marginLeft: 8,
-              fontSize: 16,
-              fontWeight: "700",
-              color: "#334155",
-            }}
-          >
-            Order #{order.invoice}
-          </Text>
-        </Pressable>
+        <ScreenHeader title={`Order #${order.invoice}`} />
 
         {/* Status Banner */}
         <LinearGradient
@@ -151,7 +132,7 @@ export default function DeliveryOrderDetailScreen() {
               ? ["#22c55e", "#16a34a"]
               : isTerminal
                 ? ["#ef4444", "#dc2626"]
-                : (DELIVERY_COLORS.gradientHorizontal)
+                : DELIVERY_COLORS.gradientHorizontal
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -208,7 +189,7 @@ export default function DeliveryOrderDetailScreen() {
               colors={
                 isUpdating
                   ? [DELIVERY_COLORS.loadingBg, DELIVERY_COLORS.loadingBg]
-                  : (DELIVERY_COLORS.gradientHorizontal)
+                  : DELIVERY_COLORS.gradientHorizontal
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -623,7 +604,7 @@ export default function DeliveryOrderDetailScreen() {
                         ? ["#ef4444", "#dc2626"]
                         : commentModal.status === "delivered"
                           ? ["#22c55e", "#16a34a"]
-                          : (DELIVERY_COLORS.gradientHorizontal)
+                          : DELIVERY_COLORS.gradientHorizontal
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}

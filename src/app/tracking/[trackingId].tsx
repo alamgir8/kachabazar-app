@@ -18,7 +18,7 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 import Button from "@/components/ui/Button";
 import {
   TrackingTimeline,
@@ -68,7 +68,7 @@ export default function TrackingScreen() {
             paddingBottom: 40,
           }}
         >
-          <BackButton subTitle="Track Order" />
+          <ScreenHeader title="Track Order" />
           <View className="mt-6">
             {/* Hero card */}
             <View
@@ -159,8 +159,8 @@ export default function TrackingScreen() {
   // Error state
   if (isError || !data) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <BackButton subTitle="Track Order" />
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Track Order" />
         <View
           className="mt-6 rounded-3xl bg-white p-8 shadow-lg"
           style={{
@@ -207,9 +207,9 @@ export default function TrackingScreen() {
         }}
       >
         <View className="px-1">
-          <BackButton
-            subTitle="Track Order"
-            subDescription={`Tracking ID: ${tracking?.trackingId ?? activeTrackingId}`}
+          <ScreenHeader
+            title={`Tracking ID: ${tracking?.trackingId ?? activeTrackingId}`}
+            subtitle="Track Order"
           />
           <View className="h-4" />
 

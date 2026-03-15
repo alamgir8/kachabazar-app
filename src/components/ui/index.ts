@@ -14,6 +14,7 @@ export { EnhancedInput, TextArea } from "./EnhancedInput";
 export { SearchBar } from "./SearchBar";
 export { QuantityStepper } from "./QuantityStepper";
 export { BackButton } from "./BackButton";
+export { ScreenHeader } from "./ScreenHeader";
 export { FilterChip } from "./FilterChip";
 export { SectionHeader } from "./SectionHeader";
 export { Surface } from "./Surface";

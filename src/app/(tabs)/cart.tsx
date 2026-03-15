@@ -11,7 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import Button from "@/components/ui/Button";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 import { CartItem } from "@/types";
 
 // Memoized separator component
@@ -34,7 +34,7 @@ export default function CartScreen() {
   // Optimized renderItem callback
   const renderItem = useCallback(
     ({ item }: { item: CartItem }) => <CartItemRow item={item} />,
-    []
+    [],
   );
 
   // Key extractor for FlatList
@@ -46,8 +46,7 @@ export default function CartScreen() {
       contentContainerClassName="flex-1 justify-between pb-4"
       innerClassName="flex-1"
     >
-      {/* Back Button */}
-      <BackButton subTitle="Your Basket" subDescription="Shopping Cart" />
+      <ScreenHeader title="Shopping Cart" subtitle="Your Basket" />
       {isEmpty ? (
         <View className="flex-1 items-center justify-center px-1">
           {/* Decorative background gradient */}

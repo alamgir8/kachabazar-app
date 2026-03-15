@@ -16,7 +16,7 @@ import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCurrency } from "@/utils";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 import Button from "@/components/ui/Button";
 import { exportOrderInvoicePdf } from "@/services/order-invoice-pdf";
 
@@ -123,8 +123,8 @@ export default function OrderDetailScreen() {
 
   if (isError || !order) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <BackButton subTitle="Order Details" />
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Order Details" />
         <View className="mt-6 rounded-3xl bg-white p-8 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-50">
             <Feather name="alert-circle" size={28} color="#dc2626" />
@@ -158,10 +158,9 @@ export default function OrderDetailScreen() {
         }}
       >
         <View className="px-1">
-          {/* Back Button */}
-          <BackButton
-            subTitle="Order Details"
-            subDescription={`Invoice #${order.invoice ?? "--"}`}
+          <ScreenHeader
+            title={`Invoice #${order.invoice ?? "--"}`}
+            subtitle="Order Details"
           />
           <View className="h-4" />
 

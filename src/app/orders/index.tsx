@@ -14,7 +14,7 @@ import { useOrders } from "@/hooks/queries/useOrders";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import Button from "@/components/ui/Button";
 
 export default function OrdersScreen() {
@@ -50,8 +50,9 @@ export default function OrdersScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-lg">
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Orders" />
+        <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-teal-50">
             <Feather name="package" size={28} color="#0f766e" />
           </View>
@@ -86,8 +87,8 @@ export default function OrdersScreen() {
 
   if (isError) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <BackButton subTitle="Orders" />
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Orders" />
         <View className="mt-6 rounded-3xl bg-white p-8 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-50">
             <Feather name="alert-circle" size={28} color="#dc2626" />
@@ -132,11 +133,7 @@ export default function OrdersScreen() {
         }}
         ListHeaderComponent={
           <View className="mb-6 px-1">
-            {/* Header */}
-            <BackButton
-              subTitle="Orders"
-              subDescription="Check your order history"
-            />
+            <ScreenHeader title="Check your order history" subtitle="Orders" />
             <View className="h-3" />
 
             {/* Order Stats */}

@@ -13,7 +13,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton, EnhancedInput } from "@/components/ui";
+import { ScreenHeader, EnhancedInput } from "@/components/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 import { loginSchema, type LoginInput } from "@/utils/validation";
@@ -58,10 +58,9 @@ export default function LoginScreen() {
     >
       <Screen scrollable edges={["bottom"]}>
         <View className="">
-          {/* Back Button */}
-          <BackButton
-            subTitle="Join KachaBazar"
-            subDescription="Login to your account"
+          <ScreenHeader
+            title="Login to your account"
+            subtitle="Join KachaBazar"
           />
 
           {/* <Text className="mt-4 text-sm text-slate-500">

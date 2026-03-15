@@ -16,7 +16,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 import Button from "@/components/ui/Button";
 import { NotificationItem } from "@/components/notifications";
 import { useAuth } from "@/contexts/AuthContext";
@@ -72,8 +72,9 @@ export default function NotificationsScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-lg">
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Notifications" />
+        <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-teal-50">
             <Feather name="bell" size={28} color="#0f766e" />
           </View>
@@ -108,8 +109,8 @@ export default function NotificationsScreen() {
 
   if (isError) {
     return (
-      <Screen className="bg-slate-50 px-5 pt-24">
-        <BackButton subTitle="Notifications" />
+      <Screen className="bg-slate-50 px-5">
+        <ScreenHeader title="Notifications" />
         <View className="mt-6 rounded-3xl bg-white p-8 shadow-lg">
           <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-red-50">
             <Feather name="alert-circle" size={28} color="#dc2626" />
@@ -155,11 +156,11 @@ export default function NotificationsScreen() {
         }}
         ListHeaderComponent={
           <View className="mb-4 px-1">
-            <BackButton
-              subTitle="Notifications"
-              subDescription={
+            <ScreenHeader
+              title={
                 unreadCount > 0 ? `${unreadCount} unread` : "All caught up"
               }
+              subtitle="Notifications"
             />
 
             {/* Mark all as read */}

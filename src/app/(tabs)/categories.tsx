@@ -8,7 +8,7 @@ import { ErrorState } from "@/components/common/ErrorState";
 import { useCategories } from "@/hooks/queries/useCategories";
 import { Category } from "@/types";
 import { getLocalizedValue } from "@/utils";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 
 const CategoryTile: React.FC<{ category: Category; onPress: () => void }> = ({
   category,
@@ -93,11 +93,7 @@ export default function CategoriesScreen() {
         }}
         ListHeaderComponent={
           <View className="mb-4">
-            {/* Back Button */}
-            <BackButton
-              subTitle="Categories"
-              subDescription="Pick your categories"
-            />
+            <ScreenHeader title="Pick your categories" subtitle="Categories" />
 
             <View className="h-3" />
 

@@ -14,7 +14,7 @@ import { z } from "zod";
 
 import { Screen } from "@/components/layout/Screen";
 import {
-  BackButton,
+  ScreenHeader,
   EnhancedInput,
   PasswordStrengthIndicator,
 } from "@/components/ui";
@@ -29,7 +29,7 @@ const phoneSchema = z.object({
     .min(10, "Phone number must be at least 10 digits")
     .regex(
       /^\+?[1-9]\d{6,14}$/,
-      "Please enter a valid phone number with country code"
+      "Please enter a valid phone number with country code",
     ),
   name: z.string().min(2, "Name must be at least 2 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -126,7 +126,7 @@ export default function PhoneRegisterScreen() {
         otpInputRefs.current[index + 1]?.focus();
       }
     },
-    [otpDigits, otpForm]
+    [otpDigits, otpForm],
   );
 
   const handleOtpKeyPress = useCallback(
@@ -135,7 +135,7 @@ export default function PhoneRegisterScreen() {
         otpInputRefs.current[index - 1]?.focus();
       }
     },
-    [otpDigits]
+    [otpDigits],
   );
 
   const handleOtpSubmit = async () => {
@@ -215,13 +215,13 @@ export default function PhoneRegisterScreen() {
     >
       <Screen scrollable edges={["bottom"]}>
         <View className="">
-          <BackButton
-            subTitle={step === "phone" ? "Sign Up with Phone" : "Verify Phone"}
-            subDescription={
+          <ScreenHeader
+            title={
               step === "phone"
                 ? "Register using your phone number"
                 : `Enter the 6-digit code sent to ${phoneData?.phone}`
             }
+            subtitle={step === "phone" ? "Sign Up with Phone" : "Verify Phone"}
           />
 
           <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">

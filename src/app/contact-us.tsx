@@ -18,7 +18,7 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
 import Button from "@/components/ui/Button";
-import { BackButton, EnhancedInput, TextArea } from "@/components/ui";
+import { ScreenHeader, EnhancedInput, TextArea } from "@/components/ui";
 import { contactFormSchema, type ContactFormInput } from "@/utils/validation";
 
 export default function ContactUsScreen() {
@@ -53,7 +53,7 @@ export default function ContactUsScreen() {
       reset();
       Alert.alert(
         "Success",
-        "Your message has been sent successfully. We will contact you shortly."
+        "Your message has been sent successfully. We will contact you shortly.",
       );
     } catch (err) {
       setError("Unable to send message. Please try again.");
@@ -70,10 +70,9 @@ export default function ContactUsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Back Button */}
-        <BackButton
-          subTitle={"Last updated: " + new Date().toLocaleDateString()}
-          subDescription={getLocalizedValue(contactUs?.title) || "Contact Us"}
+        <ScreenHeader
+          title={getLocalizedValue(contactUs?.title) || "Contact Us"}
+          subtitle={"Last updated: " + new Date().toLocaleDateString()}
         />
 
         {/* Contact Cards */}

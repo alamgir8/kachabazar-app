@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { useAuth } from "@/contexts/AuthContext";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import Button from "@/components/ui/Button";
 
 interface ProfileFormValues {
@@ -72,7 +72,7 @@ export default function EditProfileScreen() {
     if (status !== "granted") {
       Alert.alert(
         "Permission Required",
-        "Sorry, we need camera roll permissions to upload images."
+        "Sorry, we need camera roll permissions to upload images.",
       );
       return false;
     }
@@ -108,7 +108,7 @@ export default function EditProfileScreen() {
           if (selectedImage.width < 100 || selectedImage.height < 100) {
             Alert.alert(
               "Error",
-              "Image dimensions should be at least 100x100 pixels"
+              "Image dimensions should be at least 100x100 pixels",
             );
             return;
           }
@@ -128,7 +128,7 @@ export default function EditProfileScreen() {
     if (status !== "granted") {
       Alert.alert(
         "Permission Required",
-        "Sorry, we need camera permissions to take photos."
+        "Sorry, we need camera permissions to take photos.",
       );
       return;
     }
@@ -169,7 +169,7 @@ export default function EditProfileScreen() {
           style: "cancel",
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -191,7 +191,7 @@ export default function EditProfileScreen() {
     >
       <Screen edges={["bottom"]} scrollable>
         <View className="px-1">
-          <BackButton subTitle="Profile" subDescription="Update your details" />
+          <ScreenHeader title="Update your details" subtitle="Profile" />
           <View className="h-5" />
 
           <View className="mt-8 rounded-3xl bg-white p-6 shadow-[0_20px_45px_rgba(15,118,110,0.1)]">

@@ -14,7 +14,7 @@ import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { FilterChip } from "@/components/ui/FilterChip";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { CategoryDrawer } from "@/components/drawers/CategoryDrawer";
@@ -44,7 +44,7 @@ export default function SearchScreen() {
 
   const [search, setSearch] = useState(params.q ?? "");
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    params.category
+    params.category,
   );
   const [selectedCategoryName, setSelectedCategoryName] = useState<
     string | undefined
@@ -75,12 +75,12 @@ export default function SearchScreen() {
 
     if (sort === "price-asc") {
       return [...dataset].sort(
-        (a, b) => (a.prices?.price ?? 0) - (b.prices?.price ?? 0)
+        (a, b) => (a.prices?.price ?? 0) - (b.prices?.price ?? 0),
       );
     }
     if (sort === "price-desc") {
       return [...dataset].sort(
-        (a, b) => (b.prices?.price ?? 0) - (a.prices?.price ?? 0)
+        (a, b) => (b.prices?.price ?? 0) - (a.prices?.price ?? 0),
       );
     }
     if (sort === "latest") {
@@ -116,7 +116,7 @@ export default function SearchScreen() {
   // Optimized renderItem callback
   const renderItem = useCallback(
     ({ item }: { item: Product }) => <ProductCard product={item} />,
-    []
+    [],
   );
 
   // Key extractor for FlatList
@@ -167,10 +167,9 @@ export default function SearchScreen() {
         updateCellsBatchingPeriod={50}
         ListHeaderComponent={
           <View className="mb-4">
-            {/* Back Button */}
-            <BackButton
-              subTitle="Explore"
-              subDescription={headerTitle || "Discover everything"}
+            <ScreenHeader
+              title={headerTitle || "Discover everything"}
+              subtitle="Explore"
             />
 
             <View className="h-3" />

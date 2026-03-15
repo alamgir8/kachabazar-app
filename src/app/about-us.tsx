@@ -6,7 +6,7 @@ import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 
 export default function AboutUsScreen() {
   const { storeCustomization, isLoading } = useSettings();
@@ -22,10 +22,9 @@ export default function AboutUsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Back Button */}
-        <BackButton
-          subTitle={"Last updated: " + new Date().toLocaleDateString()}
-          subDescription={getLocalizedValue(aboutUs?.title) || "About Us"}
+        <ScreenHeader
+          title={getLocalizedValue(aboutUs?.title) || "About Us"}
+          subtitle={"Last updated: " + new Date().toLocaleDateString()}
         />
 
         {/* Content */}

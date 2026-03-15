@@ -15,7 +15,7 @@ import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { LoadingState } from "@/components/common/LoadingState";
@@ -150,13 +150,13 @@ export default function ProductScreen() {
             size={14}
             color="#f59e0b"
             style={{ marginRight: 2 }}
-          />
+          />,
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <View key={i} style={{ marginRight: 2 }}>
             <FontAwesome name="star-half-full" size={14} color="#f59e0b" />
-          </View>
+          </View>,
         );
       } else {
         stars.push(
@@ -166,7 +166,7 @@ export default function ProductScreen() {
             size={14}
             color="#e5e7eb"
             style={{ marginRight: 2 }}
-          />
+          />,
         );
       }
     }
@@ -201,16 +201,20 @@ export default function ProductScreen() {
       contentContainerClassName="pb-10 pt-4"
     >
       {/* Header with Back Button */}
-      <View className="absolute top-6 left-5 right-5 z-10 flex-row items-center justify-between">
-        <BackButton />
-        <View className="flex-row gap-2">
-          <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
-            <Feather name="share-2" size={18} color="#475569" />
-          </View>
-          <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
-            <Feather name="heart" size={18} color="#475569" />
-          </View>
-        </View>
+      <View className="px-5">
+        <ScreenHeader
+          title="Product Details"
+          rightContent={
+            <View className="flex-row gap-2">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
+                <Feather name="share-2" size={18} color="#475569" />
+              </View>
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm">
+                <Feather name="heart" size={18} color="#475569" />
+              </View>
+            </View>
+          }
+        />
       </View>
 
       {/* Product Images Carousel with Indicators */}
@@ -222,7 +226,7 @@ export default function ProductScreen() {
           style={{ width: carouselWidth }}
           onScroll={(event) => {
             const index = Math.round(
-              event.nativeEvent.contentOffset.x / carouselWidth
+              event.nativeEvent.contentOffset.x / carouselWidth,
             );
             setActiveImageIndex(index);
           }}
@@ -303,7 +307,7 @@ export default function ProductScreen() {
               <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
                 {product.category && typeof product.category === "object"
                   ? getLocalizedValue(
-                      product.category.name as Record<string, string>
+                      product.category.name as Record<string, string>,
                     )
                   : "Fresh Pick"}
               </Text>
@@ -627,7 +631,7 @@ export default function ProductScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     const currentReview: any = reviews.find((r: any) =>
-                      r.images?.includes(zoomedImage)
+                      r.images?.includes(zoomedImage),
                     );
                     if (currentReview?.images) {
                       handlePrevZoomImage(currentReview.images);
@@ -641,7 +645,7 @@ export default function ProductScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     const currentReview: any = reviews.find((r: any) =>
-                      r.images?.includes(zoomedImage)
+                      r.images?.includes(zoomedImage),
                     );
                     if (currentReview?.images) {
                       handleNextZoomImage(currentReview.images);

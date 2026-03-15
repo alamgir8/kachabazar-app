@@ -14,7 +14,7 @@ import { z } from "zod";
 
 import { Screen } from "@/components/layout/Screen";
 import {
-  BackButton,
+  ScreenHeader,
   EnhancedInput,
   PasswordStrengthIndicator,
 } from "@/components/ui";
@@ -103,7 +103,7 @@ export default function EmailRegisterScreen() {
         otpInputRefs.current[index + 1]?.focus();
       }
     },
-    [otpDigits]
+    [otpDigits],
   );
 
   const handleOtpKeyPress = useCallback(
@@ -112,7 +112,7 @@ export default function EmailRegisterScreen() {
         otpInputRefs.current[index - 1]?.focus();
       }
     },
-    [otpDigits]
+    [otpDigits],
   );
 
   const handleOtpSubmit = async () => {
@@ -191,13 +191,13 @@ export default function EmailRegisterScreen() {
     >
       <Screen scrollable edges={["bottom"]}>
         <View className="">
-          <BackButton
-            subTitle={step === "email" ? "Sign Up with Email" : "Verify Email"}
-            subDescription={
+          <ScreenHeader
+            title={
               step === "email"
                 ? "Create your account with email"
                 : `Enter the 6-digit code sent to ${emailData?.email}`
             }
+            subtitle={step === "email" ? "Sign Up with Email" : "Verify Email"}
           />
 
           <View className="mt-6 rounded-2xl px-1 py-4 shadow-sm">

@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 
 export default function TrackingSearchScreen() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function TrackingSearchScreen() {
           paddingBottom: 40,
         }}
       >
-        <BackButton subTitle="Track Order" />
+        <ScreenHeader title="Track Order" />
         <View className="mt-6">
           {/* Hero card */}
           <View

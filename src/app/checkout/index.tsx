@@ -11,7 +11,7 @@ import { Controller } from "react-hook-form";
 import { useRouter } from "expo-router";
 
 import { Screen } from "@/components/layout/Screen";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { EnhancedInput } from "@/components/ui/EnhancedInput";
 import Button from "@/components/ui/Button";
 import { LoadingState } from "@/components/common/LoadingState";
@@ -45,8 +45,9 @@ export default function CheckoutScreen() {
 
   if (!isAuthenticated) {
     return (
-      <Screen className="px-4 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-lg">
+      <Screen className="px-4">
+        <ScreenHeader title="Checkout" />
+        <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">
             Almost there!
           </Text>
@@ -66,8 +67,9 @@ export default function CheckoutScreen() {
 
   if (isEmpty) {
     return (
-      <Screen className="px-4 pt-24">
-        <View className="rounded-3xl bg-white p-10 shadow-lg">
+      <Screen className="px-4">
+        <ScreenHeader title="Checkout" />
+        <View className="mt-8 rounded-3xl bg-white p-10 shadow-lg">
           <Text className="text-lg font-semibold text-slate-900">
             Your cart is empty
           </Text>
@@ -96,11 +98,7 @@ export default function CheckoutScreen() {
     >
       <Screen scrollable edges={["bottom"]}>
         <View>
-          {/* Back Button */}
-          <BackButton
-            subTitle="Checkout"
-            subDescription="Complete your order"
-          />
+          <ScreenHeader title="Complete your order" subtitle="Checkout" />
 
           {/* Shipping Details Section */}
           <View className="mt-6 rounded-3xl bg-white px-4 py-6 shadow-lg">
@@ -308,7 +306,7 @@ export default function CheckoutScreen() {
                         "rounded-2xl border p-4",
                         value === option.value
                           ? "border-teal-500 bg-teal-50"
-                          : "border-slate-200 bg-slate-50"
+                          : "border-slate-200 bg-slate-50",
                       )}
                     >
                       <View className="flex-row items-center justify-between">
@@ -325,7 +323,7 @@ export default function CheckoutScreen() {
                             "h-6 w-6 items-center justify-center rounded-full border-2",
                             value === option.value
                               ? "border-teal-500 bg-white"
-                              : "border-slate-300 bg-white"
+                              : "border-slate-300 bg-white",
                           )}
                         >
                           {value === option.value ? (
@@ -375,7 +373,7 @@ export default function CheckoutScreen() {
                             "rounded-2xl border p-4",
                             value === method.value
                               ? "border-teal-500 bg-teal-50"
-                              : "border-slate-200 bg-slate-50"
+                              : "border-slate-200 bg-slate-50",
                           )}
                         >
                           <View className="flex-row items-center justify-between">
@@ -392,7 +390,7 @@ export default function CheckoutScreen() {
                                 "h-6 w-6 items-center justify-center rounded-full border-2",
                                 value === method.value
                                   ? "border-teal-500 bg-white"
-                                  : "border-slate-300 bg-white"
+                                  : "border-slate-300 bg-white",
                               )}
                             >
                               {value === method.value ? (

@@ -6,7 +6,7 @@ import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLocalizedValue } from "@/utils";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 
 export default function PrivacyPolicyScreen() {
   const router = useRouter();
@@ -23,12 +23,9 @@ export default function PrivacyPolicyScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Back Button */}
-        <BackButton
-          subTitle={"Last updated: " + new Date().toLocaleDateString()}
-          subDescription={
-            getLocalizedValue(privacyData?.title) || "Privacy Policy"
-          }
+        <ScreenHeader
+          title={getLocalizedValue(privacyData?.title) || "Privacy Policy"}
+          subtitle={"Last updated: " + new Date().toLocaleDateString()}
         />
 
         {/* Content */}

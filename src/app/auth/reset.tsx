@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import Button from "@/components/ui/Button";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 
 // Store URL - should match your production store URL
 const STORE_URL = process.env.EXPO_PUBLIC_STORE_URL || "http://localhost:3000";
@@ -24,11 +24,7 @@ export default function ResetPasswordScreen() {
   return (
     <Screen scrollable edges={["bottom"]}>
       <View className="">
-        {/* Back Button */}
-        <BackButton
-          subTitle="Password Reset"
-          subDescription="Reset your password"
-        />
+        <ScreenHeader title="Reset your password" subtitle="Password Reset" />
 
         <Text className="mt-3 text-sm text-slate-500">
           For security reasons, password reset is handled through our secure web

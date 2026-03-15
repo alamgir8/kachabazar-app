@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/layout/Screen";
 import { ProductCard } from "@/components/cards/ProductCard";
 import { useProducts } from "@/hooks/queries/useProducts";
-import { BackButton } from "@/components/ui/BackButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Product } from "@/types";
 
 export default function OffersScreen() {
@@ -20,7 +20,7 @@ export default function OffersScreen() {
         <ProductCard product={item} layout="grid" />
       </View>
     ),
-    []
+    [],
   );
 
   // Key extractor for FlatList
@@ -48,10 +48,7 @@ export default function OffersScreen() {
         updateCellsBatchingPeriod={50}
         ListHeaderComponent={
           <View className="mb-4">
-            <BackButton
-              subTitle="Offers"
-              subDescription="Save more on essential"
-            />
+            <ScreenHeader title="Save more on essential" subtitle="Offers" />
 
             {isError ? (
               <Text className="mt-3 text-sm text-red-200">

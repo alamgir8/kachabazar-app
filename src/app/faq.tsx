@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/layout/Screen";
 import { LoadingState } from "@/components/common/LoadingState";
 import { useSettings } from "@/contexts/SettingsContext";
-import { BackButton } from "@/components/ui";
+import { ScreenHeader } from "@/components/ui";
 
 const FAQItem = ({
   question,
@@ -106,11 +106,7 @@ export default function FAQScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
       >
-        {/* Back Button */}
-        <BackButton
-          subTitle="Frequently Asked Questions"
-          subDescription="FAQs"
-        />
+        <ScreenHeader title="FAQs" subtitle="Frequently Asked Questions" />
 
         {/* FAQ List */}
         <View className="px-1 py-6">

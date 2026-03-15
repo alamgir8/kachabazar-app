@@ -8,6 +8,7 @@ import { useOrder } from "@/hooks/queries/useOrders";
 import { useSettings } from "@/contexts/SettingsContext";
 import { formatCurrency } from "@/utils";
 import Button from "@/components/ui/Button";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 
 export default function OrderSuccessScreen() {
   const params = useLocalSearchParams<{ orderId?: string }>();
@@ -140,11 +141,15 @@ export default function OrderSuccessScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 20,
-          paddingTop: 60,
+          paddingTop: 12,
           paddingBottom: 120,
         }}
         showsVerticalScrollIndicator={false}
       >
+        <ScreenHeader
+          title="Order Confirmed"
+          onBack={() => router.replace("/(tabs)")}
+        />
         {/* Confetti particles */}
         {confettiAnims.map((anim, index) => (
           <Animated.View
