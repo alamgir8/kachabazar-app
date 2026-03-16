@@ -4,7 +4,7 @@ const IS_STAGING = process.env.EXPO_PUBLIC_ENV === "staging";
 export default {
   expo: {
     name: IS_DEV ? "KachaBazar (Dev)" : "KachaBazar",
-    slug: "kachabazar-mobile",
+    slug: "kachabazar",
     scheme: "kachabazar",
     version: "1.0.0",
     orientation: "portrait",
