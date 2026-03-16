@@ -807,19 +807,19 @@ export default function ProductScreen() {
             )}
           </View>
         )}
-
-        {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <View className="mt-8">
-            <ProductCarousel
-              title="You might also like"
-              subtitle="Complementary picks curated for you"
-              products={relatedProducts}
-              onSeeAll={() => router.push("/search")}
-            />
-          </View>
-        )}
       </View>
+
+      {/* Related Products — outside mx-4 wrapper so the carousel can scroll full-width */}
+      {relatedProducts.length > 0 && (
+        <View className="mt-8">
+          <ProductCarousel
+            title="You might also like"
+            subtitle="Complementary picks curated for you"
+            products={relatedProducts}
+            onSeeAll={() => router.push("/search")}
+          />
+        </View>
+      )}
 
       {/* Sticky CTA */}
       {/* Removed as per request */}
