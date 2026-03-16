@@ -57,11 +57,13 @@ export interface Review {
   _id: string;
   rating: number;
   review: string;
+  comment?: string;
   user: {
     _id: string;
     name: string;
     image?: string;
   };
+  images?: string[];
   createdAt: string;
 }
 

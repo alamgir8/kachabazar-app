@@ -49,9 +49,12 @@ export default function ProductScreen() {
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [reviewsExpanded, setReviewsExpanded] = useState(false);
+  const [reviewPage, setReviewPage] = useState(1);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [zoomedImageIndex, setZoomedImageIndex] = useState(0);
+
+  const REVIEWS_PER_PAGE = 5;
 
   const product = productQuery.data;
   const reviews = relatedQuery.data?.reviews ?? [];
@@ -191,7 +194,17 @@ export default function ProductScreen() {
     setZoomedImageIndex(prevIndex);
   };
 
-  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3);
+  const totalReviewPages = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
+  const paginatedReviews = reviews.slice(
+    (reviewPage - 1) * REVIEWS_PER_PAGE,
+    reviewPage * REVIEWS_PER_PAGE,
+  );
+
+  // Rating distribution for the summary bar
+  const ratingDistribution = [5, 4, 3, 2, 1].map((star) => ({
+    star,
+    count: reviews.filter((r: any) => Math.round(r.rating) === star).length,
+  }));
 
   return (
     <Screen
@@ -471,118 +484,326 @@ export default function ProductScreen() {
           )}
 
           {/* Product Tags */}
-          {product.tag && product.tag.length > 0 && (
+          {product.tag && product.tag.length > 0 ? (
             <View className="mt-4 pt-4 border-t border-slate-100">
               <Tags product={product} />
             </View>
-          )}
+          ) : null}
         </View>
 
-        {/* Reviews Section */}
+        {/* Reviews Section — Collapsible Accordion */}
         {reviews.length > 0 && (
           <View className="mt-4 mx-4">
-            <View className="mb-3 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4">
-              <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="text-lg font-bold text-slate-900">
-                    Customer Reviews
-                  </Text>
-                  <View className="flex-row items-center gap-2 mt-1">
-                    <View className="flex-row items-center">
-                      {renderStars(product.average_rating || 0)}
-                    </View>
-                    <Text className="text-sm font-semibold text-slate-600">
-                      {product.average_rating?.toFixed(1) || "0.0"} out of 5
+            {/* Accordion Header (always visible) */}
+            <Pressable
+              onPress={() => {
+                setReviewsExpanded(!reviewsExpanded);
+                if (!reviewsExpanded) setReviewPage(1);
+              }}
+              className="rounded-2xl bg-white border border-slate-100 overflow-hidden"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+                elevation: 2,
+              }}
+            >
+              <View className="px-5 py-4 flex-row items-center justify-between">
+                <View className="flex-row items-center gap-3 flex-1">
+                  <View className="h-10 w-10 rounded-full bg-amber-50 items-center justify-center">
+                    <FontAwesome name="star" size={18} color="#f59e0b" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-bold text-slate-900">
+                      Customer Reviews
                     </Text>
+                    <View className="flex-row items-center gap-2 mt-0.5">
+                      <View className="flex-row">
+                        {renderStars(product.average_rating || 0)}
+                      </View>
+                      <Text className="text-xs font-semibold text-slate-500">
+                        {(product.average_rating || 0).toFixed(1)} ·{" "}
+                        {reviews.length}{" "}
+                        {reviews.length === 1 ? "review" : "reviews"}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-                <View className="items-center justify-center h-14 w-14 rounded-full bg-white shadow-sm">
-                  <Text className="text-2xl font-bold text-amber-600">
-                    {reviews.length}
-                  </Text>
-                  <Text className="text-xs text-slate-500 -mt-1">
-                    {reviews.length === 1 ? "review" : "reviews"}
-                  </Text>
+                <View className="h-8 w-8 rounded-full bg-slate-100 items-center justify-center">
+                  <Feather
+                    name={reviewsExpanded ? "chevron-up" : "chevron-down"}
+                    size={18}
+                    color="#475569"
+                  />
                 </View>
               </View>
-            </View>
+            </Pressable>
 
-            <View className="space-y-3">
-              {displayedReviews.map((review: any) => (
-                <View
-                  key={review._id}
-                  className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm"
-                >
-                  <View className="mb-3 flex-row items-start justify-between">
-                    <View className="flex-1">
-                      <View className="flex-row items-center gap-2 mb-1">
-                        <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-100">
+            {/* Expanded Reviews Content */}
+            {reviewsExpanded && (
+              <View className="mt-3">
+                {/* Rating Distribution */}
+                <View className="rounded-2xl bg-white border border-slate-100 p-5 mb-3">
+                  <View className="flex-row gap-5">
+                    {/* Left: Big rating number */}
+                    <View className="items-center justify-center">
+                      <Text className="text-4xl font-extrabold text-slate-900">
+                        {(product.average_rating || 0).toFixed(1)}
+                      </Text>
+                      <View className="flex-row mt-1">
+                        {renderStars(product.average_rating || 0)}
+                      </View>
+                      <Text className="text-xs text-slate-400 mt-1">
+                        {reviews.length}{" "}
+                        {reviews.length === 1 ? "rating" : "ratings"}
+                      </Text>
+                    </View>
+
+                    {/* Right: Distribution bars */}
+                    <View className="flex-1 justify-center gap-1.5">
+                      {ratingDistribution.map(({ star, count }) => {
+                        const pct =
+                          reviews.length > 0
+                            ? (count / reviews.length) * 100
+                            : 0;
+                        return (
+                          <View
+                            key={star}
+                            className="flex-row items-center gap-2"
+                          >
+                            <Text className="w-3 text-xs font-semibold text-slate-500 text-right">
+                              {star}
+                            </Text>
+                            <FontAwesome
+                              name="star"
+                              size={10}
+                              color="#f59e0b"
+                            />
+                            <View className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                              <View
+                                className="h-full rounded-full bg-amber-400"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </View>
+                            <Text className="w-6 text-[10px] font-semibold text-slate-400 text-right">
+                              {count}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                </View>
+
+                {/* Page Info */}
+                {totalReviewPages > 1 && (
+                  <View className="mb-2 px-1">
+                    <Text className="text-xs text-slate-400 font-medium">
+                      Showing {(reviewPage - 1) * REVIEWS_PER_PAGE + 1}–
+                      {Math.min(reviewPage * REVIEWS_PER_PAGE, reviews.length)}{" "}
+                      of {reviews.length} reviews
+                    </Text>
+                  </View>
+                )}
+
+                {/* Review Cards */}
+                <View className="gap-3">
+                  {paginatedReviews.map((review: any) => (
+                    <View
+                      key={review._id}
+                      className="rounded-2xl bg-white p-4 border border-slate-100"
+                      style={{
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.03,
+                        shadowRadius: 4,
+                        elevation: 1,
+                      }}
+                    >
+                      <View className="flex-row items-center gap-3 mb-3">
+                        {/* Avatar */}
+                        <View className="h-10 w-10 rounded-full bg-primary-100 items-center justify-center">
                           <Text className="text-sm font-bold text-primary-700">
                             {(review.user?.name ?? "A").charAt(0).toUpperCase()}
                           </Text>
                         </View>
+
+                        {/* Name & Date */}
                         <View className="flex-1">
-                          <Text className="text-sm font-bold text-slate-900">
+                          <Text className="text-sm font-bold text-slate-800">
                             {review.user?.name ?? "Anonymous"}
                           </Text>
-                          <View className="flex-row items-center mt-0.5">
-                            {renderStars(review.rating)}
-                          </View>
+                          {review.createdAt && (
+                            <Text className="text-[11px] text-slate-400 mt-0.5">
+                              {new Date(review.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
+                            </Text>
+                          )}
+                        </View>
+
+                        {/* Rating badge */}
+                        <View
+                          className={`flex-row items-center gap-1 rounded-full px-2.5 py-1 ${
+                            review.rating >= 4
+                              ? "bg-emerald-50"
+                              : review.rating >= 3
+                                ? "bg-amber-50"
+                                : "bg-rose-50"
+                          }`}
+                        >
+                          <FontAwesome
+                            name="star"
+                            size={11}
+                            color={
+                              review.rating >= 4
+                                ? "#059669"
+                                : review.rating >= 3
+                                  ? "#d97706"
+                                  : "#dc2626"
+                            }
+                          />
+                          <Text
+                            className={`text-xs font-bold ${
+                              review.rating >= 4
+                                ? "text-emerald-700"
+                                : review.rating >= 3
+                                  ? "text-amber-700"
+                                  : "text-rose-700"
+                            }`}
+                          >
+                            {review.rating.toFixed(1)}
+                          </Text>
                         </View>
                       </View>
-                    </View>
-                    <View className="rounded-lg bg-amber-50 px-2.5 py-1.5">
-                      <Text className="text-xs font-bold text-amber-700">
-                        {review.rating}.0
-                      </Text>
-                    </View>
-                  </View>
-                  <Text className="text-sm text-slate-600 leading-relaxed pl-12">
-                    {review.review || review.comment}
-                  </Text>
 
-                  {/* Review Images */}
-                  {review.images && review.images.length > 0 && (
-                    <View className="flex-row flex-wrap gap-2 mt-3 pl-12">
-                      {review.images.map((img: string, idx: number) => (
-                        <Pressable
-                          key={idx}
-                          onPress={() => handleImageZoom(review.images, idx)}
-                          className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200"
-                        >
-                          <Image
-                            source={{ uri: img }}
-                            className="w-full h-full"
-                            resizeMode="cover"
-                          />
-                        </Pressable>
-                      ))}
-                    </View>
-                  )}
-                </View>
-              ))}
-            </View>
+                      {/* Stars row */}
+                      <View className="flex-row mb-2">
+                        {renderStars(review.rating)}
+                      </View>
 
-            {reviews.length > 3 && (
-              <Pressable
-                className="mt-3"
-                onPress={() => setShowAllReviews(!showAllReviews)}
-              >
-                <View className="rounded-xl bg-slate-50 border border-slate-200 p-4 items-center">
-                  <View className="flex-row items-center gap-2">
-                    <Text className="text-sm font-semibold text-slate-700">
-                      {showAllReviews
-                        ? "Show less"
-                        : `View all ${reviews.length} reviews`}
-                    </Text>
-                    <Feather
-                      name={showAllReviews ? "chevron-up" : "chevron-down"}
-                      size={16}
-                      color="#334155"
-                    />
-                  </View>
+                      {/* Review text */}
+                      {review.review || review.comment ? (
+                        <Text className="text-sm text-slate-600 leading-relaxed">
+                          {review.review || review.comment}
+                        </Text>
+                      ) : null}
+
+                      {/* Review Images */}
+                      {review.images && review.images.length > 0 && (
+                        <View className="flex-row flex-wrap gap-2 mt-3">
+                          {review.images.map((img: string, idx: number) => (
+                            <Pressable
+                              key={idx}
+                              onPress={() =>
+                                handleImageZoom(review.images, idx)
+                              }
+                              className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200"
+                            >
+                              <Image
+                                source={{ uri: img }}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                              />
+                            </Pressable>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  ))}
                 </View>
-              </Pressable>
+
+                {/* Pagination Controls */}
+                {totalReviewPages > 1 && (
+                  <View className="flex-row items-center justify-center gap-2 mt-4">
+                    <Pressable
+                      onPress={() => setReviewPage((p) => Math.max(1, p - 1))}
+                      disabled={reviewPage === 1}
+                      className={`h-9 w-9 rounded-full items-center justify-center ${
+                        reviewPage === 1 ? "bg-slate-100" : "bg-primary-100"
+                      }`}
+                    >
+                      <Feather
+                        name="chevron-left"
+                        size={18}
+                        color={reviewPage === 1 ? "#cbd5e1" : "#059669"}
+                      />
+                    </Pressable>
+
+                    {Array.from({ length: totalReviewPages }, (_, i) => i + 1)
+                      .filter((p) => {
+                        // Show first, last, current, and neighbors
+                        if (p === 1 || p === totalReviewPages) return true;
+                        if (Math.abs(p - reviewPage) <= 1) return true;
+                        return false;
+                      })
+                      .reduce<(number | "dots")[]>((acc, p, i, arr) => {
+                        if (i > 0 && p - (arr[i - 1] as number) > 1)
+                          acc.push("dots");
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((item, i) =>
+                        item === "dots" ? (
+                          <Text
+                            key={`dots-${i}`}
+                            className="text-xs text-slate-400 px-1"
+                          >
+                            ···
+                          </Text>
+                        ) : (
+                          <Pressable
+                            key={item}
+                            onPress={() => setReviewPage(item as number)}
+                            className={`h-9 w-9 rounded-full items-center justify-center ${
+                              reviewPage === item
+                                ? "bg-primary-500"
+                                : "bg-slate-100"
+                            }`}
+                          >
+                            <Text
+                              className={`text-xs font-bold ${
+                                reviewPage === item
+                                  ? "text-white"
+                                  : "text-slate-600"
+                              }`}
+                            >
+                              {item}
+                            </Text>
+                          </Pressable>
+                        ),
+                      )}
+
+                    <Pressable
+                      onPress={() =>
+                        setReviewPage((p) => Math.min(totalReviewPages, p + 1))
+                      }
+                      disabled={reviewPage === totalReviewPages}
+                      className={`h-9 w-9 rounded-full items-center justify-center ${
+                        reviewPage === totalReviewPages
+                          ? "bg-slate-100"
+                          : "bg-primary-100"
+                      }`}
+                    >
+                      <Feather
+                        name="chevron-right"
+                        size={18}
+                        color={
+                          reviewPage === totalReviewPages
+                            ? "#cbd5e1"
+                            : "#059669"
+                        }
+                      />
+                    </Pressable>
+                  </View>
+                )}
+              </View>
             )}
           </View>
         )}
