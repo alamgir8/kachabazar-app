@@ -327,7 +327,7 @@ export default function ProductScreen() {
             </View>
 
             {/* Rating Display */}
-            {product.average_rating && product.average_rating > 0 && (
+            {product.average_rating != null && product.average_rating > 0 ? (
               <View className="flex-row items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
                 <View className="flex-row items-center">
                   {renderStars(product.average_rating)}
@@ -336,7 +336,7 @@ export default function ProductScreen() {
                   {product.average_rating.toFixed(1)}
                 </Text>
               </View>
-            )}
+            ) : null}
           </View>
 
           {/* Title */}
@@ -370,7 +370,7 @@ export default function ProductScreen() {
                   </View>
                 </View>
               )}
-            </View>{" "}
+            </View>
             {/* Stock Badge */}
             <View
               className={`rounded-lg px-2.5 py-1 ${stock > 0 ? "bg-emerald-50" : "bg-red-50"}`}
