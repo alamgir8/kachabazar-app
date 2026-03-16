@@ -81,9 +81,9 @@ export default {
     ],
     extra: {
       eas: {
-        projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || "",
+        projectId: "63719080-02d7-4a2c-9abc-5ba08f01c43b",
       },
-      apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
+      apiBaseUrl: process.env.EXPO_PUBLIC_BASE_URL,
       apiPort: process.env.EXPO_PUBLIC_API_PORT,
       stripePublishableKey: process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       razorpayKeyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID,

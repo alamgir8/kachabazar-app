@@ -195,6 +195,7 @@ eas build --platform ios --profile production
 
 # Android
 eas build --platform android --profile production
+eas build -p android --profile preview --clear-cache
 
 # Both
 eas build --platform all --profile production
