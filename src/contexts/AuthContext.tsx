@@ -39,6 +39,8 @@ interface LoginWithTokenInput {
   phone?: string;
   image?: string;
   address?: string;
+  city?: string;
+  country?: string;
   token: string;
   refreshToken: string;
 }
@@ -223,6 +225,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       phone: response.phone,
       image: response.image,
       address: response.address,
+      city: response.city,
+      country: response.country,
     };
 
     setUser(authenticatedUser);
@@ -260,6 +264,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       phone: response.phone,
       image: response.image,
       address: response.address,
+      city: response.city,
+      country: response.country,
     };
 
     setUser(authenticatedUser);
@@ -340,6 +346,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         phone: response.phone,
         image: response.image,
         address: response.address,
+        city: response.city,
+        country: response.country,
       };
 
       setUser(updatedUser);

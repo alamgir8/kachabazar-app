@@ -192,6 +192,8 @@ export interface LoginResponse {
   phone?: string;
   image?: string;
   address?: string;
+  city?: string;
+  country?: string;
 }
 
 export interface RefreshResponse {
