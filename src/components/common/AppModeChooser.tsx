@@ -63,15 +63,17 @@ export default function AppModeChooser() {
       }),
     ]).start();
 
-    // Delay to show selection state
-    setTimeout(async () => {
-      await setMode(mode);
-      // Animate out
+    // Delay to show selection state, then animate out before setting mode
+    setTimeout(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 250,
         useNativeDriver: true,
-      }).start(() => setVisible(false));
+      }).start(async () => {
+        setVisible(false);
+        // Set mode AFTER the modal is fully hidden to avoid blank screen
+        await setMode(mode);
+      });
     }, 400);
   };
 

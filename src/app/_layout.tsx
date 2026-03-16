@@ -1,18 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
-import { LogBox } from "react-native";
+import { LogBox, View, ActivityIndicator } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { useSegments, useRouter } from "expo-router";
 
-// Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync().catch(() => {
-  // Ignore - view controller may not be registered yet
-});
+// Prevent the splash screen from auto-hiding.
+// Wrapped in a flag so we know whether it succeeded.
+let splashScreenReady = false;
+try {
+  SplashScreen.preventAutoHideAsync();
+  splashScreenReady = true;
+} catch {
+  // Ignore – on web or when the native module is unavailable
+}
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
@@ -31,6 +36,7 @@ const RootContent = () => {
   const router = useRouter();
   const { mode, isReady: modeReady, isFirstLaunch } = useAppMode();
   const [isReady, setReady] = useState(false);
+  const [splashHidden, setSplashHidden] = useState(false);
 
   useEffect(() => {
     async function prepare() {
@@ -49,18 +55,28 @@ const RootContent = () => {
     prepare();
   }, []);
 
+  // Hide the splash screen once everything is ready
+  const hideSplash = useCallback(async () => {
+    if (splashHidden) return;
+    if (!splashScreenReady) {
+      // Native splash was never registered – just mark as hidden
+      setSplashHidden(true);
+      return;
+    }
+    try {
+      await SplashScreen.hideAsync();
+    } catch {
+      // Ignore - splash screen may already be hidden
+    } finally {
+      setSplashHidden(true);
+    }
+  }, [splashHidden]);
+
   useEffect(() => {
-    const maybeHideSplash = async () => {
-      if (isReady && modeReady) {
-        try {
-          await SplashScreen.hideAsync();
-        } catch {
-          // Ignore - splash screen may already be hidden
-        }
-      }
-    };
-    void maybeHideSplash();
-  }, [isReady, modeReady]);
+    if (isReady && modeReady) {
+      void hideSplash();
+    }
+  }, [isReady, modeReady, hideSplash]);
 
   // Navigate to delivery login when mode switches to delivery
   useEffect(() => {
@@ -74,6 +90,22 @@ const RootContent = () => {
       router.replace("/(tabs)");
     }
   }, [mode, isReady, modeReady, isFirstLaunch]);
+
+  // Show a loading indicator while resources and mode are loading
+  if (!isReady || !modeReady) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f8fafc",
+        }}
+      >
+        <ActivityIndicator size="large" color="#0d9488" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>

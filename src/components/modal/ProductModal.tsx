@@ -169,26 +169,26 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               <View className="px-5 pt-4">
                 {/* Category & Rating */}
                 <View className="mb-3 flex-row items-center justify-between">
-                  {product?.category &&
-                    typeof product.category === "object" && (
-                      <View className="flex-row items-center gap-2 rounded-full bg-primary-100 px-3 py-1.5">
-                        <Feather name="tag" size={12} color="#10b981" />
-                        <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
-                          {getLocalizedValue(
-                            product?.category?.name as Record<string, string>
-                          )}
-                        </Text>
-                      </View>
-                    )}
+                  {product?.category && typeof product.category === "object" ? (
+                    <View className="flex-row items-center gap-2 rounded-full bg-primary-100 px-3 py-1.5">
+                      <Feather name="tag" size={12} color="#10b981" />
+                      <Text className="text-xs font-bold uppercase tracking-wider text-primary-700">
+                        {getLocalizedValue(
+                          product?.category?.name as Record<string, string>,
+                        )}
+                      </Text>
+                    </View>
+                  ) : null}
 
-                  {product.average_rating && product.average_rating > 0 && (
+                  {product.average_rating != null &&
+                  Number(product.average_rating) > 0 ? (
                     <View className="flex-row items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5">
                       <FontAwesome name="star" size={14} color="#f59e0b" />
                       <Text className="text-xs font-bold text-amber-700">
-                        {product.average_rating.toFixed(1)}
+                        {Number(product.average_rating).toFixed(1)}
                       </Text>
                     </View>
-                  )}
+                  ) : null}
                 </View>
 
                 {/* Title */}
@@ -279,9 +279,9 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 />
 
                 {/* Tags */}
-                {product.tag && product.tag.length > 0 && (
+                {product.tag && product.tag.length > 0 ? (
                   <Tags product={product} />
-                )}
+                ) : null}
               </View>
             </ScrollView>
           </View>
