@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Alert,
   ActivityIndicator,
   Linking,
   RefreshControl,
@@ -23,6 +22,7 @@ import {
   useUpdateTrackingStatus,
 } from "@/hooks/queries/useDelivery";
 import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
+import { showToast } from "@/utils/toast";
 
 const TRACKING_STATUSES = [
   {
@@ -109,9 +109,9 @@ export default function ActiveDeliveryScreen() {
         trackingStatus: newStatus,
         message: comment.trim() || undefined,
       });
-      Alert.alert("Success", `Status updated to ${label}`);
+      showToast.success("Status Updated", `Status updated to ${label}`);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to update status");
+      showToast.error("Error", err.message || "Failed to update status");
     } finally {
       setUpdatingTo(null);
       setComment("");
@@ -860,7 +860,7 @@ export default function ActiveDeliveryScreen() {
                         ? ["#ef4444", "#dc2626"]
                         : commentModal.status === "delivered"
                           ? ["#22c55e", "#16a34a"]
-                          : (DELIVERY_COLORS.gradientHorizontal)
+                          : DELIVERY_COLORS.gradientHorizontal
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}

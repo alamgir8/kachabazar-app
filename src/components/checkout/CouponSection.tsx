@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { applyCoupon, getShowingCoupons, type Coupon } from "@/services/coupons";
+import {
+  applyCoupon,
+  getShowingCoupons,
+  type Coupon,
+} from "@/services/coupons";
 import { formatCurrency } from "@/utils";
 import { HapticFeedback } from "@/utils/accessibility";
 import { analytics } from "@/utils/analytics";
+import { showToast } from "@/utils/toast";
 import { QUERY_KEYS } from "@/constants";
 
 interface CouponSectionProps {
@@ -49,22 +54,28 @@ export const CouponSection: React.FC<CouponSectionProps> = ({
           coupon_code: couponCode,
           discount: response.discount,
         });
-        Alert.alert("Success", `Coupon applied! You saved ${formatCurrency(response.discount, currency)}`);
+        showToast.success(
+          "Coupon Applied",
+          `You saved ${formatCurrency(response.discount, currency)}`,
+        );
         setCouponCode("");
       } else {
         HapticFeedback.error();
-        Alert.alert("Invalid Coupon", response.message || "This coupon cannot be applied.");
+        showToast.error(
+          "Invalid Coupon",
+          response.message || "This coupon cannot be applied.",
+        );
       }
     },
     onError: (error: any) => {
       HapticFeedback.error();
-      Alert.alert("Error", error.message || "Failed to apply coupon");
+      showToast.error("Error", error.message || "Failed to apply coupon");
     },
   });
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) {
-      Alert.alert("Error", "Please enter a coupon code");
+      showToast.warning("Error", "Please enter a coupon code");
       return;
     }
     applyCouponMutation.mutate(couponCode.trim().toUpperCase());
@@ -76,9 +87,10 @@ export const CouponSection: React.FC<CouponSectionProps> = ({
     HapticFeedback.light();
   };
 
-  const availableCoupons = couponsData?.coupons?.filter(
-    (coupon) => cartTotal >= coupon.minimumAmount
-  ) || [];
+  const availableCoupons =
+    couponsData?.coupons?.filter(
+      (coupon) => cartTotal >= coupon.minimumAmount,
+    ) || [];
 
   return (
     <View className="mb-4">
@@ -176,7 +188,8 @@ export const CouponSection: React.FC<CouponSectionProps> = ({
                       {coupon.discountType.type === "fixed"
                         ? formatCurrency(coupon.discountType.value, currency)
                         : `${coupon.discountType.value}%`}{" "}
-                      off • Min. {formatCurrency(coupon.minimumAmount, currency)}
+                      off • Min.{" "}
+                      {formatCurrency(coupon.minimumAmount, currency)}
                     </Text>
                   </View>
                   <Feather name="arrow-right" size={14} color="#10b981" />
@@ -189,4 +202,3 @@ export const CouponSection: React.FC<CouponSectionProps> = ({
     </View>
   );
 };
-

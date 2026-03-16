@@ -4,7 +4,6 @@ import {
   Text,
   View,
   ActivityIndicator,
-  Alert,
   Pressable,
   Linking,
 } from "react-native";
@@ -19,6 +18,7 @@ import { formatCurrency } from "@/utils";
 import { ScreenHeader } from "@/components/ui";
 import Button from "@/components/ui/Button";
 import { exportOrderInvoicePdf } from "@/services/order-invoice-pdf";
+import { showToast } from "@/utils/toast";
 
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,7 +42,7 @@ export default function OrderDetailScreen() {
 
   const handleDownloadInvoice = async () => {
     if (!order) {
-      Alert.alert("Error", "Order not found to export invoice.");
+      showToast.error("Error", "Order not found to export invoice.");
       return;
     }
 
@@ -62,7 +62,7 @@ export default function OrderDetailScreen() {
       // Sharing dialog already gives UX feedback, no extra alert needed
     } catch (error) {
       console.error("Invoice export error:", error);
-      Alert.alert(
+      showToast.error(
         "Error",
         "Could not generate the invoice PDF. Please try again.",
       );
@@ -73,7 +73,7 @@ export default function OrderDetailScreen() {
 
   const handleEmailInvoice = async () => {
     if (!order?.user_info?.email) {
-      Alert.alert("Error", "No email address found for this order.");
+      showToast.error("Error", "No email address found for this order.");
       return;
     }
 
@@ -97,14 +97,14 @@ export default function OrderDetailScreen() {
       if (canOpen) {
         await Linking.openURL(mailtoUrl);
       } else {
-        Alert.alert(
+        showToast.error(
           "Error",
           "Unable to open email client. Please ensure you have an email app installed.",
         );
       }
     } catch (error) {
       console.error("Email error:", error);
-      Alert.alert("Error", "Could not open email client.");
+      showToast.error("Error", "Could not open email client.");
     } finally {
       setTimeout(() => setEmailing(false), 1000);
     }

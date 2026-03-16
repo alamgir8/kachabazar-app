@@ -4,9 +4,10 @@
  */
 
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRateDeliveryBoy } from "@/hooks/queries/useTracking";
+import { showToast } from "@/utils/toast";
 
 interface RateDeliveryProps {
   orderId: string;
@@ -40,7 +41,7 @@ export const RateDelivery: React.FC<RateDeliveryProps> = ({
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      Alert.alert("Rating Required", "Please select a star rating.");
+      showToast.warning("Rating Required", "Please select a star rating.");
       return;
     }
 
@@ -52,7 +53,7 @@ export const RateDelivery: React.FC<RateDeliveryProps> = ({
       });
       setSubmitted(true);
     } catch (error: any) {
-      Alert.alert(
+      showToast.error(
         "Rating Failed",
         error.message || "Could not submit your rating. Please try again.",
       );

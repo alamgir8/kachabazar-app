@@ -29,6 +29,8 @@ import { theme } from "@/theme";
 import { logger } from "@/utils/logger";
 import { analytics } from "@/utils/analytics";
 import { env, validateEnvironmentConfig } from "@/config/environment";
+import { toastConfig } from "@/components/ui/ToastConfig";
+import Toast from "react-native-toast-message";
 import "../styles/global.css";
 
 const RootContent = () => {
@@ -191,6 +193,7 @@ export default function RootLayout() {
                   <CartProvider>
                     <DeliveryAuthProvider>
                       <RootContent />
+                      <Toast config={toastConfig} />
                     </DeliveryAuthProvider>
                   </CartProvider>
                 </AuthProvider>

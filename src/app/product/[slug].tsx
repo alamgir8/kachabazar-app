@@ -8,7 +8,6 @@ import {
   Pressable,
   Modal,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather, FontAwesome } from "@expo/vector-icons";
@@ -34,6 +33,7 @@ import { theme } from "@/theme";
 import Button from "@/components/ui/Button";
 import Tags from "@/components/common/Tags";
 import VariantList from "@/components/variants/VariantList";
+import { showToast } from "@/utils/toast";
 
 const windowWidth = Dimensions.get("window").width;
 const carouselWidth = Math.max(windowWidth - 48, 320);
@@ -128,9 +128,9 @@ export default function ProductScreen() {
   const handleAddToCartClick = () => {
     const result = addToCartAction(quantity);
     if (!result.success) {
-      Alert.alert("Error", result.message);
+      showToast.error("Error", result.message);
     } else {
-      Alert.alert("Success", "Added to cart successfully!");
+      showToast.success("Added to Cart", "Added to cart successfully!");
       setQuantity(1);
     }
   };

@@ -9,6 +9,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { Alert } from "react-native";
+import { showToast } from "@/utils/toast";
 
 import { SECURE_STORAGE_KEYS } from "@/constants";
 import {
@@ -156,7 +157,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
               router.replace("/auth/login");
             },
           },
-        ]
+        ],
       );
     });
 
@@ -193,7 +194,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
             } catch (error) {
               console.log(
                 "Unable to fetch shipping address on hydration",
-                error
+                error,
               );
             }
           }
@@ -354,7 +355,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         user: updatedUser,
       });
     },
-    [accessToken, user?._id]
+    [accessToken, user?._id],
   );
 
   const upsertShippingAddress = useCallback(
@@ -371,7 +372,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
         },
       });
     },
-    [accessToken, refreshToken, user]
+    [accessToken, refreshToken, user],
   );
 
   const value = useMemo<AuthContextValue>(
@@ -403,7 +404,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       updateProfile,
       upsertShippingAddress,
       reloadProfile,
-    ]
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

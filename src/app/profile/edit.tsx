@@ -19,6 +19,7 @@ import { Screen } from "@/components/layout/Screen";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import Button from "@/components/ui/Button";
+import { showToast } from "@/utils/toast";
 
 interface ProfileFormValues {
   name: string;
@@ -70,7 +71,7 @@ export default function EditProfileScreen() {
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert(
+      showToast.warning(
         "Permission Required",
         "Sorry, we need camera roll permissions to upload images.",
       );
@@ -99,14 +100,14 @@ export default function EditProfileScreen() {
           selectedImage.fileSize &&
           selectedImage.fileSize > 5 * 1024 * 1024
         ) {
-          Alert.alert("Error", "Image size should be less than 5MB");
+          showToast.error("Error", "Image size should be less than 5MB");
           return;
         }
 
         // Validate image dimensions (optional)
         if (selectedImage.width && selectedImage.height) {
           if (selectedImage.width < 100 || selectedImage.height < 100) {
-            Alert.alert(
+            showToast.error(
               "Error",
               "Image dimensions should be at least 100x100 pixels",
             );
@@ -119,14 +120,14 @@ export default function EditProfileScreen() {
         setError(null);
       }
     } catch (err) {
-      Alert.alert("Error", "Failed to pick image. Please try again.");
+      showToast.error("Error", "Failed to pick image. Please try again.");
     }
   };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert(
+      showToast.warning(
         "Permission Required",
         "Sorry, we need camera permissions to take photos.",
       );
@@ -147,7 +148,7 @@ export default function EditProfileScreen() {
         setError(null);
       }
     } catch (err) {
-      Alert.alert("Error", "Failed to take photo. Please try again.");
+      showToast.error("Error", "Failed to take photo. Please try again.");
     }
   };
 

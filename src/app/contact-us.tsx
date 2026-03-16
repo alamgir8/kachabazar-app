@@ -6,7 +6,6 @@ import {
   Image,
   Pressable,
   TextInput,
-  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -20,6 +19,7 @@ import { getLocalizedValue } from "@/utils";
 import Button from "@/components/ui/Button";
 import { ScreenHeader, EnhancedInput, TextArea } from "@/components/ui";
 import { contactFormSchema, type ContactFormInput } from "@/utils/validation";
+import { showToast } from "@/utils/toast";
 
 export default function ContactUsScreen() {
   const router = useRouter();
@@ -51,8 +51,8 @@ export default function ContactUsScreen() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccess(true);
       reset();
-      Alert.alert(
-        "Success",
+      showToast.success(
+        "Message Sent",
         "Your message has been sent successfully. We will contact you shortly.",
       );
     } catch (err) {

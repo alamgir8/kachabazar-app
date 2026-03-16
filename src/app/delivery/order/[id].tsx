@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Alert,
   ActivityIndicator,
   Linking,
   Modal,
@@ -24,6 +23,7 @@ import {
 } from "@/hooks/queries/useDelivery";
 import { DELIVERY_COLORS } from "@/constants/deliveryTheme";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { showToast } from "@/utils/toast";
 
 const NEXT_STATUS_MAP: Record<string, { value: string; label: string }> = {
   "order-placed": { value: "confirmed", label: "Confirm Order" },
@@ -94,7 +94,7 @@ export default function DeliveryOrderDetailScreen() {
       });
       refetch();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to update");
+      showToast.error("Error", err.message || "Failed to update");
     } finally {
       setIsUpdating(false);
       setComment("");

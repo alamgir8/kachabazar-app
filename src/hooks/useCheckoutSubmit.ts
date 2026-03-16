@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "expo-router";
-import { Alert } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -13,6 +12,7 @@ import { type Coupon } from "@/services/coupons";
 import { notifyAuthError } from "@/services/api-client";
 import { HapticFeedback } from "@/utils/accessibility";
 import { checkoutSchema } from "@/utils/validation";
+import { showToast } from "@/utils/toast";
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
@@ -37,7 +37,7 @@ export const useCheckoutSubmit = () => {
 
   const cartTotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   const [error, setError] = useState("");
@@ -80,7 +80,7 @@ export const useCheckoutSubmit = () => {
         cost: Number(checkout?.shipping_two_cost) || 15,
       },
     ],
-    [checkout]
+    [checkout],
   );
 
   // Dynamic Payment Methods
@@ -140,7 +140,7 @@ export const useCheckoutSubmit = () => {
 
   useEffect(() => {
     const option = shippingOptions.find(
-      (o) => o.value === selectedShippingOption
+      (o) => o.value === selectedShippingOption,
     );
     if (option) {
       setShippingCost(option.cost);
@@ -254,13 +254,19 @@ export const useCheckoutSubmit = () => {
         });
       } else {
         // Placeholder for other payment methods
-        Alert.alert("Coming Soon", "This payment method is not yet available.");
+        showToast.info(
+          "Coming Soon",
+          "This payment method is not yet available.",
+        );
         setIsCheckoutSubmit(false);
       }
     } catch (err: any) {
       console.error("Checkout error:", err);
       setError(err.message || "Checkout failed");
-      Alert.alert("Error", err.message || "Failed to place order");
+      showToast.error(
+        "Checkout Failed",
+        err.message || "Failed to place order",
+      );
       setIsCheckoutSubmit(false);
       HapticFeedback.error();
     }

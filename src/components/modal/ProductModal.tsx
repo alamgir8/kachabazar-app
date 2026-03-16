@@ -6,7 +6,6 @@ import {
   ScrollView,
   Pressable,
   Dimensions,
-  Alert,
 } from "react-native";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,6 +26,7 @@ import {
 } from "@/utils";
 import { HapticFeedback } from "@/utils/accessibility";
 import { analytics } from "@/utils/analytics";
+import { showToast } from "@/utils/toast";
 import Button from "../ui/Button";
 import Tags from "../common/Tags";
 import VariantList from "../variants/VariantList";
@@ -93,19 +93,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({
     if (result.success) {
       HapticFeedback.success();
       analytics.trackAddToCart(product._id, productName, price, quantity);
-      Alert.alert("Success", "Added to cart!", [
-        { text: "Continue Shopping", onPress: onClose },
-        {
-          text: "View Cart",
-          onPress: () => {
-            onClose();
-            router.push("/(tabs)/cart");
-          },
-        },
-      ]);
+      showToast.success("Added to Cart", `${productName} × ${quantity}`);
+      onClose();
     } else {
       HapticFeedback.error();
-      Alert.alert("Error", result.message);
+      showToast.error("Error", result.message);
     }
   };
 
